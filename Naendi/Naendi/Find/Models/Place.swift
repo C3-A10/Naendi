@@ -28,6 +28,7 @@ struct Place: Identifiable, Codable, Hashable {
     
     // tambahan
     let imgUrl: String?
+    let reportCount: Int?
     
     // Mapping dari snake_case (CSV) ke camelCase (Swift)
     enum CodingKeys: String, CodingKey {
@@ -47,6 +48,8 @@ struct Place: Identifiable, Codable, Hashable {
         case reviewPositif = "review_positif"
         case reviewNegatif = "review_negatif"
         case imgUrl
+        case reportCount
+        
     }
 }
 
@@ -107,7 +110,8 @@ extension Place {
             halalEvidence: "Sertifikat Halal MUI",
             reviewPositif: "Mie Mapan ini emang jadi legend di Surabaya, rasanya konsisten enak dari dulu sampai sekarang. Pelayanan di sini juga jempolan, cepet, ramah, dan tempatnya bersih.",
             reviewNegatif: "Beberapa pengunjung merasa AC di sini kurang dingin, bikin gerah pas cuaca Surabaya lagi panas.",
-            imgUrl: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=800&auto=format&fit=crop"
+            imgUrl: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=800&auto=format&fit=crop",
+            reportCount: 0
         ),
         
         // 2. Volcano Terang Bulan
@@ -127,7 +131,8 @@ extension Place {
             halalEvidence: nil,
             reviewPositif: "Porsi martabak dan terang bulannya tuh super big banget, bikin nagih deh pokoknya. Topingnya melimpah, jadi worth it lah.",
             reviewNegatif: "Agak pricey sih buat sebagian orang, tapi ada juga yang bilang porsinya gede jadi lumayan.",
-            imgUrl: "https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=800&auto=format&fit=crop"
+            imgUrl: "https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=800&auto=format&fit=crop",
+            reportCount: 0
         ),
         
         // 3. Holden Martabak
@@ -147,7 +152,8 @@ extension Place {
             halalEvidence: "No Pork No Lard",
             reviewPositif: "Harga sangat terjangkau untuk mahasiswa, rasanya pas tidak terlalu manis dan adonannya lembut.",
             reviewNegatif: "Antrean lumayan panjang kalau malam minggu dan tempat parkirnya agak sempit untuk mobil.",
-            imgUrl: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=800&auto=format&fit=crop"
+            imgUrl: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=800&auto=format&fit=crop",
+            reportCount: 0
         ),
         
         // 4. Soto Ayam Ambengan
@@ -167,7 +173,8 @@ extension Place {
             halalEvidence: "Sertifikat Halal MUI",
             reviewPositif: "Kuah sotonya sangat gurih dan kental, apalagi ditambah bubuk koya khasnya yang bikin rasa makin mantap. Daging ayamnya melimpah.",
             reviewNegatif: "Kalau jam makan siang sangat ramai sampai susah cari meja kosong.",
-            imgUrl: "https://images.unsplash.com/photo-1572656631137-7935297eff55?q=80&w=800&auto=format&fit=crop"
+            imgUrl: "https://images.unsplash.com/photo-1572656631137-7935297eff55?q=80&w=800&auto=format&fit=crop",
+            reportCount: 0
         )
     ]
 
