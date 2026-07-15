@@ -89,6 +89,20 @@ struct ResultView: View {
                         ProgressView("Memuat rekomendasi...")
                             .scaleEffect(1.1)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else if viewModel.places.isEmpty {
+                        // Tampilan saat hasil kosong
+                        VStack(spacing: 16) {
+                            Text("No results found")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                            
+                            Text("Edit Your Preference First To get results")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 40)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
                         ScrollView {
                             LazyVStack(spacing: 20) {
