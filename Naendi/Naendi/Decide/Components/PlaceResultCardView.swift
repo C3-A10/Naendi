@@ -16,10 +16,10 @@ struct PlaceResultCardView: View {
     
     var body: some View {
         ZStack {
-//            NavigationLink(destination: DetailPlaceView(place: place), isActive: $isNavigating) {
-//                EmptyView()
-//            }
-//            .hidden()
+            NavigationLink(destination: DetailPlaceView(place: place), isActive: $isNavigating) {
+                EmptyView()
+            }
+            .hidden()
             
             // Bungkus dalam satu container yang menangkap tap
             VStack(spacing: 0) {
