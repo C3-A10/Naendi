@@ -29,7 +29,7 @@ struct CompareCard: View {
         // PENTING: Struktur diubah agar satu kontainer utama mengontrol segalanya
         VStack(alignment: .leading, spacing: 0) {
             
-            // 1. Bagian Atas: Gambar & Badge Kontainer
+            // Bagian Atas: Gambar & Badge Kontainer
             ZStack(alignment: .topTrailing) {
                 if let imgUrlString = item.imgUrl, !imgUrlString.isEmpty, let url = URL(string: imgUrlString) {
                     AsyncImage(url: url) { phase in
@@ -68,53 +68,53 @@ struct CompareCard: View {
                 .padding([.top, .trailing], 10)
             }
             
-            // 2. Bagian Bawah: Seluruh Informasi Detail Teks dimasukkan ke dalam satu blok padding
+            // Bagian Bawah Kartu
             VStack(alignment: .leading, spacing: 10) {
                 
-                // Judul Tempat / Cafe (Aman di dalam padding kontainer)
-                Text(item.nama)
-                    .font(.system(size: 20, weight: .bold)) // Ukuran proporsional untuk 2 kolom
-                    .foregroundColor(.black)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.8)
-                    .frame(height: 48, alignment: .topLeading) // Mengunci tinggi agar card kiri & kanan selalu sejajar presisi
-                
-                // Ratings & Tags Row
-                HStack(spacing: 6) {
-                    HStack(spacing: 2) {
+                BrickLayout(spacing: 6) {
+                    // Judul
+                    Text(item.nama)
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(.black)
+                            .lineLimit(2)
+                            .frame(maxWidth: 120, alignment: .leading)
+                    
+                    // Rating Star
+                    HStack(spacing: 3) {
                         Image(systemName: "star.fill")
                             .foregroundColor(Color(red: 0.95, green: 0.76, blue: 0.29))
-                            .font(.system(size: 15))
+                            .font(.system(size: 13))
                         
                         Text(String(format: "%.1f", item.rating))
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.system(size: 12, weight: .semibold))
                             .foregroundColor(.gray)
                     }
+                    .padding(.trailing, 4) // Memberi sedikit jarak visual sebelum masuk ke tag berikutnya
                     
                     // Tag Vibe
                     TagView(
-                            text: item.vibe,
-                            backgroundColor: Color(red: 0.82, green: 0.94, blue: 0.89),
-                            textColor: Color(red: 0.22, green: 0.55, blue: 0.42)
-                        )
+                        text: item.vibe,
+                        backgroundColor: Color(red: 0.82, green: 0.94, blue: 0.89),
+                        textColor: Color(red: 0.22, green: 0.55, blue: 0.42)
+                    )
                     
-                    // Tag Halal
+                    // Tag Status Halal / Non-Halal
                     if item.halal.lowercased() == "yes" {
-                            TagView(
-                                text: "Halal",
-                                backgroundColor: Color(red: 0.98, green: 0.84, blue: 0.53),
-                                textColor: Color(red: 0.72, green: 0.44, blue: 0.16)
-                            )
-                        } else {
-                            TagView(
-                                text: "Non-Halal",
-                                backgroundColor: Color(red: 0.98, green: 0.85, blue: 0.85),
-                                textColor: Color(red: 0.75, green: 0.22, blue: 0.22)
-                            )
-                        }
+                        TagView(
+                            text: "Halal",
+                            backgroundColor: Color(red: 0.98, green: 0.84, blue: 0.53),
+                            textColor: Color(red: 0.72, green: 0.44, blue: 0.16)
+                        )
+                    } else {
+                        TagView(
+                            text: "Non-Halal",
+                            backgroundColor: Color(red: 0.98, green: 0.85, blue: 0.85),
+                            textColor: Color(red: 0.75, green: 0.22, blue: 0.22)
+                        )
+                    }
                 }
                 
-                // Info Jarak Kustom
+                // 3. Info Jarak Kustom
                 VStack(alignment: .leading, spacing: 2) {
                     Text("0,9 KM dari lokasi Anda saat ini")
                     Text("0,1 KM dari GWalk")
@@ -123,14 +123,15 @@ struct CompareCard: View {
                 .foregroundColor(.gray)
                 
                 Divider()
-                    .padding(.vertical, 2)
+                    .padding(.vertical, 4)
                 
                 // Baris Informasi Detail Tambahan
                 DetailRowView(title: "Address", value: item.alamat)
                 DetailRowView(title: "Price Range", value: item.rangeHarga)
                 DetailRowView(title: "Operating Hour", value: item.jamBuka)
             }
-            .padding(.all, 14) // Menggeser seluruh elemen teks ke tengah secara merata dan aman
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top) // Membagi 50/50 ruang layar secara adil
         .background(Color(red: 0.95, green: 0.95, blue: 0.95)) // Background untuk SATU KESATUAN Kartu
