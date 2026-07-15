@@ -13,11 +13,15 @@ struct CompareTable: View {
     let placeB: Place
     
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .top, spacing: 10) {
             CompareCard(item: placeA)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            
             CompareCard(item: placeB)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .padding(.horizontal, 16) // Padding luar kanan-kiri layar utama
+        .padding(.horizontal, 16)
+        .fixedSize(horizontal: false, vertical: true)
     }
 }
 
@@ -26,31 +30,37 @@ struct CompareCard: View {
     let item: Place
     
     var body: some View {
-        // PENTING: Struktur diubah agar satu kontainer utama mengontrol segalanya
         VStack(alignment: .leading, spacing: 0) {
             
-            // Bagian Atas: Gambar & Badge Kontainer
+            // MARK: Image & Badge
             ZStack(alignment: .topTrailing) {
-                if let imgUrlString = item.imgUrl, !imgUrlString.isEmpty, let url = URL(string: imgUrlString) {
+                
+                if let imgUrlString = item.imgUrl,
+                   !imgUrlString.isEmpty,
+                   let url = URL(string: imgUrlString) {
+                    
                     AsyncImage(url: url) { phase in
                         switch phase {
+                            
                         case .success(let image):
                             image
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .frame(height: 130) // Tinggi gambar seragam
+                                .frame(height: 130)
                                 .clipped()
+                            
                         case .failure, .empty:
                             placeholderView
+                            
                         @unknown default:
                             EmptyView()
                         }
                     }
+                    
                 } else {
                     placeholderView
                 }
                 
-                // Grup Badge (Green Count + White Bubble)
                 HStack(spacing: -6) {
                     Text("\(item.reportCount)")
                         .font(.system(size: 9, weight: .bold))
@@ -62,24 +72,22 @@ struct CompareCard: View {
                     
                     Image(systemName: "exclamationmark.bubble.fill")
                         .font(.system(size: 20))
-                        .foregroundColor(Color.white)
-                        .shadow(color: Color.black.opacity(0.15), radius: 4, x: 0, y: 2)
+                        .foregroundColor(.white)
+                        .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
                 }
-                .padding([.top, .trailing], 10)
+                .padding(.top, 10)
             }
             
-            // Bagian Bawah Kartu
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 8) {
+                
+                Text(item.nama)
+                    .font(.system(size: 16, weight: .bold))
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+                    .padding(.top, 10)
                 
                 BrickLayout(spacing: 6) {
-                    // Judul
-                    Text(item.nama)
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.black)
-                            .lineLimit(2)
-                            .frame(maxWidth: 120, alignment: .leading)
                     
-                    // Rating Star
                     HStack(spacing: 3) {
                         Image(systemName: "star.fill")
                             .foregroundColor(Color(red: 0.95, green: 0.76, blue: 0.29))
@@ -89,16 +97,14 @@ struct CompareCard: View {
                             .font(.system(size: 12, weight: .semibold))
                             .foregroundColor(.gray)
                     }
-                    .padding(.trailing, 4) // Memberi sedikit jarak visual sebelum masuk ke tag berikutnya
+                    .padding(.trailing, 4)
                     
-                    // Tag Vibe
                     TagView(
                         text: item.vibe,
                         backgroundColor: Color(red: 0.82, green: 0.94, blue: 0.89),
                         textColor: Color(red: 0.22, green: 0.55, blue: 0.42)
                     )
                     
-                    // Tag Status Halal / Non-Halal
                     if item.halal.lowercased() == "yes" {
                         TagView(
                             text: "Halal",
@@ -114,81 +120,77 @@ struct CompareCard: View {
                     }
                 }
                 
-                // 3. Info Jarak Kustom
                 VStack(alignment: .leading, spacing: 2) {
                     Text("0,9 KM dari lokasi Anda saat ini")
                     Text("0,1 KM dari GWalk")
                 }
-                .font(.system(size: 12, weight: .regular))
+                .font(.system(size: 12))
                 .foregroundColor(.gray)
                 
                 Divider()
                     .padding(.vertical, 4)
                 
-                // Baris Informasi Detail Tambahan
                 DetailRowView(title: "Address", value: item.alamat)
                 DetailRowView(title: "Price Range", value: item.rangeHarga)
                 DetailRowView(title: "Operating Hour", value: item.jamBuka)
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 8)
             .padding(.bottom, 16)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top) // Membagi 50/50 ruang layar secara adil
-        .background(Color(red: 0.95, green: 0.95, blue: 0.95)) // Background untuk SATU KESATUAN Kartu
-        .cornerRadius(24) // Efek melengkung rapi membungkus gambar dan teks sekaligus
+        .frame(maxHeight: .infinity, alignment: .top)
+        .background(Color(red: 0.95, green: 0.95, blue: 0.95))
+        .clipShape(RoundedRectangle(cornerRadius: 24))
     }
     
-    // View Placeholder saat gambar loading/gagal (Tinggi disamakan 130 agar tidak jumping)
     private var placeholderView: some View {
         Color.gray.opacity(0.3)
             .frame(height: 130)
             .overlay(ProgressView())
     }
-}
-
-// MARK: - Sub Component Tags
-struct TagView: View {
-    let text: String
-    let backgroundColor: Color
-    let textColor: Color
     
-    var body: some View {
-        Text(text)
-            .font(.system(size: 10, weight: .bold))
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(backgroundColor)
-            .foregroundColor(textColor)
-            .cornerRadius(8)
-    }
-}
-
-// MARK: - Sub Component Detail Row
-struct DetailRowView: View {
-    let title: String
-    let value: String
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(title)
-                .font(.system(size: 14, weight: .bold))
-                .foregroundColor(.black)
-            
-            Text(value)
-                .font(.system(size: 12, weight: .regular))
-                .foregroundColor(.gray)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
+    // MARK: - Sub Component Tags
+    struct TagView: View {
+        let text: String
+        let backgroundColor: Color
+        let textColor: Color
+        
+        var body: some View {
+            Text(text)
+                .font(.system(size: 10, weight: .bold))
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(backgroundColor)
+                .foregroundColor(textColor)
+                .cornerRadius(8)
         }
-        .padding(.bottom, 6)
+    }
+    
+    // MARK: - Sub Component Detail Row
+    struct DetailRowView: View {
+        let title: String
+        let value: String
+        
+        var body: some View {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(.black)
+                
+                Text(value)
+                    .font(.system(size: 12, weight: .regular))
+                    .foregroundColor(.gray)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(.bottom, 6)
+        }
     }
 }
-    
-    
-    
-    // MARK: - PREVIEW
-    #Preview {
-        CompareTable(placeA: Place(
+
+// MARK: - PREVIEW
+#Preview {
+    CompareTable(
+        placeA: Place(
             id: "ChIJZWbUpcD71y0RasSgwAJ7TUw_2",
             nama: "Holden Martabak & Terang Bulan",
             alamat: "Jl. Kalidami VII No.2, RT.003/RW.10, Mojo, Kec. Gubeng, Surabaya, Jawa Timur 60285, Indonesia",
@@ -206,7 +208,8 @@ struct DetailRowView: View {
             reviewNegatif: "Antrean lumayan panjang kalau malam minggu dan tempat parkirnya agak sempit untuk mobil.",
             imgUrl: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=800&auto=format&fit=crop",
             reportCount: 12
-        ), placeB: Place(
+        ),
+        placeB: Place(
             id: "ChIJZWbUpcD71y0RasSgwAJ7TUw_2",
             nama: "Kopi Joyo",
             alamat: "Jl. Kalidami VII No.2, RT.003/RW.10, Mojo, Kec. Gubeng, Surabaya, Jawa Timur 60285, Indonesia",
@@ -224,6 +227,6 @@ struct DetailRowView: View {
             reviewNegatif: "Antrean lumayan panjang kalau malam minggu dan tempat parkirnya agak sempit untuk mobil.",
             imgUrl: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=800&auto=format&fit=crop",
             reportCount: 12
-        ))
-        
-    }
+        )
+    )
+}
