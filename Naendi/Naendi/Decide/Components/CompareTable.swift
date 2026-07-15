@@ -92,24 +92,26 @@ struct CompareCard: View {
                     }
                     
                     // Tag Vibe
-                    Text(item.vibe)
-                        .font(.system(size: 10, weight: .bold))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color(red: 0.82, green: 0.94, blue: 0.89))
-                        .foregroundColor(Color(red: 0.22, green: 0.55, blue: 0.42))
-                        .cornerRadius(8)
+                    TagView(
+                            text: item.vibe,
+                            backgroundColor: Color(red: 0.82, green: 0.94, blue: 0.89),
+                            textColor: Color(red: 0.22, green: 0.55, blue: 0.42)
+                        )
                     
                     // Tag Halal
                     if item.halal.lowercased() == "yes" {
-                        Text("Halal")
-                            .font(.system(size: 10, weight: .bold))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(Color(red: 0.98, green: 0.84, blue: 0.53))
-                            .foregroundColor(Color(red: 0.72, green: 0.44, blue: 0.16))
-                            .cornerRadius(8)
-                    }
+                            TagView(
+                                text: "Halal",
+                                backgroundColor: Color(red: 0.98, green: 0.84, blue: 0.53),
+                                textColor: Color(red: 0.72, green: 0.44, blue: 0.16)
+                            )
+                        } else {
+                            TagView(
+                                text: "Non-Halal",
+                                backgroundColor: Color(red: 0.98, green: 0.85, blue: 0.85),
+                                textColor: Color(red: 0.75, green: 0.22, blue: 0.22)
+                            )
+                        }
                 }
                 
                 // Info Jarak Kustom
@@ -140,6 +142,23 @@ struct CompareCard: View {
         Color.gray.opacity(0.3)
             .frame(height: 130)
             .overlay(ProgressView())
+    }
+}
+
+// MARK: - Sub Component Tags
+struct TagView: View {
+    let text: String
+    let backgroundColor: Color
+    let textColor: Color
+    
+    var body: some View {
+        Text(text)
+            .font(.system(size: 10, weight: .bold))
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(backgroundColor)
+            .foregroundColor(textColor)
+            .cornerRadius(8)
     }
 }
 
@@ -188,7 +207,7 @@ struct DetailRowView: View {
             reportCount: 12
         ), placeB: Place(
             id: "ChIJZWbUpcD71y0RasSgwAJ7TUw_2",
-            nama: "Holden Martabak & Terang Bulan",
+            nama: "Kopi Joyo",
             alamat: "Jl. Kalidami VII No.2, RT.003/RW.10, Mojo, Kec. Gubeng, Surabaya, Jawa Timur 60285, Indonesia",
             latitude: -7.2760381,
             longitude: 112.7583921,
@@ -198,7 +217,7 @@ struct DetailRowView: View {
             rating: 4.2,
             jumlahReview: 115,
             vibe: "Casual",
-            halal: "yes",
+            halal: "no",
             halalEvidence: "No Pork No Lard",
             reviewPositif: "Harga sangat terjangkau untuk mahasiswa, rasanya pas tidak terlalu manis dan adonannya lembut.",
             reviewNegatif: "Antrean lumayan panjang kalau malam minggu dan tempat parkirnya agak sempit untuk mobil.",
