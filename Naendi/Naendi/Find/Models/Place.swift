@@ -15,20 +15,20 @@ struct Place: Identifiable, Codable, Hashable {
     let alamat: String
     let latitude: Double
     let longitude: Double
-    let rangeHarga: String?
-    let jamBuka: String?
+    let rangeHarga: String
+    let jamBuka: String
     let typeTempat: String
     let rating: Double
     let jumlahReview: Int
-    let vibe: String?
-    let halal: String?
-    let halalEvidence: String?
-    let reviewPositif: String?
-    let reviewNegatif: String?
+    let vibe: String
+    let halal: String
+    let halalEvidence: String
+    let reviewPositif: String
+    let reviewNegatif: String
     
     // tambahan
     let imgUrl: String?
-    let reportCount: Int?
+    let reportCount: Int
     
     // Mapping dari snake_case (CSV) ke camelCase (Swift)
     enum CodingKeys: String, CodingKey {
@@ -58,16 +58,16 @@ extension Place {
     /// Computed property untuk memparsing string JSON di dalam kolom `jam_buka`
     /// Menghasilkan dictionary dengan format: ["Senin": ["07.00–22.00"], "Selasa": [...]]
     var jamBukaDictionary: [String: [String]]? {
-        guard let jamBukaString = jamBuka,
-              let data = jamBukaString.data(using: .utf8) else {
-            return nil
-        }
-        return try? JSONDecoder().decode([String: [String]].self, from: data)
+            // Langsung konversi ke Data karena jamBuka dijamin ada nilainya
+            guard let data = jamBuka.data(using: .utf8) else {
+                return nil
+            }
+            return try? JSONDecoder().decode([String: [String]].self, from: data)
     }
     
     /// Mengecek apakah tempat ini terkonfirmasi halal
     var isHalalConfirmed: Bool {
-        return halal?.lowercased() == "yes" || halal?.lowercased() == "halal"
+        return halal.lowercased() == "yes" || halal.lowercased() == "halal"
     }
     
     var statusJamBukaFormatted: String {
@@ -128,7 +128,7 @@ extension Place {
             jumlahReview: 20,
             vibe: "Lively",
             halal: "unknown",
-            halalEvidence: nil,
+            halalEvidence: "No Pork No Lard",
             reviewPositif: "Porsi martabak dan terang bulannya tuh super big banget, bikin nagih deh pokoknya. Topingnya melimpah, jadi worth it lah.",
             reviewNegatif: "Agak pricey sih buat sebagian orang, tapi ada juga yang bilang porsinya gede jadi lumayan.",
             imgUrl: "https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=800&auto=format&fit=crop",
