@@ -7,16 +7,61 @@
 import SwiftUI
 
 struct CompareView: View {
+    @Environment(\.dismiss) var dismiss
     
     let placeA: Place
     let placeB: Place
     
     var body: some View {
-        VStack{
+        
+        VStack(spacing: 0) {
+            // TOP NAVIGATION BAR ---
+            HStack {
+                Button(action: {
+                    dismiss()
+                }) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(.black)
+                        .padding(12)
+                        .background(Color.white)
+                        .clipShape(Circle())
+                        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+                }
+                
+                Spacer()
+                
+                Text("Compare")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundColor(.black)
+                
+                Spacer()
+                
+                Color.clear
+                    .frame(width: 40, height: 40)
+            }
+            .padding(.top, 16)
+            .padding(.bottom, 16)
+            .padding(.horizontal, 24)
+            
+            // Compare Table
             CompareTable(placeA: placeA, placeB: placeB)
+            
+            // Button
+            CustomActionButton(
+                text: "Choose this location",
+                backgroundColor: .white,
+                textColor: .black,
+                action: {
+                    print("Location Selected!")
+                }
+            )
+            .padding(.top, 16)
+            .padding(.bottom, 12)
+            .padding(.horizontal, 24)
         }
+        Spacer()
     }
-    
 }
 
 #Preview {
