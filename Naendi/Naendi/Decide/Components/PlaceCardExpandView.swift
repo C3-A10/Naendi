@@ -51,14 +51,14 @@ struct PlaceCardExpandView: View {
             .ignoresSafeArea()
         
         ScrollView {
-//            PlaceCardExpandView(
-//                place: Place.dummyData[0],
-//                isExpanded: .constant(false),
-//                isComparing: .constant(true),
-//                viewModel: DecideViewModel()
-//            )
-//            .padding(.horizontal)
-//            .padding(.vertical)
+            PlaceCardExpandView(
+                place: Place.dummyData[0],
+                isExpanded: .constant(false),
+                isComparing: .constant(true),
+                viewModel: DecideViewModel(), selectedImageURL: .constant(URL(string: Place.dummyData[0].imgUrl ?? ""))
+            )
+            .padding(.horizontal)
+            .padding(.vertical)
         }
     }
 }
