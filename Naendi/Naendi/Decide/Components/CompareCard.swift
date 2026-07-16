@@ -6,7 +6,7 @@
 //
 import SwiftUI
 
-// MARK: - Component Card
+// MARK: - Compare Card
 struct CompareCard: View {
     let item: Place
     
