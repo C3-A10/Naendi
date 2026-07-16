@@ -1,8 +1,8 @@
 //
 //  PlaceCardNormalView.swift
-//  Naendi
+//  C3Satriya
 //
-//  Created by Satriya Handha Wibowo on 15/07/26.
+//  Created by Satriya Handha Wibowo on 14/07/26.
 //
 
 import SwiftUI
@@ -11,10 +11,10 @@ struct PlaceCardNormalView: View {
     let place: Place
     @Binding var isExpanded: Bool
     @Binding var isComparing: Bool
-    var viewModel: DecideViewModel
+    @State var viewModel: DecideViewModel
     
-    private var isSelected: Bool { viewModel.isSelected(place) }
-    private var isCheckDisabled: Bool { viewModel.isCompareLimitReached && !isSelected }
+    var isSelected: Bool { viewModel.isSelected(place) }
+    var isCheckDisabled: Bool { viewModel.isCompareLimitReached && !isSelected }
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -35,44 +35,13 @@ struct PlaceCardNormalView: View {
                     .overlay { Image(systemName: "photo").font(.largeTitle).foregroundColor(.gray) }
             }
             
-            HStack(alignment: .top) {
-                // 1. Badge Jarak (Kiri)
-                Text("0.5 km")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.black)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 8)
-                    .background(Color("color_green"))
-                    .clipShape(Capsule())
-                
-                Spacer() // Mendorong Checkbox ke kanan
-                
-                // 2. Checkbox (Kanan)
-                if isComparing {
-                    Button {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                            viewModel.toggleSelection(for: place)
-                        }
-                    } label: {
-                        ZStack {
-                            Circle()
-                                .fill(isSelected ? Color("color_green") : (isCheckDisabled ? Color.black.opacity(0.2) : Color.black.opacity(0.5)))
-                                .frame(width: 32, height: 32)
-                                .overlay(Circle().stroke(isCheckDisabled ? Color.white.opacity(0.3) : Color.white, lineWidth: 2))
-                            
-                            if isSelected {
-                                Image(systemName: "checkmark")
-                                    .font(.system(size: 14, weight: .bold))
-                                    .foregroundColor(.black)
-                            }
-                        }
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(isCheckDisabled)
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .padding(16)
+            DistanceCheckmarkView(
+                isComparing: isComparing,
+                isSelected: isSelected,
+                isCheckDisabled: isCheckDisabled,
+                place: place,
+                viewModel: viewModel
+            )
             
             // Tombol Expand
             Button {
@@ -116,9 +85,8 @@ struct PlaceCardNormalView: View {
             place: Place.dummyData[0],
             isExpanded: .constant(false),
             isComparing: .constant(true),
-            viewModel: DecideViewModel() // Inisialisasi ViewModel kosong untuk preview
+            viewModel: DecideViewModel() 
         )
         .padding()
     }
 }
-

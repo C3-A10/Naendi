@@ -14,14 +14,20 @@ struct DetailPlaceView: View {
     var body: some View {
         VStack {
             Button {
-                let destination = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(
+                let coordinate = CLLocationCoordinate2D(
                     latitude: place.latitude,
                     longitude: place.longitude
-                )))
+                )
+                
+                let address = MKAddress(fullAddress: place.alamat, shortAddress: nil)
+                                
+                let destination = MKMapItem(
+                    location: CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude),
+                    address: address
+                )
                 
                 destination.name = place.nama
                 
-                // Membuka Maps dengan mode 'driving' (bisa diganti .walking atau .transit)
                 destination.openInMaps(launchOptions: [
                     MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
                 ])

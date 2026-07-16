@@ -10,6 +10,7 @@ import SwiftUI
 struct ResultView: View {
     @State private var viewModel = DecideViewModel()
     @State private var isComparing: Bool = false
+    @State private var selectedImageURL: URL? = nil
     
     var body: some View {
         NavigationStack {
@@ -109,8 +110,9 @@ struct ResultView: View {
                                 ForEach(viewModel.places) { place in
                                     PlaceResultCardView(
                                         place: place,
+                                        viewModel: viewModel,
                                         isComparing: $isComparing,
-                                        viewModel: viewModel
+                                        selectedImageURL: $selectedImageURL
                                     )
                                 }
                             }
@@ -146,6 +148,9 @@ struct ResultView: View {
                     }
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
+            }
+            .navigationDestination(item: $selectedImageURL) { url in
+                    // FullImageDetailView(url: url)
             }
         }
     }

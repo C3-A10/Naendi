@@ -1,8 +1,8 @@
 //
 //  PlaceCardView.swift
-//  Naendi
+//  C3Satriya
 //
-//  Created by Satriya Handha Wibowo on 15/07/26.
+//  Created by Satriya Handha Wibowo on 13/07/26.
 //
 
 import SwiftUI
@@ -10,9 +10,10 @@ import SwiftUI
 struct PlaceResultCardView: View {
     let place: Place
     @State private var isExpanded: Bool = false
-    @Binding var isComparing: Bool
-    var viewModel: DecideViewModel
+    @State var viewModel: DecideViewModel
     @State private var isNavigating: Bool = false
+    @Binding var isComparing: Bool
+    @Binding var selectedImageURL: URL?
     
     var body: some View {
         ZStack {
@@ -24,7 +25,7 @@ struct PlaceResultCardView: View {
             // Bungkus dalam satu container yang menangkap tap
             VStack(spacing: 0) {
                 if isExpanded {
-                    PlaceCardExpandView(place: place, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel)
+                    PlaceCardExpandView(place: place, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel, selectedImageURL: $selectedImageURL)
                 } else {
                     PlaceCardNormalView(place: place, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel)
                 }
@@ -52,8 +53,8 @@ struct PlaceResultCardView: View {
         ScrollView {
             PlaceResultCardView(
                 place: Place.dummyData[0],
-                isComparing: .constant(true),
-                viewModel: DecideViewModel()
+                viewModel: DecideViewModel(), isComparing: .constant(true),
+                selectedImageURL: .constant(nil)
             )
             .padding(.vertical)
         }
