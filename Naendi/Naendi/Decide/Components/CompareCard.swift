@@ -9,6 +9,8 @@ import SwiftUI
 // MARK: - Compare Card
 struct CompareCard: View {
     let item: Place
+    let isSelected: Bool
+    let onTap: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -124,6 +126,21 @@ struct CompareCard: View {
         .frame(maxHeight: .infinity, alignment: .top)
         .background(Color(red: 0.95, green: 0.95, blue: 0.95))
         .clipShape(RoundedRectangle(cornerRadius: 24))
+        .overlay(
+            RoundedRectangle(cornerRadius: 24)
+                .stroke(
+                    isSelected ? Color(red: 207/255, green: 245/255, blue: 64/255) : .clear,
+                    lineWidth: 4
+                )
+                .shadow(
+                    color: isSelected ? Color(red: 207/255, green: 245/255, blue: 64/255).opacity(0.9) : .clear,
+                    radius: 10
+                )
+        )
+        .onTapGesture {
+            onTap()
+        }
+        .animation(.easeInOut(duration: 0.2), value: isSelected)
     }
     
     private var placeholderView: some View {
@@ -154,6 +171,18 @@ struct DetailRowView: View {
     }
 }
 
-#Preview {
-    CompareCard(item: Place.dummyData[1]);
+#Preview("Selected") {
+    CompareCard(
+        item: Place.dummyData[1],
+        isSelected: true,
+        onTap: {}
+    )
+}
+
+#Preview("Not Selected") {
+    CompareCard(
+        item: Place.dummyData[1],
+        isSelected: false,
+        onTap: {}
+    )
 }

@@ -12,12 +12,14 @@ struct CompareView: View {
     let placeA: Place
     let placeB: Place
     
+    @State private var selectedPlace: Place?
+    
     var body: some View {
         
         VStack(spacing: 0) {
             
             // Compare Table
-            CompareTable(placeA: placeA, placeB: placeB)
+            CompareTable(placeA: placeA, placeB: placeB,selectedPlace: $selectedPlace)
             
             // Button
             CustomActionButton(

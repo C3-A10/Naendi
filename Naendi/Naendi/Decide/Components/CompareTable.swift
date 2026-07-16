@@ -12,13 +12,25 @@ struct CompareTable: View {
     let placeA: Place
     let placeB: Place
     
+    @Binding var selectedPlace: Place?
+    
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
-            CompareCard(item: placeA)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            CompareCard(
+                item: placeA,
+                isSelected: selectedPlace?.id == placeA.id
+            ) {
+                selectedPlace = placeA
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             
-            CompareCard(item: placeB)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            CompareCard(
+                item: placeB,
+                isSelected: selectedPlace?.id == placeB.id
+            ) {
+                selectedPlace = placeB
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .padding(.horizontal, 16)
         .fixedSize(horizontal: false, vertical: true)
@@ -26,8 +38,8 @@ struct CompareTable: View {
 }
 
 
-    
-    // MARK: - PREVIEW
-    #Preview {
-        CompareTable(placeA: Place.dummyData[1], placeB: Place.dummyData[2])
-    }
+
+// MARK: - PREVIEW
+#Preview {
+    CompareTable(placeA: Place.dummyData[1], placeB: Place.dummyData[2],selectedPlace: .constant(nil))
+}
