@@ -17,7 +17,13 @@ struct PlaceResultCardView: View {
     
     var body: some View {
         ZStack {
-            NavigationLink(destination: DetailPlaceView(place: place), isActive: $isNavigating) {
+            NavigationLink(
+                destination:
+                    DetailPlaceView(place: place)
+                        .navigationTitle(place.nama)
+                        .navigationBarTitleDisplayMode(.inline),
+                isActive: $isNavigating
+            ) {
                 EmptyView()
             }
             .hidden()
