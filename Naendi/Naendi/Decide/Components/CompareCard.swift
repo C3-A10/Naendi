@@ -106,6 +106,7 @@ struct CompareCard: View {
                     }
                 }
                 
+                //TODO: benarkan jarak sesuai jarak terbaru dan pin(bila ada)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("0,9 KM dari lokasi Anda saat ini")
                     Text("0,1 KM dari GWalk")
@@ -118,7 +119,7 @@ struct CompareCard: View {
                 
                 DetailRowView(title: "Address", value: item.alamat)
                 DetailRowView(title: "Price Range", value: item.rangeHarga)
-                DetailRowView(title: "Operating Hour", value: item.jamBuka)
+                DetailRowView(title: "Operating Hour", value: item.jamHariIniFormatted)
             }
             .padding(.horizontal, 8)
             .padding(.bottom, 16)
