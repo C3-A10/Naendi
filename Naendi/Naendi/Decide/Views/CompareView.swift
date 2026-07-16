@@ -4,25 +4,38 @@
 //
 //  Created by Bryan Samuel on 14/07/26.
 //
-
 import SwiftUI
 
 struct CompareView: View {
-    let places: [Place]
+    @Environment(\.dismiss) var dismiss
+    
+    let placeA: Place
+    let placeB: Place
     
     var body: some View {
-        List {
-            ForEach(places) { place in
-                VStack(alignment: .leading) {
-                    Text(place.nama).font(.headline)
-                    Text("Rating: \(place.rating, specifier: "%.1f")")
+        
+        VStack(spacing: 0) {
+            
+            // Compare Table
+            CompareTable(placeA: placeA, placeB: placeB)
+            
+            // Button
+            CustomActionButton(
+                text: "Choose this location",
+                backgroundColor: .white,
+                textColor: .black,
+                action: {
+                    print("Location Selected!")
                 }
-            }
+            )
+            .padding(.top, 16)
+            .padding(.bottom, 12)
+            .padding(.horizontal, 24)
         }
-        .navigationTitle(Text("Compare"))
+        Spacer()
     }
 }
 
 #Preview {
-    // CompareView()
+    CompareView(placeA: Place.dummyData[1], placeB: Place.dummyData[2])
 }
