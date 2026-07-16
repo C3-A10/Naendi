@@ -9,7 +9,6 @@ import SwiftUI
 
 struct PlaceCardNormalView: View {
     let place: Place
-    let frameHeight: CGFloat
     @Binding var isExpanded: Bool
     @Binding var isComparing: Bool
     @State var viewModel: DecideViewModel
@@ -28,11 +27,11 @@ struct PlaceCardNormalView: View {
                         Color.gray.opacity(0.3)
                     }
                 }
-                .frame(height: frameHeight)
+                .frame(height: 240)
                 .clipped()
             } else {
                 Color.gray.opacity(0.3)
-                    .frame(height: frameHeight)
+                    .frame(height: 240)
                     .overlay { Image(systemName: "photo").font(.largeTitle).foregroundColor(.gray) }
             }
             
@@ -71,7 +70,7 @@ struct PlaceCardNormalView: View {
             }
             .buttonStyle(.plain)
         }
-        .frame(height: frameHeight)
+        .frame(height: 240)
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
         .shadow(color: Color.black.opacity(0.12), radius: 12, x: 0, y: 6)
@@ -84,7 +83,6 @@ struct PlaceCardNormalView: View {
         
         PlaceCardNormalView(
             place: Place.dummyData[0],
-            frameHeight: 400,
             isExpanded: .constant(false),
             isComparing: .constant(true),
             viewModel: DecideViewModel() 
