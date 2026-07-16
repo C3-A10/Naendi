@@ -1,6 +1,6 @@
 //
 //  PlaceCardExpandView.swift
-//  C3Satriya
+//  Naendi
 //
 //  Created by Satriya Handha Wibowo on 13/07/26.
 //

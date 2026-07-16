@@ -24,5 +24,5 @@ struct CompareView: View {
 }
 
 #Preview {
-    // CompareView()
+    CompareView(places: Place.dummyData)
 }
