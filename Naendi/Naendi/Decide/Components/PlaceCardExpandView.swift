@@ -1,6 +1,6 @@
 //
 //  PlaceCardExpandView.swift
-//  C3Satriya
+//  Naendi
 //
 //  Created by Satriya Handha Wibowo on 13/07/26.
 //
@@ -51,14 +51,14 @@ struct PlaceCardExpandView: View {
             .ignoresSafeArea()
         
         ScrollView {
-//            PlaceCardExpandView(
-//                place: Place.dummyData[0],
-//                isExpanded: .constant(false),
-//                isComparing: .constant(true),
-//                viewModel: DecideViewModel()
-//            )
-//            .padding(.horizontal)
-//            .padding(.vertical)
+            PlaceCardExpandView(
+                place: Place.dummyData[0],
+                isExpanded: .constant(false),
+                isComparing: .constant(true),
+                viewModel: DecideViewModel(), selectedImageURL: .constant(URL(string: Place.dummyData[0].imgUrl ?? ""))
+            )
+            .padding(.horizontal)
+            .padding(.vertical)
         }
     }
 }
