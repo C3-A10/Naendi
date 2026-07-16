@@ -9,11 +9,28 @@ import SwiftUI
 
 struct PlaceResultCardView: View {
     let place: Place
+    let cardHeight: CGFloat
     @State private var isExpanded: Bool = false
     @State var viewModel: DecideViewModel
     @State private var isNavigating: Bool = false
     @Binding var isComparing: Bool
     @Binding var selectedImageURL: URL?
+    
+    init(place: Place, viewModel: DecideViewModel, isComparing: Binding<Bool>, selectedImageURL: Binding<URL?>) {
+        self.place = place
+        self.cardHeight = 240
+        self._viewModel = State(initialValue: viewModel)
+        self._isComparing = isComparing
+        self._selectedImageURL = selectedImageURL
+    }
+    
+    init(place: Place, cardHeight: CGFloat, viewModel: DecideViewModel, isComparing: Binding<Bool>, selectedImageURL: Binding<URL?>) {
+        self.place = place
+        self.cardHeight = cardHeight
+        self._viewModel = State(initialValue: viewModel)
+        self._isComparing = isComparing
+        self._selectedImageURL = selectedImageURL
+    }
     
     var body: some View {
         ZStack {
@@ -33,7 +50,7 @@ struct PlaceResultCardView: View {
                 if isExpanded {
                     PlaceCardExpandView(place: place, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel, selectedImageURL: $selectedImageURL)
                 } else {
-                    PlaceCardNormalView(place: place, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel)
+                    PlaceCardNormalView(place: place, frameHeight: cardHeight, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel)
                 }
             }
             .padding(.horizontal)
@@ -59,7 +76,9 @@ struct PlaceResultCardView: View {
         ScrollView {
             PlaceResultCardView(
                 place: Place.dummyData[0],
-                viewModel: DecideViewModel(), isComparing: .constant(true),
+                cardHeight: 240,
+                viewModel: DecideViewModel(),
+                isComparing: .constant(true),
                 selectedImageURL: .constant(nil)
             )
             .padding(.vertical)

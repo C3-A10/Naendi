@@ -20,10 +20,12 @@ struct DetailPlaceView: View {
             // Card
             PlaceResultCardView(
                 place: place,
+                cardHeight: 400,
                 viewModel: viewModel,
                 isComparing: $isComparing,
                 selectedImageURL: $selectedImageURL
             )
+            .padding(.horizontal, 16)
             
             // Button
             CustomActionButton(
