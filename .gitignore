@@ -55,3 +55,4 @@ fastlane/test_output/
 # App entitlements (team-specific)
 # --------------------------------------------------
 *.entitlements
+Developer.xcconfig
