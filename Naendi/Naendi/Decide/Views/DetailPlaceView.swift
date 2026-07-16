@@ -17,6 +17,7 @@ struct DetailPlaceView: View {
     
     var body: some View {
         VStack {
+            Spacer()
             // Card
             PlaceResultCardView(
                 place: place,
@@ -25,6 +26,7 @@ struct DetailPlaceView: View {
                 isComparing: $isComparing,
                 selectedImageURL: $selectedImageURL
             )
+            .frame(maxWidth: .infinity)
             
             // Button
             CustomActionButton(
@@ -35,10 +37,11 @@ struct DetailPlaceView: View {
                     print("Location Selected!")
                 }
             )
-            .padding(.top, 16)
-            .padding(.bottom, 12)
+            .padding(.vertical, 20)
             .padding(.horizontal, 24)
+            Spacer()
         }
+        .frame(alignment: .center)
         .navigationTitle(place.nama)
         .navigationBarTitleDisplayMode(.inline)
     }

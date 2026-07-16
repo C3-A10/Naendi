@@ -31,14 +31,29 @@ struct PlaceCardNormalView: View {
             // Gambar
             if let urlString = place.imgUrl, let url = URL(string: urlString) {
                 AsyncImage(url: url) { phase in
-                    if let image = phase.image {
-                        image.resizable().aspectRatio(contentMode: .fill)
-                    } else {
+                    switch phase {
+
+                    case .success(let image):
+                        GeometryReader { geo in
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: geo.size.width, height: geo.size.height)
+                                .clipped()
+                        }
+                        .frame(height: cardHeight)
+
+                    case .failure, .empty:
                         Color.gray.opacity(0.3)
+                            .frame(height: cardHeight)
+                            .overlay {
+                                ProgressView()
+                            }
+
+                    @unknown default:
+                        EmptyView()
                     }
                 }
-                .frame(height: cardHeight)
-                .clipped()
                 .overlay(alignment: .topTrailing) {
                     // Tombol report
                     if isDetail {
