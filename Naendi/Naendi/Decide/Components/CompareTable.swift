@@ -42,4 +42,5 @@ struct CompareTable: View {
 // MARK: - PREVIEW
 #Preview {
     CompareTable(placeA: Place.dummyData[1], placeB: Place.dummyData[2],selectedPlace: .constant(nil))
+
 }

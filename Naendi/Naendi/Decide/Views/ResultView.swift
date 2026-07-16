@@ -166,7 +166,7 @@ struct ResultView: View {
                 }
             }
             .navigationDestination(item: $selectedImageURL) { url in
-                    // FullImageDetailView(url: url)
+                    FullImageDetailView(url: url)
             }
         }
     }

@@ -1,6 +1,6 @@
 //
 //  PlaceCardExpandInformationView.swift
-//  C3Satriya
+//  Naendi
 //
 //  Created by Satriya Handha Wibowo on 15/07/26.
 //
@@ -55,32 +55,12 @@ struct PlaceCardExpandInfoView: View {
                     
                     // Badges Type - Vibe - Halal
                     HStack(spacing: 6) {
-                        Text(place.typeTempat)
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(Color(red: 0.90, green: 0.45, blue: 0.10))
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 4)
-                            .background(Color.orange.opacity(0.15))
-                            .clipShape(Capsule())
-                        
-                      
-                        Text(place.vibe)
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundColor(Color(red: 0.10, green: 0.45, blue: 0.90))
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 4)
-                            .background(Color.blue.opacity(0.15))
-                            .clipShape(Capsule())
-                        
+                        TagView(text: place.typeTempat, backgroundColor: Color.orange.opacity(0.15), textColor: Color(red: 0.90, green: 0.45, blue: 0.10))
+
+                        TagView(text: place.vibe, backgroundColor: Color.blue.opacity(0.15), textColor: Color(red: 0.10, green: 0.45, blue: 0.90))
                         
                         if place.isHalalConfirmed {
-                            Text("Halal")
-                                .font(.system(size: 11, weight: .bold))
-                                .foregroundColor(Color(red: 0.15, green: 0.65, blue: 0.30))
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 4)
-                                .background(Color.green.opacity(0.15))
-                                .clipShape(Capsule())
+                            TagView(text: "Halal", backgroundColor: Color.green.opacity(0.15), textColor: Color(red: 0.15, green: 0.65, blue: 0.30))
                         }
                     }
                 }
@@ -101,33 +81,12 @@ struct PlaceCardExpandInfoView: View {
             Divider()
                 .padding(.vertical, 2)
             
-            VStack (alignment: .leading, spacing: 2) {
-                Text("Location")
-                    .font(.system(size: 14, weight: .bold))
-                    .lineLimit(2)
-                
-                Text(place.alamat)
-                    .font(.system(size: 12))
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
-                    .padding(.top, 4)
-            }
-            .padding(.horizontal, 12)
+            DetailRowView(title: "Location", value: place.alamat)            .padding(.horizontal, 12)
             
             Divider()
                 .padding(.vertical, 2)
             
-            VStack (alignment: .leading, spacing: 2) {
-                Text("Operational Hours")
-                    .font(.system(size: 14, weight: .bold))
-                    .lineLimit(2)
-                
-                Text("\(place.jamHariIniFormatted) WIB")
-                    .font(.system(size: 12))
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
-                    .padding(.top, 4)
-            }
+            DetailRowView(title: "Operational Hours", value: "\(place.jamHariIniFormatted) WIB")
             .padding(.horizontal, 12)
             
             Divider()
