@@ -11,6 +11,7 @@ struct ResultView: View {
     @State private var viewModel = DecideViewModel()
     @State private var isComparing: Bool = false
     @State private var selectedImageURL: URL? = nil
+    @State private var isShowingCompare: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -133,8 +134,9 @@ struct ResultView: View {
             // MARK: - Tombol Melayang "Compare" (Muncul saat pas 2 kartu dipilih)
             .overlay(alignment: .bottom) {
                 if isComparing && viewModel.isCompareLimitReached {
-                    NavigationLink(destination: CompareView(placeA:viewModel.selectedPlaces[0], placeB: viewModel.selectedPlaces[1] ).navigationTitle("Compare")
-                        .navigationBarTitleDisplayMode(.inline)) {
+                    Button {
+                        isShowingCompare = true
+                    } label: {
                         HStack(spacing: 8) {
                             Text("Compare (\(viewModel.selectedPlaces.count) places)")
                                 .font(.system(size: 16, weight: .bold))
@@ -149,6 +151,18 @@ struct ResultView: View {
                         .padding(.bottom, 20)
                     }
                     .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+
+            .fullScreenCover(isPresented: $isShowingCompare) {
+                if viewModel.selectedPlaces.count >= 2 {
+                    NavigationStack {
+                        CompareView(placeA: viewModel.selectedPlaces[0], placeB: viewModel.selectedPlaces[1])
+                            .navigationTitle("Compare")
+                            .navigationBarTitleDisplayMode(.inline)
+                    }
+                } else {
+                    EmptyView()
                 }
             }
             .navigationDestination(item: $selectedImageURL) { url in
