@@ -37,5 +37,6 @@ struct CompareView: View {
 }
 
 #Preview {
-    CompareView(placeA: Place.dummyData[1], placeB: Place.dummyData[2])
+
+    CompareView(places: Place.dummyData)
 }
