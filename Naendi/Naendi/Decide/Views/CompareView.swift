@@ -103,3 +103,24 @@ struct CompareView: View {
         reportCount: 12))
 }
 
+import SwiftUI
+
+struct CompareView: View {
+    let places: [Place]
+    
+    var body: some View {
+        List {
+            ForEach(places) { place in
+                VStack(alignment: .leading) {
+                    Text(place.nama).font(.headline)
+                    Text("Rating: \(place.rating, specifier: "%.1f")")
+                }
+            }
+        }
+        .navigationTitle(Text("Compare"))
+    }
+}
+
+#Preview {
+    // CompareView()
+}

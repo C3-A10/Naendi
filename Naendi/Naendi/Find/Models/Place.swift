@@ -92,6 +92,35 @@ extension Place {
         return "Buka hari ini"
     }
     
+    var jamHariIniFormatted: String {
+        guard let jamBukaDict = jamBukaDictionary else { return "Jam Buka Tidak Tersedia" }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "id_ID")
+        dateFormatter.dateFormat = "EEEE"
+        let hariIni = dateFormatter.string(from: Date())
+        
+        guard let jadwalHariIni = jamBukaDict[hariIni]?.first else { return "Tutup hari ini" }
+        
+        if jadwalHariIni.lowercased().contains("24 jam") {
+            return "Buka 24 jam"
+        }
+        
+        // Memproses string "07.00–22.00"
+        // Kita split berdasarkan tanda hubung (gunakan karakter yang sesuai dengan data kamu)
+        let komponen = jadwalHariIni.components(separatedBy: CharacterSet(charactersIn: "–-"))
+        
+        if komponen.count == 2 {
+            let jamBuka = komponen[0].trimmingCharacters(in: .whitespaces)
+            let jamTutup = komponen[1].trimmingCharacters(in: .whitespaces)
+            
+            // Format output: "hh.mm - hh.mm"
+            return "\(jamBuka) - \(jamTutup)"
+        }
+        
+        return jadwalHariIni // fallback jika format tidak sesuai
+    }
+    
     static let dummyData: [Place] = [
         // 1. Mie Mapan
         Place(
