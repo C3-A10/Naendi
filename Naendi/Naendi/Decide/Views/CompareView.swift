@@ -13,17 +13,7 @@ struct CompareView: View {
     let placeB: Place
     
     @State private var selectedPlace: Place?
-    @State private var isNavigatingToDetail = false
-    
-    private var detailDestination: some View {
-        Group {
-            if let selectedPlace {
-                DetailPlaceView(place: selectedPlace)
-            } else {
-                EmptyView()
-            }
-        }
-    }
+    @State private var isShowingDetail = false
     
     var body: some View {
         ZStack {
@@ -39,7 +29,7 @@ struct CompareView: View {
                     isDisabled: selectedPlace == nil,
                     action: {
                         guard selectedPlace != nil else { return }
-                        isNavigatingToDetail = true
+                        isShowingDetail = true
                     }
                 )
                 .padding(.top, 16)
@@ -49,10 +39,15 @@ struct CompareView: View {
                 Spacer(minLength: 0)
             }
             
-            NavigationLink(destination: detailDestination, isActive: $isNavigatingToDetail) {
-                EmptyView()
+            .fullScreenCover(isPresented: $isShowingDetail) {
+                if let selectedPlace {
+                    NavigationStack {
+                        DetailPlaceView(place: selectedPlace)
+                    }
+                } else {
+                    EmptyView()
+                }
             }
-            .hidden()
         }
         .navigationTitle(selectedPlace?.nama ?? "Compare")
         .navigationBarTitleDisplayMode(.inline)

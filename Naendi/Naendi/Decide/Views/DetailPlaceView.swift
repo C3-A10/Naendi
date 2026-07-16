@@ -6,15 +6,15 @@
 //
 
 import SwiftUI
-import MapKit
 
 struct DetailPlaceView: View {
     let place: Place
-    
+
+    @Environment(\.dismiss) private var dismiss
     @State private var viewModel = DecideViewModel()
     @State private var isComparing: Bool = false
     @State private var selectedImageURL: URL? = nil
-    
+
     var body: some View {
         VStack {
             Spacer()
@@ -27,7 +27,7 @@ struct DetailPlaceView: View {
                 selectedImageURL: $selectedImageURL
             )
             .frame(maxWidth: .infinity)
-            
+
             // Button
             CustomActionButton(
                 text: "Go to Destination",
@@ -44,6 +44,13 @@ struct DetailPlaceView: View {
         .frame(alignment: .center)
         .navigationTitle(place.nama)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: { dismiss() }) {
+                    Image(systemName: "chevron.backward")
+                }
+            }
+        }
     }
 }
 

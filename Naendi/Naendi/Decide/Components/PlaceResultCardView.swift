@@ -26,18 +26,6 @@ struct PlaceResultCardView: View {
     
     var body: some View {
         ZStack {
-            if !isDetail{
-                NavigationLink(
-                    destination:
-                        DetailPlaceView(place: place)
-                        .navigationTitle(place.nama)
-                        .navigationBarTitleDisplayMode(.inline),
-                    isActive: $isNavigating
-                ) {
-                    EmptyView()
-                }
-                .hidden()
-            }
             
             // Bungkus dalam satu container yang menangkap tap
             VStack(spacing: 0) {
@@ -48,15 +36,20 @@ struct PlaceResultCardView: View {
                 }
             }
             .padding(.horizontal)
-            .contentShape(Rectangle()) // Penting agar seluruh area bisa diklik
+            .contentShape(Rectangle()) 
             .onTapGesture {
                 if isComparing {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                         viewModel.toggleSelection(for: place)
                     }
-                } else {
+                } else if !isDetail {
                     isNavigating = true
                 }
+            }
+        }
+        .fullScreenCover(isPresented: $isNavigating) {
+            NavigationStack {
+                DetailPlaceView(place: place)
             }
         }
     }
