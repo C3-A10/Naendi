@@ -20,6 +20,7 @@ struct DetailPlaceView: View {
             // Card
             PlaceResultCardView(
                 place: place,
+                isDetail: true,
                 viewModel: viewModel,
                 isComparing: $isComparing,
                 selectedImageURL: $selectedImageURL

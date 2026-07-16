@@ -110,6 +110,7 @@ struct ResultView: View {
                                 ForEach(viewModel.places) { place in
                                     PlaceResultCardView(
                                         place: place,
+                                        isDetail: false,
                                         viewModel: viewModel,
                                         isComparing: $isComparing,
                                         selectedImageURL: $selectedImageURL
