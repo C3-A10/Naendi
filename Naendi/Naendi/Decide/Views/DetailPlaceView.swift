@@ -38,6 +38,8 @@ struct DetailPlaceView: View {
             .padding(.bottom, 12)
             .padding(.horizontal, 24)
         }
+        .navigationTitle(place.nama)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

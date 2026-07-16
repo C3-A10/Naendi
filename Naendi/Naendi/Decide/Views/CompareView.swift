@@ -13,28 +13,49 @@ struct CompareView: View {
     let placeB: Place
     
     @State private var selectedPlace: Place?
+    @State private var isNavigatingToDetail = false
+    
+    private var detailDestination: some View {
+        Group {
+            if let selectedPlace {
+                DetailPlaceView(place: selectedPlace)
+            } else {
+                EmptyView()
+            }
+        }
+    }
     
     var body: some View {
-        
-        VStack(spacing: 0) {
+        ZStack {
+            VStack(spacing: 0) {
+                // Compare Table
+                CompareTable(placeA: placeA, placeB: placeB, selectedPlace: $selectedPlace)
+                
+                // Button
+                CustomActionButton(
+                    text: "Choose this location",
+                    backgroundColor: selectedPlace == nil ? Color.gray.opacity(0.2) : .white,
+                    textColor: selectedPlace == nil ? .gray : .black,
+                    isDisabled: selectedPlace == nil,
+                    action: {
+                        guard selectedPlace != nil else { return }
+                        isNavigatingToDetail = true
+                    }
+                )
+                .padding(.top, 16)
+                .padding(.bottom, 12)
+                .padding(.horizontal, 24)
+                
+                Spacer(minLength: 0)
+            }
             
-            // Compare Table
-            CompareTable(placeA: placeA, placeB: placeB,selectedPlace: $selectedPlace)
-            
-            // Button
-            CustomActionButton(
-                text: "Choose this location",
-                backgroundColor: .white,
-                textColor: .black,
-                action: {
-                    print("Location Selected!")
-                }
-            )
-            .padding(.top, 16)
-            .padding(.bottom, 12)
-            .padding(.horizontal, 24)
+            NavigationLink(destination: detailDestination, isActive: $isNavigatingToDetail) {
+                EmptyView()
+            }
+            .hidden()
         }
-        Spacer()
+        .navigationTitle(selectedPlace?.nama ?? "Compare")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
