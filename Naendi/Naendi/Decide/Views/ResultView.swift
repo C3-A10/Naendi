@@ -132,7 +132,7 @@ struct ResultView: View {
             // MARK: - Tombol Melayang "Compare" (Muncul saat pas 2 kartu dipilih)
             .overlay(alignment: .bottom) {
                 if isComparing && viewModel.isCompareLimitReached {
-                    NavigationLink(destination: CompareView(placeA:viewModel.selectedPlaces[0], placeB: viewModel.selectedPlaces[1] ).navigationTitle("Compare")
+                    NavigationLink(destination: CompareView(places: viewModel.selectedPlaces ).navigationTitle("Compare")
                         .navigationBarTitleDisplayMode(.inline)) {
                         HStack(spacing: 8) {
                             Text("Compare (\(viewModel.selectedPlaces.count) places)")
