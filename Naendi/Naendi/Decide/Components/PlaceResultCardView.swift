@@ -16,12 +16,7 @@ struct PlaceResultCardView: View {
     @Binding var selectedImageURL: URL?
     
     var body: some View {
-        ZStack {
-            NavigationLink(destination: DetailPlaceView(place: place), isActive: $isNavigating) {
-                EmptyView()
-            }
-            .hidden()
-            
+        ZStack {            
             // Bungkus dalam satu container yang menangkap tap
             VStack(spacing: 0) {
                 if isExpanded {
@@ -40,6 +35,9 @@ struct PlaceResultCardView: View {
                 } else {
                     isNavigating = true
                 }
+            }
+            .navigationDestination(isPresented: $isNavigating) {
+                DetailPlaceView(place: place)
             }
         }
     }
