@@ -16,14 +16,14 @@ struct PreferenceOptionRow: View {
     }
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 8) {
             Text(title)
                 .font(.system(size: 18))
                 .foregroundStyle(.primary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.85)
 
-            Spacer(minLength: 12)
+            Spacer(minLength: 8)
 
             valueView
 
@@ -33,7 +33,7 @@ struct PreferenceOptionRow: View {
                     .foregroundStyle(.secondary.opacity(0.55))
             }
         }
-        .padding(.horizontal, 28)
+        .padding(.horizontal, 20)
         .frame(height: 60)
         .background(Color(uiColor: .secondarySystemGroupedBackground))
         .clipShape(Capsule())
@@ -47,13 +47,16 @@ struct PreferenceOptionRow: View {
     @ViewBuilder
     private var valueView: some View {
         if title == "Preferred Time" {
-            HStack(spacing: 8) {
-                timeValue("08:00")
-                Text("-")
-                timeValue("10:00")
-            }
-            .font(.system(size: 18))
-            .foregroundStyle(.secondary)
+            Text(value)
+                .font(.system(size: 15, weight: .medium))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.85)
+                .padding(.horizontal, 10)
+                .frame(height: 32)
+                .background(Color(uiColor: .systemBackground).opacity(0.9))
+                .clipShape(Capsule())
+                .layoutPriority(1)
         } else {
             Text(value)
                 .font(.system(size: 18))
@@ -63,13 +66,6 @@ struct PreferenceOptionRow: View {
         }
     }
 
-    private func timeValue(_ value: String) -> some View {
-        Text(value)
-            .padding(.horizontal, 10)
-            .frame(height: 32)
-            .background(Color(uiColor: .systemBackground).opacity(0.9))
-            .clipShape(Capsule())
-    }
 }
 
 #Preview {
