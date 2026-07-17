@@ -6,51 +6,54 @@
 //
 
 import SwiftUI
-import MapKit
 
 struct DetailPlaceView: View {
     let place: Place
-    
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var viewModel = DecideViewModel()
+    @State private var isComparing: Bool = false
+    @State private var selectedImageURL: URL? = nil
+
     var body: some View {
         VStack {
-            Button {
-                let coordinate = CLLocationCoordinate2D(
-                    latitude: place.latitude,
-                    longitude: place.longitude
-                )
-                
-                let address = MKAddress(fullAddress: place.alamat, shortAddress: nil)
-                                
-                let destination = MKMapItem(
-                    location: CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude),
-                    address: address
-                )
-                
-                destination.name = place.nama
-                
-                destination.openInMaps(launchOptions: [
-                    MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
-                ])
-            } label: {
-                HStack {
-                    Image(systemName: "map.fill")
-                    Text("Buka di Maps")
-                        .fontWeight(.semibold)
+            Spacer()
+            // Card
+            PlaceResultCardView(
+                place: place,
+                isDetail: true,
+                viewModel: viewModel,
+                isComparing: $isComparing,
+                selectedImageURL: $selectedImageURL
+            )
+            .frame(maxWidth: .infinity)
+
+            // Button
+            CustomActionButton(
+                text: "Go to Destination",
+                backgroundColor: Color(red: 207/255, green: 245/255, blue: 64/255),
+                textColor: .black,
+                action: {
+                    print("Location Selected!")
                 }
-                .foregroundColor(.black)
-                .padding(.vertical, 16)
-                .frame(maxWidth: .infinity)
-                .background(Color("color_green"))
-                .clipShape(Capsule())
-                .padding(.horizontal, 24)
-                .padding(.bottom, 20)
-            }
-            .padding(.horizontal)
+            )
+            .padding(.vertical, 20)
+            .padding(.horizontal, 24)
+            Spacer()
         }
-        .navigationTitle(Text(place.nama))
+        .frame(alignment: .center)
+        .navigationTitle(place.nama)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: { dismiss() }) {
+                    Image(systemName: "chevron.backward")
+                }
+            }
+        }
     }
 }
 
 #Preview {
-    DetailPlaceView(place: Place.dummyData[0])
+    DetailPlaceView(place: Place.dummyData[1])
 }

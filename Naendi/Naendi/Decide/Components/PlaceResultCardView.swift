@@ -9,37 +9,47 @@ import SwiftUI
 
 struct PlaceResultCardView: View {
     let place: Place
+    let isDetail: Bool
     @State private var isExpanded: Bool = false
     @State var viewModel: DecideViewModel
     @State private var isNavigating: Bool = false
     @Binding var isComparing: Bool
     @Binding var selectedImageURL: URL?
     
+    init(place: Place, isDetail: Bool, viewModel: DecideViewModel, isComparing: Binding<Bool>, selectedImageURL: Binding<URL?>) {
+        self.place = place
+        self.isDetail = isDetail
+        self._viewModel = State(initialValue: viewModel)
+        self._isComparing = isComparing
+        self._selectedImageURL = selectedImageURL
+    }
+    
     var body: some View {
         ZStack {
-            NavigationLink(destination: DetailPlaceView(place: place), isActive: $isNavigating) {
-                EmptyView()
-            }
-            .hidden()
             
             // Bungkus dalam satu container yang menangkap tap
             VStack(spacing: 0) {
                 if isExpanded {
                     PlaceCardExpandView(place: place, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel, selectedImageURL: $selectedImageURL)
                 } else {
-                    PlaceCardNormalView(place: place, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel)
+                    PlaceCardNormalView(place: place, isDetail: isDetail, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel)
                 }
             }
             .padding(.horizontal)
-            .contentShape(Rectangle()) // Penting agar seluruh area bisa diklik
+            .contentShape(Rectangle()) 
             .onTapGesture {
                 if isComparing {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                         viewModel.toggleSelection(for: place)
                     }
-                } else {
+                } else if !isDetail {
                     isNavigating = true
                 }
+            }
+        }
+        .fullScreenCover(isPresented: $isNavigating) {
+            NavigationStack {
+                DetailPlaceView(place: place)
             }
         }
     }
@@ -53,6 +63,7 @@ struct PlaceResultCardView: View {
         ScrollView {
             PlaceResultCardView(
                 place: Place.dummyData[0],
+                isDetail: true,
                 viewModel: DecideViewModel(), isComparing: .constant(true),
                 selectedImageURL: .constant(nil)
             )

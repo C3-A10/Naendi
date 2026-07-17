@@ -12,27 +12,52 @@ struct CompareView: View {
     let placeA: Place
     let placeB: Place
     
+    @State private var selectedPlace: Place?
+    @State private var isShowingDetail = false
+    
     var body: some View {
-        
-        VStack(spacing: 0) {
+        ZStack {
+            VStack(spacing: 0) {
+                // Compare Table
+                CompareTable(placeA: placeA, placeB: placeB, selectedPlace: $selectedPlace)
+                
+                // Button
+                CustomActionButton(
+                    text: "Choose this location",
+                    backgroundColor: selectedPlace == nil ? Color.gray.opacity(0.2) : .white,
+                    textColor: selectedPlace == nil ? .gray : .black,
+                    isDisabled: selectedPlace == nil,
+                    action: {
+                        guard selectedPlace != nil else { return }
+                        isShowingDetail = true
+                    }
+                )
+                .padding(.top, 16)
+                .padding(.bottom, 12)
+                .padding(.horizontal, 24)
+                
+                Spacer(minLength: 0)
+            }
             
-            // Compare Table
-            CompareTable(placeA: placeA, placeB: placeB)
-            
-            // Button
-            CustomActionButton(
-                text: "Choose this location",
-                backgroundColor: .white,
-                textColor: .black,
-                action: {
-                    print("Location Selected!")
+            .fullScreenCover(isPresented: $isShowingDetail) {
+                if let selectedPlace {
+                    NavigationStack {
+                        DetailPlaceView(place: selectedPlace)
+                    }
+                } else {
+                    EmptyView()
                 }
-            )
-            .padding(.top, 16)
-            .padding(.bottom, 12)
-            .padding(.horizontal, 24)
+            }
         }
-        Spacer()
+        .navigationTitle("Compare")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: { dismiss() }) {
+                    Image(systemName: "chevron.backward")
+                }
+            }
+        }
     }
 }
 

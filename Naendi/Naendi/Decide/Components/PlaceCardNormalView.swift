@@ -9,30 +9,77 @@ import SwiftUI
 
 struct PlaceCardNormalView: View {
     let place: Place
+    let isDetail: Bool
     @Binding var isExpanded: Bool
     @Binding var isComparing: Bool
     @State var viewModel: DecideViewModel
     
+    init(place: Place, isDetail: Bool, isExpanded: Binding<Bool>, isComparing: Binding<Bool>, viewModel: DecideViewModel) {
+        self.place = place
+        self.isDetail = isDetail
+        self._isExpanded = isExpanded
+        self._isComparing = isComparing
+        self._viewModel = State(initialValue: viewModel)
+    }
+    
     var isSelected: Bool { viewModel.isSelected(place) }
     var isCheckDisabled: Bool { viewModel.isCompareLimitReached && !isSelected }
+    private var cardHeight: CGFloat { isDetail ? 400 : 240 }
 
     var body: some View {
         ZStack(alignment: .bottom) {
             // Gambar
             if let urlString = place.imgUrl, let url = URL(string: urlString) {
                 AsyncImage(url: url) { phase in
-                    if let image = phase.image {
-                        image.resizable().aspectRatio(contentMode: .fill)
-                    } else {
+                    switch phase {
+
+                    case .success(let image):
+                        GeometryReader { geo in
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: geo.size.width, height: geo.size.height)
+                                .clipped()
+                        }
+                        .frame(height: cardHeight)
+
+                    case .failure, .empty:
                         Color.gray.opacity(0.3)
+                            .frame(height: cardHeight)
+                            .overlay {
+                                ProgressView()
+                            }
+
+                    @unknown default:
+                        EmptyView()
                     }
                 }
-                .frame(height: 240)
-                .clipped()
+                .overlay(alignment: .topTrailing) {
+                    // Tombol report
+                    if isDetail {
+                        Image(systemName: "exclamationmark.bubble.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(.white)
+                            .padding(12)
+                            .clipShape(Circle())
+                            .padding(12)
+                    }
+                }
             } else {
                 Color.gray.opacity(0.3)
-                    .frame(height: 240)
+                    .frame(height: cardHeight)
                     .overlay { Image(systemName: "photo").font(.largeTitle).foregroundColor(.gray) }
+                    .overlay(alignment: .topTrailing) {
+                        if isDetail {
+                            Image(systemName: "exclamationmark.bubble.fill")
+                                .font(.system(size: 24))
+                                .foregroundColor(.white)
+                                .padding(12)
+                                .background(Color.black.opacity(0.4))
+                                .clipShape(Circle())
+                                .padding(12)
+                        }
+                    }
             }
             
             DistanceCheckmarkView(
@@ -70,7 +117,7 @@ struct PlaceCardNormalView: View {
             }
             .buttonStyle(.plain)
         }
-        .frame(height: 240)
+        .frame(height: cardHeight)
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
         .shadow(color: Color.black.opacity(0.12), radius: 12, x: 0, y: 6)
@@ -83,6 +130,7 @@ struct PlaceCardNormalView: View {
         
         PlaceCardNormalView(
             place: Place.dummyData[0],
+            isDetail: true,
             isExpanded: .constant(false),
             isComparing: .constant(true),
             viewModel: DecideViewModel() 
