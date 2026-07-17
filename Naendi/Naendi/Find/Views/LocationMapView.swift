@@ -3,6 +3,7 @@ import SwiftUI
 
 struct LocationMapView: View {
     @Binding var cameraPosition: MapCameraPosition
+    @Binding var selectedLocationName: String
     @Binding var selectedCoordinate: CLLocationCoordinate2D
     @Binding var radius: Double
     @Binding var submittedSearchQuery: String
@@ -78,6 +79,7 @@ struct LocationMapView: View {
                 span: MKCoordinateSpan(latitudeDelta: 0.035, longitudeDelta: 0.035)
             )
 
+            selectedLocationName = mapItem.name ?? query
             selectedCoordinate = coordinate
 
             withAnimation(.smooth(duration: 0.45)) {
@@ -91,6 +93,7 @@ struct LocationMapView: View {
 
 #Preview {
     @Previewable @State var cameraPosition: MapCameraPosition = .automatic
+    @Previewable @State var selectedLocationName = "Search Location"
     @Previewable @State var selectedCoordinate = CLLocationCoordinate2D(latitude: 37.3377, longitude: -121.8787)
     @Previewable @State var radius = 1.0
     @Previewable @State var submittedSearchQuery = ""
@@ -98,6 +101,7 @@ struct LocationMapView: View {
 
     LocationMapView(
         cameraPosition: $cameraPosition,
+        selectedLocationName: $selectedLocationName,
         selectedCoordinate: $selectedCoordinate,
         radius: $radius,
         submittedSearchQuery: $submittedSearchQuery,

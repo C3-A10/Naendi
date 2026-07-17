@@ -4,6 +4,7 @@ import SwiftUI
 struct SelectLocationView: View {
     @Environment(\.dismiss) private var dismiss
 
+    @Binding var selectedLocationName: String
     @Binding var selectedCoordinate: CLLocationCoordinate2D
     @Binding var radius: Double
 
@@ -13,7 +14,12 @@ struct SelectLocationView: View {
     @State private var showsUserLocation = true
     @State private var isMapExpanded = false
 
-    init(selectedCoordinate: Binding<CLLocationCoordinate2D>, radius: Binding<Double>) {
+    init(
+        selectedLocationName: Binding<String>,
+        selectedCoordinate: Binding<CLLocationCoordinate2D>,
+        radius: Binding<Double>
+    ) {
+        _selectedLocationName = selectedLocationName
         _selectedCoordinate = selectedCoordinate
         _radius = radius
         _cameraPosition = State(
@@ -33,7 +39,8 @@ struct SelectLocationView: View {
             ZStack(alignment: .top) {
                 LocationMapView(
                     cameraPosition: $cameraPosition,
-                    selectedCoordinate: $selectedCoordinate,
+                    selectedLocationName: $selectedLocationName,
+   -                 selectedCoordinate: $selectedCoordinate,
                     radius: $radius,
                     submittedSearchQuery: $submittedSearchQuery,
                     showsUserLocation: $showsUserLocation
@@ -69,6 +76,7 @@ struct SelectLocationView: View {
         .fullScreenCover(isPresented: $isMapExpanded) {
             ExpandedLocationMapView(
                 cameraPosition: $cameraPosition,
+                selectedLocationName: $selectedLocationName,
                 selectedCoordinate: $selectedCoordinate,
                 radius: $radius,
                 submittedSearchQuery: $submittedSearchQuery,
@@ -123,6 +131,7 @@ private struct ExpandedLocationMapView: View {
     @Environment(\.dismiss) private var dismiss
 
     @Binding var cameraPosition: MapCameraPosition
+    @Binding var selectedLocationName: String
     @Binding var selectedCoordinate: CLLocationCoordinate2D
     @Binding var radius: Double
     @Binding var submittedSearchQuery: String
@@ -132,6 +141,7 @@ private struct ExpandedLocationMapView: View {
         ZStack(alignment: .topTrailing) {
             LocationMapView(
                 cameraPosition: $cameraPosition,
+                selectedLocationName: $selectedLocationName,
                 selectedCoordinate: $selectedCoordinate,
                 radius: $radius,
                 submittedSearchQuery: $submittedSearchQuery,
@@ -151,8 +161,13 @@ private struct ExpandedLocationMapView: View {
 }
 
 #Preview {
+    @Previewable @State var locationName = "Search Location"
     @Previewable @State var coordinate = CLLocationCoordinate2D(latitude: 37.3377, longitude: -121.8787)
     @Previewable @State var radius = 1.0
 
-    SelectLocationView(selectedCoordinate: $coordinate, radius: $radius)
+    SelectLocationView(
+        selectedLocationName: $locationName,
+        selectedCoordinate: $coordinate,
+        radius: $radius
+    )
 }

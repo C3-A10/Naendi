@@ -5,6 +5,7 @@ struct EditPreferenceView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var isSelectingLocation = false
+    @State private var selectedLocationName = "Search Location"
     @State private var selectedCoordinate = CLLocationCoordinate2D(latitude: 37.3377, longitude: -121.8787)
     @State private var radius = 1.0
     @State private var selectedBudgetOption: BudgetOption = .any
@@ -22,7 +23,7 @@ struct EditPreferenceView: View {
                     } label: {
                         PreferenceOptionRow(
                             title: "Location",
-                            value: "Search Location",
+                            value: selectedLocationName,
                             showsDisclosure: false
                         )
                     }
@@ -56,6 +57,7 @@ struct EditPreferenceView: View {
         .background(Color(uiColor: .systemBackground))
         .fullScreenCover(isPresented: $isSelectingLocation) {
             SelectLocationView(
+                selectedLocationName: $selectedLocationName,
                 selectedCoordinate: $selectedCoordinate,
                 radius: $radius
             )
