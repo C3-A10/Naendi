@@ -11,7 +11,7 @@ import SwiftUI
 struct NaendiApp: App {
     var body: some Scene {
         WindowGroup {
-            ResultView()
+            ContentView()
         }
     }
 }

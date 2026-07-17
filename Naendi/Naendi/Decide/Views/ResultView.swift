@@ -12,7 +12,8 @@ struct ResultView: View {
     @State private var isComparing: Bool = false
     @State private var selectedImageURL: URL? = nil
     @State private var isShowingCompare: Bool = false
-    
+    @State private var isShowingEditPreference: Bool = false
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -68,7 +69,7 @@ struct ResultView: View {
                             .transition(.scale.combined(with: .opacity))
                             
                             Button {
-                                // Aksi edit atau profil
+                                isShowingEditPreference = true
                             } label: {
                                 Image(systemName: "pencil")
                                     .font(.system(size: 16, weight: .semibold))
@@ -76,7 +77,9 @@ struct ResultView: View {
                                     .frame(width: 40, height: 40)
                                     .background(Color(white: 0.15))
                                     .clipShape(Circle())
+                                    .contentShape(Circle())
                             }
+                            .buttonStyle(.plain)
                             .transition(.scale.combined(with: .opacity))
                         }
                     }
@@ -164,6 +167,9 @@ struct ResultView: View {
                 } else {
                     EmptyView()
                 }
+            }
+            .fullScreenCover(isPresented: $isShowingEditPreference) {
+                EditPreferenceView()
             }
             .navigationDestination(item: $selectedImageURL) { url in
                     FullImageDetailView(url: url)

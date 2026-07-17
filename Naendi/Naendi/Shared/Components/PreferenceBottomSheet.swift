@@ -6,6 +6,10 @@ struct PreferenceBottomSheet: View {
 
     let onSubmitSearch: () -> Void
 
+    @State private var selectedBudgetOption: BudgetOption = .any
+    @State private var minimumBudget = ""
+    @State private var maximumBudget = ""
+
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
@@ -70,7 +74,16 @@ struct PreferenceBottomSheet: View {
 
     private var preferenceRows: some View {
         VStack(spacing: 20) {
-            PreferenceOptionRow(title: "Budget", value: "$$$")
+            BudgetRow(selection: $selectedBudgetOption)
+
+            if selectedBudgetOption == .custom {
+                CustomBudgetRow(
+                    minimumBudget: $minimumBudget,
+                    maximumBudget: $maximumBudget
+                )
+                .transition(.move(edge: .top).combined(with: .opacity))
+            }
+
             PreferenceOptionRow(title: "Type", value: "Cafe")
             PreferenceOptionRow(title: "Vibe", value: "Lively")
             PreferenceOptionRow(title: "Preferred Time", value: "08:00  –  10:00")
@@ -78,12 +91,74 @@ struct PreferenceBottomSheet: View {
             PreferenceOptionRow(title: "Output Result", value: "5")
             PreferenceOptionRow(title: "Sort By", value: "Surprise Me")
         }
+        .animation(.snappy(duration: 0.24), value: selectedBudgetOption)
+    }
+}
+
+struct BudgetOption: Identifiable, Hashable {
+    let id: String
+    let title: String
+
+    static let any = BudgetOption(id: "any", title: "Any Budget")
+    static let tenToFifty = BudgetOption(id: "10_50", title: "Rp. 10rb – Rp. 50rb")
+    static let fiftyToOneHundred = BudgetOption(id: "50_100", title: "Rp. 50rb – Rp. 100rb")
+    static let oneHundredToTwoFifty = BudgetOption(id: "100_250", title: "Rp. 100rb – Rp. 250rb")
+    static let custom = BudgetOption(id: "custom", title: "Custom")
+
+    static let allCases: [BudgetOption] = [
+        .any,
+        .tenToFifty,
+        .fiftyToOneHundred,
+        .oneHundredToTwoFifty,
+        .custom
+    ]
+}
+
+struct BudgetRow: View {
+    @Binding var selection: BudgetOption
+
+    var body: some View {
+        Menu {
+            ForEach(BudgetOption.allCases) { option in
+                Button {
+                    selection = option
+                } label: {
+                    Label(
+                        option.title,
+                        systemImage: selection == option ? "checkmark" : ""
+                    )
+                }
+            }
+        } label: {
+            PreferenceOptionRowContent(
+                title: "Budget",
+                value: selection.title,
+                showsDisclosure: true
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Budget")
+        .accessibilityValue(selection.title)
     }
 }
 
 struct PreferenceOptionRow: View {
     let title: String
     let value: String
+
+    var body: some View {
+        PreferenceOptionRowContent(
+            title: title,
+            value: value,
+            showsDisclosure: true
+        )
+    }
+}
+
+private struct PreferenceOptionRowContent: View {
+    let title: String
+    let value: String
+    let showsDisclosure: Bool
 
     var body: some View {
         HStack(spacing: 12) {
@@ -97,9 +172,11 @@ struct PreferenceOptionRow: View {
 
             valueView
 
-            Image(systemName: "chevron.up.chevron.down")
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(.secondary.opacity(0.55))
+            if showsDisclosure {
+                Image(systemName: "chevron.up.chevron.down")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(.secondary.opacity(0.55))
+            }
         }
         .padding(.horizontal, 28)
         .frame(height: 60)
