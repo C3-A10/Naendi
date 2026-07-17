@@ -8,16 +8,15 @@
 import SwiftUI
 
 struct ResultView: View {
-    
     @State var viewModel: DecideViewModel
-    @State private var isComparing: Bool = false
-    @State private var selectedImageURL: URL? = nil
-    @State private var isNavigatingToCompare: Bool = false
-    @State private var selectedPlace: Place? = nil
-    
+    @State private var isComparing = false
+    @State private var selectedImageURL: URL?
+    @State private var isNavigatingToCompare = false
+    @State private var selectedPlace: Place?
+    @State private var isShowingEditPreference = false
+
     var body: some View {
         VStack(spacing: 0) {
-            // MARK: - Custom Header (Pengganti Native Navigation Bar)
             HStack(alignment: .center) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(isComparing ? "Compare" : "Results")
@@ -30,12 +29,11 @@ struct ResultView: View {
                             .transition(.opacity.combined(with: .move(edge: .top)))
                     }
                 }
-                
+
                 Spacer()
-                
+
                 HStack(spacing: 12) {
                     if isComparing {
-                        // SAAT MODE COMPARE: Hanya ada tombol Cancel
                         Button {
                             withAnimation(.spring()) {
                                 isComparing = false
@@ -51,9 +49,7 @@ struct ResultView: View {
                                 .clipShape(Capsule())
                         }
                         .transition(.scale.combined(with: .opacity))
-                        
                     } else {
-                        // SAAT NORMAL: Tombol Compare dan Tombol Edit/Filter
                         Button {
                             withAnimation(.spring()) {
                                 isComparing = true
@@ -67,9 +63,9 @@ struct ResultView: View {
                                 .clipShape(Circle())
                         }
                         .transition(.scale.combined(with: .opacity))
-                        
+
                         Button {
-                            // Aksi edit atau filter
+                            isShowingEditPreference = true
                         } label: {
                             Image(systemName: "pencil")
                                 .font(.system(size: 16, weight: .semibold))
@@ -77,7 +73,9 @@ struct ResultView: View {
                                 .frame(width: 40, height: 40)
                                 .background(Color(white: 0.15))
                                 .clipShape(Circle())
+                                .contentShape(Circle())
                         }
+                        .buttonStyle(.plain)
                         .transition(.scale.combined(with: .opacity))
                     }
                 }
@@ -85,8 +83,7 @@ struct ResultView: View {
             .padding(.horizontal, 20)
             .padding(.top, 10)
             .padding(.bottom, 16)
-            
-            // MARK: - Konten Utama
+
             ZStack {
                 if viewModel.isLoading {
                     ProgressView("Memuat rekomendasi...")
@@ -97,7 +94,6 @@ struct ResultView: View {
                         Text("No results found")
                             .font(.title2)
                             .fontWeight(.bold)
-                        
                         Text("Edit Your Preference First To get results")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
@@ -121,7 +117,6 @@ struct ResultView: View {
                         }
                         .padding(.vertical, 16)
                         .padding(.horizontal, 20)
-                        // Memberikan padding bottom ekstra jika tombol compare melayang muncul agar tidak tertutup
                         .padding(.bottom, (isComparing && viewModel.isCompareLimitReached) ? 80 : 16)
                     }
                 }
@@ -129,12 +124,9 @@ struct ResultView: View {
         }
         .toolbar(.hidden, for: .navigationBar)
         .onAppear {
-            // Jika perlu load dummy data saat testing, Anda bisa uncomment baris di bawah ini:
-            // viewModel.loadDummyData()
             viewModel.clearSelectedPlaces()
             isComparing = false
         }
-        // MARK: - Tombol Melayang "Compare" (Muncul saat pas 2 kartu dipilih)
         .overlay(alignment: .bottom) {
             if isComparing && viewModel.isCompareLimitReached {
                 Button {
@@ -156,7 +148,6 @@ struct ResultView: View {
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        // MARK: - Navigation Destinations
         .navigationDestination(item: $selectedImageURL) { url in
             FullImageDetailView(url: url)
         }
@@ -174,11 +165,12 @@ struct ResultView: View {
                 }
             }
         }
+        .fullScreenCover(isPresented: $isShowingEditPreference) {
+            EditPreferenceView()
+        }
     }
 }
 
 #Preview {
-    ResultView(
-        viewModel: DecideViewModel()
-    )
+    ResultView(viewModel: DecideViewModel())
 }

@@ -6,8 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		F5380E48300A141E00B48257 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5380E47300A141E00B48257 /* ContentView.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		6F5A4C103004E788005BB796 /* Naendi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Naendi.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F5380E47300A141E00B48257 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -47,6 +52,7 @@
 			children = (
 				6F5A4C123004E788005BB796 /* Naendi */,
 				6F5A4C113004E788005BB796 /* Products */,
+				F5380E47300A141E00B48257 /* ContentView.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -132,6 +138,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F5380E48300A141E00B48257 /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
