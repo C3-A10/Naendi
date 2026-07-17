@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum HalalStatus {
+enum HalalStatus: String {
     case halal
     case nonHalal
     case unknown
