@@ -174,9 +174,7 @@ struct ResultView: View {
 }
 
 #Preview {
-    NavigationStack {
-        ResultView(
-            viewModel: DecideViewModel()
-        )
-    }
+    ResultView(
+        viewModel: DecideViewModel()
+    )
 }

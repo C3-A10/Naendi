@@ -14,18 +14,15 @@ struct DetailPlaceView: View {
     @State private var viewModel = DecideViewModel()
     @State private var isComparing: Bool = false
     @State private var selectedImageURL: URL? = nil
+    @State private var dummySelectedPlace: Place? = nil
 
     var body: some View {
         VStack {
             Spacer()
             // Card
-            PlaceResultCardView(
-                place: place,
-                isDetail: true,
-                viewModel: viewModel,
-                isComparing: $isComparing,
-                selectedImageURL: $selectedImageURL
-            )
+            
+            PlaceCardView(place: place, mode: .landing, viewModel: viewModel, isComparing: $isComparing, selectedImageURL: $selectedImageURL, selectedPlace: $dummySelectedPlace)
+            
             .frame(maxWidth: .infinity)
 
             // Button
@@ -38,20 +35,15 @@ struct DetailPlaceView: View {
                 }
             )
             .padding(.vertical, 20)
-            .padding(.horizontal, 24)
             Spacer()
         }
         .frame(alignment: .center)
         .navigationTitle(place.nama)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: { dismiss() }) {
-                    Image(systemName: "chevron.backward")
-                }
-            }
-        }
+        .padding(.horizontal, 16)
+
     }
+
 }
 
 #Preview {
