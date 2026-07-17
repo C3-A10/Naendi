@@ -60,7 +60,30 @@ final class CloudKitPlaceRepository: PlaceRepository {
         default:          status = .unknown
         }
 
-        return Place(name: name, halalStatus: status)
+        let location = record["location"] as? CLLocation
+        let reviewCount = (record["jumlah_review"] as? Int)
+            ?? (record["jumlah_review"] as? Int64).map(Int.init)
+
+        return Place(
+            name: name,
+            halalStatus: status,
+            address: record["alamat"] as? String,
+            halalEvidence: record["halal_evidence"] as? String,
+            images: record["images"] as? String,
+            openingHours: record["jam_buka"] as? String,
+            reviewCount: reviewCount,
+            latitude: location?.coordinate.latitude,
+            longitude: location?.coordinate.longitude,
+            menuLink: record["menu_link"] as? String,
+            placeID: record["place_id"] as? String,
+            priceRange: record["range_harga"] as? String,
+            rating: record["rating"] as? Double,
+            negativeReview: record["review_negatif"] as? String,
+            positiveReview: record["review_positif"] as? String,
+            thumbnail: record["thumbnail"] as? String,
+            placeType: record["type_tempat"] as? String,
+            vibe: record["vibe"] as? String
+        )
     }
     
 }
