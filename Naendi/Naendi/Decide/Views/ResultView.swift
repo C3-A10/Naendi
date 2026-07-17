@@ -2,19 +2,19 @@
 //  ResultView.swift
 //  Naendi
 //
-//  Created by Satriya Handha Wibowo on 16/07/26.
+//  Created by Satriya Handha Wibowo & Bryan Samuel on 16/07/26.
 //
 
 import SwiftUI
 
 struct ResultView: View {
-    
     @State var viewModel: DecideViewModel
-    @State private var isComparing: Bool = false
-    @State private var selectedImageURL: URL? = nil
-    @State private var isNavigatingToCompare: Bool = false
-    @State private var selectedPlace: Place? = nil
-    
+    @State private var isComparing = false
+    @State private var selectedImageURL: URL?
+    @State private var isNavigatingToCompare = false
+    @State private var selectedPlace: Place?
+    @State private var isShowingEditPreference = false
+
     var body: some View {
         VStack(spacing: 0) {
             HStack(alignment: .center) {
@@ -29,9 +29,9 @@ struct ResultView: View {
                             .transition(.opacity.combined(with: .move(edge: .top)))
                     }
                 }
-                
+
                 Spacer()
-                
+
                 HStack(spacing: 12) {
                     if isComparing {
                         Button {
@@ -49,7 +49,6 @@ struct ResultView: View {
                                 .clipShape(Capsule())
                         }
                         .transition(.scale.combined(with: .opacity))
-                        
                     } else {
                         Button {
                             withAnimation(.spring()) {
@@ -64,9 +63,9 @@ struct ResultView: View {
                                 .clipShape(Circle())
                         }
                         .transition(.scale.combined(with: .opacity))
-                        
+
                         Button {
-                            // Aksi edit atau filter
+                            isShowingEditPreference = true
                         } label: {
                             Image(systemName: "pencil")
                                 .font(.system(size: 16, weight: .semibold))
@@ -74,32 +73,52 @@ struct ResultView: View {
                                 .frame(width: 40, height: 40)
                                 .background(Color(white: 0.15))
                                 .clipShape(Circle())
+                                .contentShape(Circle())
                         }
+                        .buttonStyle(.plain)
                         .transition(.scale.combined(with: .opacity))
                     }
                 }
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 20)
             .padding(.top, 10)
             .padding(.bottom, 16)
-            
+
             ZStack {
-                ScrollView {
-                    LazyVStack(spacing: 20) {
-                        ForEach(viewModel.places) { place in
-                            PlaceCardView(
-                                place: place,
-                                mode: .result,
-                                viewModel: viewModel,
-                                isComparing: $isComparing,
-                                selectedImageURL: $selectedImageURL,
-                                selectedPlace: $selectedPlace 
-                            )
-                        }
+                if viewModel.isLoading {
+                    ProgressView("Memuat rekomendasi...")
+                        .scaleEffect(1.1)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if viewModel.places.isEmpty {
+                    VStack(spacing: 16) {
+                        Text("No results found")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                        Text("Edit Your Preference First To get results")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 40)
                     }
-                    .padding(.vertical, 16)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, viewModel.isCompareLimitReached ? 80 : 16)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 20) {
+                            ForEach(viewModel.places) { place in
+                                PlaceCardView(
+                                    place: place,
+                                    mode: .result,
+                                    viewModel: viewModel,
+                                    isComparing: $isComparing,
+                                    selectedImageURL: $selectedImageURL,
+                                    selectedPlace: $selectedPlace
+                                )
+                            }
+                        }
+                        .padding(.vertical, 16)
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, (isComparing && viewModel.isCompareLimitReached) ? 80 : 16)
+                    }
                 }
             }
         }
@@ -132,21 +151,26 @@ struct ResultView: View {
         .navigationDestination(item: $selectedImageURL) { url in
             FullImageDetailView(url: url)
         }
-        .navigationDestination(item: $selectedPlace) { place in
-            DetailPlaceView(place: place)
-        }
-        .navigationDestination(isPresented: $isNavigatingToCompare) {
-            if viewModel.selectedPlaces.count >= 2 {
-                CompareView(placeA: viewModel.selectedPlaces[0], placeB: viewModel.selectedPlaces[1])
-                    .navigationTitle("Compare")
-                    .navigationBarTitleDisplayMode(.inline)
+        .fullScreenCover(item: $selectedPlace) { place in
+            NavigationStack {
+                DetailPlaceView(place: place)
             }
+        }
+        .fullScreenCover(isPresented: $isNavigatingToCompare) {
+            if viewModel.selectedPlaces.count >= 2 {
+                NavigationStack {
+                    CompareView(placeA: viewModel.selectedPlaces[0], placeB: viewModel.selectedPlaces[1])
+                        .navigationTitle("Compare")
+                        .navigationBarTitleDisplayMode(.inline)
+                }
+            }
+        }
+        .fullScreenCover(isPresented: $isShowingEditPreference) {
+            EditPreferenceView()
         }
     }
 }
 
 #Preview {
-    ResultView(
-        viewModel: DecideViewModel()
-    )
+    ResultView(viewModel: DecideViewModel())
 }

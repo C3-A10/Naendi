@@ -11,7 +11,22 @@ struct CustomActionButton: View {
     let text: String
     let backgroundColor: Color
     let textColor: Color
+    let isDisabled: Bool
     let action: () -> Void
+    
+    init(
+        text: String,
+        backgroundColor: Color,
+        textColor: Color,
+        isDisabled: Bool = false,
+        action: @escaping () -> Void
+    ) {
+        self.text = text
+        self.backgroundColor = backgroundColor
+        self.textColor = textColor
+        self.isDisabled = isDisabled
+        self.action = action
+    }
     
     var body: some View {
         Button(action: action) {
@@ -24,5 +39,7 @@ struct CustomActionButton: View {
                 .clipShape(Capsule())
                 .shadow(color: Color.black.opacity(0.08), radius: 10, x: 0, y: 6)
         }
+        .disabled(isDisabled)
+        .opacity(isDisabled ? 0.6 : 1.0)
     }
 }
