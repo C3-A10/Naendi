@@ -50,7 +50,7 @@ class DecideViewModel {
         Task {
             try? await Task.sleep(nanoseconds: 800_000_000)
             await MainActor.run {
-                self.places = Place.dummyData
+                //self.places = Place.dummyData
                 self.isLoading = false
             }
         }

@@ -41,7 +41,13 @@ struct DetailPlaceView: View {
         .navigationTitle(place.nama)
         .navigationBarTitleDisplayMode(.inline)
         .padding(.horizontal, 16)
-
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: { dismiss() }) {
+                    Image(systemName: "chevron.backward")
+                }
+            }
+        }
     }
 
 }

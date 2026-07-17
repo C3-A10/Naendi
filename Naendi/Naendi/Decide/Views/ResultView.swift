@@ -160,8 +160,10 @@ struct ResultView: View {
         .navigationDestination(item: $selectedImageURL) { url in
             FullImageDetailView(url: url)
         }
-        .navigationDestination(item: $selectedPlace) { place in
-            DetailPlaceView(place: place)
+        .fullScreenCover(item: $selectedPlace) { place in
+            NavigationStack {
+                DetailPlaceView(place: place)
+            }
         }
         .navigationDestination(isPresented: $isNavigatingToCompare) {
             if viewModel.selectedPlaces.count >= 2 {
