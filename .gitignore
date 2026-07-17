@@ -54,6 +54,5 @@ fastlane/test_output/
 # --------------------------------------------------
 # App entitlements (team-specific)
 # --------------------------------------------------
-Naendi/Naendi/Naendi.entitlements
 
 Developer.xcconfig
