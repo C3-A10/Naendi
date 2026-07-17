@@ -15,6 +15,10 @@ final class SwiftDataPlaceStore: PlaceStore {
     }
     
     func save(_ places: [Place]) throws {
+        // A seed replaces the whole dataset: wipe any prior (possibly partial,
+        // from an interrupted fetch) rows before inserting the fresh full set,
+        // so re-seeding never duplicates.
+        try context.delete(model: PlaceEntity.self)
         for place in places {
             context.insert(PlaceEntity(from: place))
         }
@@ -27,15 +31,21 @@ final class SwiftDataPlaceStore: PlaceStore {
         return entities.map { $0.toPlace() }
     }
 
-    // Seeding state is derived from the persistent store itself, so the local
-    // cache survives across app launches: any persisted row means we've seeded.
     var hasSeededData: Bool {
-        let count = (try? context.fetchCount(FetchDescriptor<PlaceEntity>())) ?? 0
-        return count > 0
+        seedState()?.isSeeded ?? false
     }
 
     func markSeeded() throws {
-        // No-op: presence of persisted rows already marks the store as seeded.
+        if let existing = seedState() {
+            existing.isSeeded = true
+        } else {
+            context.insert(SeedState(isSeeded: true))
+        }
+        try context.save()
+    }
+
+    private func seedState() -> SeedState? {
+        try? context.fetch(FetchDescriptor<SeedState>()).first
     }
 
 }
