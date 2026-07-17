@@ -52,5 +52,5 @@ struct DetailPlaceView: View {
 }
 
 #Preview {
-    //DetailPlaceView()
+    DetailPlaceView(place: Place.dummyData[0])
 }
