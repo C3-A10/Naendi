@@ -13,15 +13,7 @@ struct PlaceCardNormalView: View {
     let isReported: Bool=false
     @Binding var isExpanded: Bool
     @Binding var isComparing: Bool
-    @State var viewModel: DecideViewModel
-    
-    init(place: Place, isDetail: Bool, isExpanded: Binding<Bool>, isComparing: Binding<Bool>, viewModel: DecideViewModel) {
-        self.place = place
-        self.isDetail = isDetail
-        self._isExpanded = isExpanded
-        self._isComparing = isComparing
-        self._viewModel = State(initialValue: viewModel)
-    }
+    let viewModel: DecideViewModel
     
     var isSelected: Bool { viewModel.isSelected(place) }
     var isCheckDisabled: Bool { viewModel.isCompareLimitReached && !isSelected }
