@@ -5,7 +5,11 @@
 //  Created by Mohammad Rizaldy Ramadhan on 17/07/26.
 //
 
-final class PlaceProvider {
+protocol PlaceProviding {
+    func places() async throws -> [Place]
+}
+
+final class PlaceProvider: PlaceProviding {
     private let repository: PlaceRepository
     private let store: PlaceStore
 

@@ -21,6 +21,16 @@
 		6F5A4C103004E788005BB796 /* Naendi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Naendi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		6F659CCA300772FE00BBB6A8 /* Exceptions for "Naendi" folder in "Naendi" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 6F5A4C0F3004E788005BB796 /* Naendi */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		352E20B83008B5280096F685 /* NaendiTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -29,6 +39,9 @@
 		};
 		6F5A4C123004E788005BB796 /* Naendi */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				6F659CCA300772FE00BBB6A8 /* Exceptions for "Naendi" folder in "Naendi" target */,
+			);
 			path = Naendi;
 			sourceTree = "<group>";
 		};

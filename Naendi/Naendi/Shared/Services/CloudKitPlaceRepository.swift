@@ -50,39 +50,33 @@ final class CloudKitPlaceRepository: PlaceRepository {
     }
     
     func makePlace(from record: CKRecord) -> Place? {
-        guard let name = record["nama"] as? String else { return nil }
-
-        let halalText = (record["halal"] as? String) ?? ""
-        let status: HalalStatus
-        switch halalText.lowercased() {
-        case "halal":     status = .halal
-        case "non-halal": status = .nonHalal
-        default:          status = .unknown
-        }
+        guard let nama = record["nama"] as? String else { return nil }
 
         let location = record["location"] as? CLLocation
-        let reviewCount = (record["jumlah_review"] as? Int)
+        let jumlahReview = (record["jumlah_review"] as? Int)
             ?? (record["jumlah_review"] as? Int64).map(Int.init)
+            ?? 0
+        // Prefer the stable place_id; fall back to the record's own name so id is never empty.
+        let id = (record["place_id"] as? String) ?? record.recordID.recordName
 
         return Place(
-            name: name,
-            halalStatus: status,
-            address: record["alamat"] as? String,
-            halalEvidence: record["halal_evidence"] as? String,
-            images: record["images"] as? String,
-            openingHours: record["jam_buka"] as? String,
-            reviewCount: reviewCount,
-            latitude: location?.coordinate.latitude,
-            longitude: location?.coordinate.longitude,
-            menuLink: record["menu_link"] as? String,
-            placeID: record["place_id"] as? String,
-            priceRange: record["range_harga"] as? String,
-            rating: record["rating"] as? Double,
-            negativeReview: record["review_negatif"] as? String,
-            positiveReview: record["review_positif"] as? String,
-            thumbnail: record["thumbnail"] as? String,
-            placeType: record["type_tempat"] as? String,
-            vibe: record["vibe"] as? String
+            id: id,
+            nama: nama,
+            alamat: (record["alamat"] as? String) ?? "",
+            latitude: location?.coordinate.latitude ?? 0,
+            longitude: location?.coordinate.longitude ?? 0,
+            rangeHarga: (record["range_harga"] as? String) ?? "",
+            jamBuka: (record["jam_buka"] as? String) ?? "",
+            typeTempat: (record["type_tempat"] as? String) ?? "",
+            rating: (record["rating"] as? Double) ?? 0,
+            jumlahReview: jumlahReview,
+            vibe: (record["vibe"] as? String) ?? "",
+            halal: (record["halal"] as? String) ?? "",
+            halalEvidence: (record["halal_evidence"] as? String) ?? "",
+            reviewPositif: (record["review_positif"] as? String) ?? "",
+            reviewNegatif: (record["review_negatif"] as? String) ?? "",
+            imgUrl: (record["thumbnail"] as? String) ?? (record["images"] as? String),
+            reportCount: 0
         )
     }
     

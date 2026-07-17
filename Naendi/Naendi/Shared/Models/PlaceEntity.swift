@@ -9,110 +9,105 @@ import SwiftData
 
 @Model
 final class PlaceEntity {
-    var name: String
-    var halalStatusRaw: String
-    var address: String?
-    var halalEvidence: String?
-    var images: String?
-    var openingHours: String?
-    var reviewCount: Int?
-    var latitude: Double?
-    var longitude: Double?
-    var menuLink: String?
-    var placeID: String?
-    var priceRange: String?
-    var rating: Double?
-    var negativeReview: String?
-    var positiveReview: String?
-    var thumbnail: String?
-    var placeType: String?
-    var vibe: String?
+    @Attribute(.unique) var id: String
+    var nama: String
+    var alamat: String
+    var latitude: Double
+    var longitude: Double
+    var rangeHarga: String
+    var jamBuka: String
+    var typeTempat: String
+    var rating: Double
+    var jumlahReview: Int
+    var vibe: String
+    var halal: String
+    var halalEvidence: String
+    var reviewPositif: String
+    var reviewNegatif: String
+    var imgUrl: String?
+    var reportCount: Int
 
     init(
-        name: String,
-        halalStatusRaw: String,
-        address: String? = nil,
-        halalEvidence: String? = nil,
-        images: String? = nil,
-        openingHours: String? = nil,
-        reviewCount: Int? = nil,
-        latitude: Double? = nil,
-        longitude: Double? = nil,
-        menuLink: String? = nil,
-        placeID: String? = nil,
-        priceRange: String? = nil,
-        rating: Double? = nil,
-        negativeReview: String? = nil,
-        positiveReview: String? = nil,
-        thumbnail: String? = nil,
-        placeType: String? = nil,
-        vibe: String? = nil
+        id: String,
+        nama: String,
+        alamat: String,
+        latitude: Double,
+        longitude: Double,
+        rangeHarga: String,
+        jamBuka: String,
+        typeTempat: String,
+        rating: Double,
+        jumlahReview: Int,
+        vibe: String,
+        halal: String,
+        halalEvidence: String,
+        reviewPositif: String,
+        reviewNegatif: String,
+        imgUrl: String?,
+        reportCount: Int
     ) {
-        self.name = name
-        self.halalStatusRaw = halalStatusRaw
-        self.address = address
-        self.halalEvidence = halalEvidence
-        self.images = images
-        self.openingHours = openingHours
-        self.reviewCount = reviewCount
+        self.id = id
+        self.nama = nama
+        self.alamat = alamat
         self.latitude = latitude
         self.longitude = longitude
-        self.menuLink = menuLink
-        self.placeID = placeID
-        self.priceRange = priceRange
+        self.rangeHarga = rangeHarga
+        self.jamBuka = jamBuka
+        self.typeTempat = typeTempat
         self.rating = rating
-        self.negativeReview = negativeReview
-        self.positiveReview = positiveReview
-        self.thumbnail = thumbnail
-        self.placeType = placeType
+        self.jumlahReview = jumlahReview
         self.vibe = vibe
+        self.halal = halal
+        self.halalEvidence = halalEvidence
+        self.reviewPositif = reviewPositif
+        self.reviewNegatif = reviewNegatif
+        self.imgUrl = imgUrl
+        self.reportCount = reportCount
     }
 }
 
 extension PlaceEntity {
     func toPlace() -> Place {
         Place(
-            name: name,
-            halalStatus: HalalStatus(rawValue: halalStatusRaw) ?? .unknown,
-            address: address,
-            halalEvidence: halalEvidence,
-            images: images,
-            openingHours: openingHours,
-            reviewCount: reviewCount,
+            id: id,
+            nama: nama,
+            alamat: alamat,
             latitude: latitude,
             longitude: longitude,
-            menuLink: menuLink,
-            placeID: placeID,
-            priceRange: priceRange,
+            rangeHarga: rangeHarga,
+            jamBuka: jamBuka,
+            typeTempat: typeTempat,
             rating: rating,
-            negativeReview: negativeReview,
-            positiveReview: positiveReview,
-            thumbnail: thumbnail,
-            placeType: placeType,
-            vibe: vibe
+            jumlahReview: jumlahReview,
+            vibe: vibe,
+            halal: halal,
+            halalEvidence: halalEvidence,
+            reviewPositif: reviewPositif,
+            reviewNegatif: reviewNegatif,
+            imgUrl: imgUrl,
+            reportCount: reportCount
         )
     }
 
     convenience init(from place: Place) {
         self.init(
-            name: place.name,
-            halalStatusRaw: place.halalStatus.rawValue,
-            address: place.address,
-            halalEvidence: place.halalEvidence,
-            images: place.images,
-            openingHours: place.openingHours,
-            reviewCount: place.reviewCount,
+            id: place.id,
+            nama: place.nama,
+            alamat: place.alamat,
             latitude: place.latitude,
             longitude: place.longitude,
-            menuLink: place.menuLink,
-            placeID: place.placeID,
-            priceRange: place.priceRange,
+            rangeHarga: place.rangeHarga,
+            jamBuka: place.jamBuka,
+            typeTempat: place.typeTempat,
             rating: place.rating,
-            negativeReview: place.negativeReview,
-            positiveReview: place.positiveReview,
-            thumbnail: place.thumbnail,
-            placeType: place.placeType,
-            vibe: place.vibe
+            jumlahReview: place.jumlahReview,
+            vibe: place.vibe,
+            halal: place.halal,
+            halalEvidence: place.halalEvidence,
+            reviewPositif: place.reviewPositif,
+            reviewNegatif: place.reviewNegatif,
+            imgUrl: place.imgUrl,
+            reportCount: place.reportCount
         )
     }
 }

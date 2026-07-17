@@ -11,25 +11,24 @@ import Testing
 struct PlaceEntityTests {
     @Test("a Place round-trips through PlaceEntity preserving every field")
     func roundTripPreservesEveryField() {
-        let original = Place(
-            name: "Warung Nusantara",
-            halalStatus: .halal,
-            address: "Jl. Raya Darmo 1",
-            halalEvidence: "MUI certificate",
-            images: "img1.jpg,img2.jpg",
-            openingHours: "08:00 - 22:00",
-            reviewCount: 128,
+        let original = Place.stub(
+            id: "ChIJabc123",
+            nama: "Warung Nusantara",
+            alamat: "Jl. Raya Darmo 1",
             latitude: -7.2575,
             longitude: 112.7521,
-            menuLink: "https://menu.example/warung",
-            placeID: "ChIJabc123",
-            priceRange: "Rp25.000 - Rp75.000",
+            rangeHarga: "Rp25.000 - Rp75.000",
+            jamBuka: "08:00 - 22:00",
+            typeTempat: "Restoran",
             rating: 4.6,
-            negativeReview: "Antre panjang saat jam makan siang",
-            positiveReview: "Rasa autentik dan porsi besar",
-            thumbnail: "thumb.jpg",
-            placeType: "Restoran",
-            vibe: "Cozy"
+            jumlahReview: 128,
+            vibe: "Cozy",
+            halal: "halal",
+            halalEvidence: "MUI certificate",
+            reviewPositif: "Rasa autentik dan porsi besar",
+            reviewNegatif: "Antre panjang saat jam makan siang",
+            imgUrl: "thumb.jpg",
+            reportCount: 3
         )
 
         let roundTripped = PlaceEntity(from: original).toPlace()
@@ -37,9 +36,9 @@ struct PlaceEntityTests {
         #expect(roundTripped == original)
     }
 
-    @Test("nil optional fields survive the round-trip")
-    func roundTripPreservesNilFields() {
-        let original = Place(name: "Bare Minimum", halalStatus: .unknown)
+    @Test("a nil imgUrl survives the round-trip")
+    func roundTripPreservesNilImgUrl() {
+        let original = Place.stub(id: "1", nama: "Bare Minimum", imgUrl: nil)
 
         let roundTripped = PlaceEntity(from: original).toPlace()
 

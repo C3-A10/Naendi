@@ -26,12 +26,16 @@ final class SwiftDataPlaceStore: PlaceStore {
         let entities = try context.fetch(descriptor)
         return entities.map { $0.toPlace() }
     }
-    
-    
-    var hasSeededData: Bool = false
-    
-    func markSeeded() throws {
-        hasSeededData = true
+
+    // Seeding state is derived from the persistent store itself, so the local
+    // cache survives across app launches: any persisted row means we've seeded.
+    var hasSeededData: Bool {
+        let count = (try? context.fetchCount(FetchDescriptor<PlaceEntity>())) ?? 0
+        return count > 0
     }
-    
+
+    func markSeeded() throws {
+        // No-op: presence of persisted rows already marks the store as seeded.
+    }
+
 }

@@ -14,8 +14,8 @@ struct FindViewModelTests {
     @Test("loading places from the repository fills the view model")
     func loadFillsViewModel() async throws {
         let fake = FakePlaceRepository(places: [
-            Place(name: "Cafe A", halalStatus: HalalStatus.halal),
-            Place(name: "Cafe B", halalStatus: HalalStatus.nonHalal),
+            .stub(nama: "Cafe A"),
+            .stub(nama: "Cafe B"),
         ])
         let viewModel = FindViewModel(repository: fake)
 

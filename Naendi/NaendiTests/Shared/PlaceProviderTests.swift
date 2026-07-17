@@ -12,38 +12,32 @@ struct PlaceProviderTests {
 
     @Test("when already seeded, load from local store and do NOT fetch remotely")
     func usesCacheWhenSeeded() async throws {
-        let remote = FakePlaceRepository(places: [
-            Place(name: "From CloudKit", halalStatus: .halal)
-        ])
+        let remote = FakePlaceRepository(places: [.stub(nama: "From CloudKit")])
         let local = FakePlaceStore()
         local.hasSeededData = true
-        local.storedPlaces = [Place(name: "From cache", halalStatus: .halal)]
+        local.storedPlaces = [.stub(nama: "From cache")]
 
         let provider = PlaceProvider(repository: remote, store: local)
         let result = try await provider.places()
 
-        #expect(result.first?.name == "From cache")
+        #expect(result.first?.nama == "From cache")
     }
 
     @Test("when not yet seeded, fetch remotely and save to local store")
     func fetchesAndSeedsWhenNotSeeded() async throws {
-        let remote = FakePlaceRepository(places: [
-            Place(name: "From CloudKit", halalStatus: .halal)
-        ])
+        let remote = FakePlaceRepository(places: [.stub(nama: "From CloudKit")])
         let local = FakePlaceStore()
 
         let provider = PlaceProvider(repository: remote, store: local)
         let result = try await provider.places()
 
-        #expect(result.first?.name == "From CloudKit")
+        #expect(result.first?.nama == "From CloudKit")
         #expect(local.savedPlaces?.isEmpty == false)
     }
-    
+
     @Test("after fetching, the store is marked as seeded")
     func marksSeededAfterFetch() async throws {
-        let remote = FakePlaceRepository(places: [
-            Place(name: "From CloudKit", halalStatus: .halal)
-        ])
+        let remote = FakePlaceRepository(places: [.stub(nama: "From CloudKit")])
         let local = FakePlaceStore()
 
         let provider = PlaceProvider(repository: remote, store: local)

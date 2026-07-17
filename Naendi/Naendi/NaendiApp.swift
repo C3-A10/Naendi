@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct NaendiApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ResultView()
         }
+        .modelContainer(for: [PlaceEntity.self, UserPreference.self])
     }
 }
