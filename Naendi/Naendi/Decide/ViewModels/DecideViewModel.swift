@@ -12,6 +12,7 @@ import CoreLocation
 @Observable
 class DecideViewModel {
     var places: [Place] = []
+    var landingPagePlaces: [Place] = []
     var isLoading: Bool = false
     var errorMessage: String?
     private let mapKitService = MapKitService()
@@ -52,7 +53,17 @@ class DecideViewModel {
             try? await Task.sleep(nanoseconds: 800_000_000)
             await MainActor.run {
                 self.places = Place.dummyData
-                // self.places = []
+                self.isLoading = false
+            }
+        }
+    }
+    
+    func loadLandingPageData() {
+        self.isLoading = true
+        Task {
+            try? await Task.sleep(nanoseconds: 800_000_000)
+            await MainActor.run {
+                self.landingPagePlaces = Place.dummyData
                 self.isLoading = false
             }
         }
