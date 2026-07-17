@@ -10,6 +10,7 @@ import SwiftUI
 struct PlaceCardNormalView: View {
     let place: Place
     let isDetail: Bool
+    let isReported: Bool=false
     @Binding var isExpanded: Bool
     @Binding var isComparing: Bool
     @State var viewModel: DecideViewModel
@@ -25,14 +26,14 @@ struct PlaceCardNormalView: View {
     var isSelected: Bool { viewModel.isSelected(place) }
     var isCheckDisabled: Bool { viewModel.isCompareLimitReached && !isSelected }
     private var cardHeight: CGFloat { isDetail ? 400 : 240 }
-
+    
     var body: some View {
         ZStack(alignment: .bottom) {
             // Gambar
             if let urlString = place.imgUrl, let url = URL(string: urlString) {
                 AsyncImage(url: url) { phase in
                     switch phase {
-
+                        
                     case .success(let image):
                         GeometryReader { geo in
                             image
@@ -42,14 +43,14 @@ struct PlaceCardNormalView: View {
                                 .clipped()
                         }
                         .frame(height: cardHeight)
-
+                        
                     case .failure, .empty:
                         Color.gray.opacity(0.3)
                             .frame(height: cardHeight)
                             .overlay {
                                 ProgressView()
                             }
-
+                        
                     @unknown default:
                         EmptyView()
                     }
@@ -57,12 +58,14 @@ struct PlaceCardNormalView: View {
                 .overlay(alignment: .topTrailing) {
                     // Tombol report
                     if isDetail {
-                        Image(systemName: "exclamationmark.bubble.fill")
+                        
+                        Image(systemName: isReported ? "exclamationmark.bubble.fill" : "exclamationmark.bubble")
                             .font(.system(size: 24))
                             .foregroundColor(.white)
                             .padding(12)
                             .clipShape(Circle())
                             .padding(12)
+                        
                     }
                 }
             } else {
@@ -133,7 +136,7 @@ struct PlaceCardNormalView: View {
             isDetail: true,
             isExpanded: .constant(false),
             isComparing: .constant(true),
-            viewModel: DecideViewModel() 
+            viewModel: DecideViewModel()
         )
         .padding()
     }
