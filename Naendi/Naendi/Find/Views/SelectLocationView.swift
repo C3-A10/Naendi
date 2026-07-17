@@ -40,7 +40,7 @@ struct SelectLocationView: View {
                 LocationMapView(
                     cameraPosition: $cameraPosition,
                     selectedLocationName: $selectedLocationName,
-   -                 selectedCoordinate: $selectedCoordinate,
+                    selectedCoordinate: $selectedCoordinate,
                     radius: $radius,
                     submittedSearchQuery: $submittedSearchQuery,
                     showsUserLocation: $showsUserLocation
