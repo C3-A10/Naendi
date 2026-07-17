@@ -2,182 +2,175 @@
 //  ResultView.swift
 //  Naendi
 //
-//  Created by Bryan Samuel on 14/07/26.
+//  Created by Satriya Handha Wibowo & Bryan Samuel on 16/07/26.
 //
 
 import SwiftUI
 
 struct ResultView: View {
-    @State private var viewModel = DecideViewModel()
-    @State private var isComparing: Bool = false
-    @State private var selectedImageURL: URL? = nil
-    @State private var isShowingCompare: Bool = false
-    @State private var isShowingEditPreference: Bool = false
+    @State var viewModel: DecideViewModel
+    @State private var isComparing = false
+    @State private var selectedImageURL: URL?
+    @State private var isNavigatingToCompare = false
+    @State private var selectedPlace: Place?
+    @State private var isShowingEditPreference = false
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                // MARK: - Custom Header (Pengganti Native Navigation Bar)
-                HStack(alignment: .center) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(isComparing ? "Compare" : "Results")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                        if isComparing {
-                            Text("Select any 2 places to compare")
-                                .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(.secondary)
-                                .transition(.opacity.combined(with: .move(edge: .top)))
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                    HStack(spacing: 12) {
-                        if isComparing {
-                            // SAAT MODE COMPARE: Hanya ada tombol Cancel
-                            Button {
-                                withAnimation(.spring()) {
-                                    isComparing = false
-                                    viewModel.clearSelectedPlaces()
-                                }
-                            } label: {
-                                Text("Cancel")
-                                    .font(.system(size: 15, weight: .semibold))
-                                    .foregroundColor(.white)
-                                    .frame(height: 36)
-                                    .padding(.horizontal, 16)
-                                    .background(Color(white: 0.15))
-                                    .clipShape(Capsule())
-                            }
-                            .transition(.scale.combined(with: .opacity))
-                            
-                        } else {
-                            // SAAT NORMAL: Tombol Compare dan Tombol Edit
-                            Button {
-                                withAnimation(.spring()) {
-                                    isComparing = true
-                                }
-                            } label: {
-                                Image(systemName: "arrow.left.arrow.right")
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundColor(.white)
-                                    .frame(width: 40, height: 40)
-                                    .background(Color(white: 0.15))
-                                    .clipShape(Circle())
-                            }
-                            .transition(.scale.combined(with: .opacity))
-                            
-                            Button {
-                                isShowingEditPreference = true
-                            } label: {
-                                Image(systemName: "pencil")
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundColor(.white)
-                                    .frame(width: 40, height: 40)
-                                    .background(Color(white: 0.15))
-                                    .clipShape(Circle())
-                                    .contentShape(Circle())
-                            }
-                            .buttonStyle(.plain)
-                            .transition(.scale.combined(with: .opacity))
-                        }
+        VStack(spacing: 0) {
+            HStack(alignment: .center) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(isComparing ? "Compare" : "Results")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                    if isComparing {
+                        Text("Select any 2 places to compare")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.secondary)
+                            .transition(.opacity.combined(with: .move(edge: .top)))
                     }
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 10)
-                .padding(.bottom, 16)
-                
-                // MARK: - Konten Utama
-                ZStack {
-                    if viewModel.isLoading {
-                        ProgressView("Memuat rekomendasi...")
-                            .scaleEffect(1.1)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    } else if viewModel.places.isEmpty {
-                        // Tampilan saat hasil kosong
-                        VStack(spacing: 16) {
-                            Text("No results found")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                            
-                            Text("Edit Your Preference First To get results")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal, 40)
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    } else {
-                        ScrollView {
-                            LazyVStack(spacing: 20) {
-                                ForEach(viewModel.places) { place in
-                                    PlaceResultCardView(
-                                        place: place,
-                                        isDetail: false,
-                                        viewModel: viewModel,
-                                        isComparing: $isComparing,
-                                        selectedImageURL: $selectedImageURL
-                                    )
-                                }
-                            }
-                            .padding(.vertical, 16)
-                            .padding(.bottom, viewModel.isCompareLimitReached ? 80 : 16)
-                        }
-                    }
-                }
-            }
-            // Sembunyikan navigation bar bawaan secara penuh
-            .toolbar(.hidden, for: .navigationBar)
-            .onAppear {
-                viewModel.loadDummyData()
-                viewModel.clearSelectedPlaces()
-                isComparing = false
-            }
-            // MARK: - Tombol Melayang "Compare" (Muncul saat pas 2 kartu dipilih)
-            .overlay(alignment: .bottom) {
-                if isComparing && viewModel.isCompareLimitReached {
-                    Button {
-                        isShowingCompare = true
-                    } label: {
-                        HStack(spacing: 8) {
-                            Text("Compare (\(viewModel.selectedPlaces.count) places)")
-                                .font(.system(size: 16, weight: .bold))
-                            Image(systemName: "arrow.right")
-                        }
-                        .foregroundColor(.black)
-                        .padding(.vertical, 16)
-                        .frame(maxWidth: .infinity)
-                        .background(Color("color_green"))
-                        .clipShape(Capsule())
-                        .padding(.horizontal, 24)
-                        .padding(.bottom, 20)
-                    }
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
-            }
 
-            .fullScreenCover(isPresented: $isShowingCompare) {
-                if viewModel.selectedPlaces.count >= 2 {
-                    NavigationStack {
-                        CompareView(placeA: viewModel.selectedPlaces[0], placeB: viewModel.selectedPlaces[1])
-                            .navigationTitle("Compare")
-                            .navigationBarTitleDisplayMode(.inline)
+                Spacer()
+
+                HStack(spacing: 12) {
+                    if isComparing {
+                        Button {
+                            withAnimation(.spring()) {
+                                isComparing = false
+                                viewModel.clearSelectedPlaces()
+                            }
+                        } label: {
+                            Text("Cancel")
+                                .font(.system(size: 15, weight: .semibold))
+                                .foregroundColor(.white)
+                                .frame(height: 36)
+                                .padding(.horizontal, 16)
+                                .background(Color(white: 0.15))
+                                .clipShape(Capsule())
+                        }
+                        .transition(.scale.combined(with: .opacity))
+                    } else {
+                        Button {
+                            withAnimation(.spring()) {
+                                isComparing = true
+                            }
+                        } label: {
+                            Image(systemName: "arrow.left.arrow.right")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white)
+                                .frame(width: 40, height: 40)
+                                .background(Color(white: 0.15))
+                                .clipShape(Circle())
+                        }
+                        .transition(.scale.combined(with: .opacity))
+
+                        Button {
+                            isShowingEditPreference = true
+                        } label: {
+                            Image(systemName: "pencil")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.white)
+                                .frame(width: 40, height: 40)
+                                .background(Color(white: 0.15))
+                                .clipShape(Circle())
+                                .contentShape(Circle())
+                        }
+                        .buttonStyle(.plain)
+                        .transition(.scale.combined(with: .opacity))
                     }
-                } else {
-                    EmptyView()
                 }
             }
-            .fullScreenCover(isPresented: $isShowingEditPreference) {
-                EditPreferenceView()
+            .padding(.horizontal, 20)
+            .padding(.top, 10)
+            .padding(.bottom, 16)
+
+            ZStack {
+                if viewModel.isLoading {
+                    ProgressView("Memuat rekomendasi...")
+                        .scaleEffect(1.1)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if viewModel.places.isEmpty {
+                    VStack(spacing: 16) {
+                        Text("No results found")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                        Text("Edit Your Preference First To get results")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 40)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 20) {
+                            ForEach(viewModel.places) { place in
+                                PlaceCardView(
+                                    place: place,
+                                    mode: .result,
+                                    viewModel: viewModel,
+                                    isComparing: $isComparing,
+                                    selectedImageURL: $selectedImageURL,
+                                    selectedPlace: $selectedPlace
+                                )
+                            }
+                        }
+                        .padding(.vertical, 16)
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, (isComparing && viewModel.isCompareLimitReached) ? 80 : 16)
+                    }
+                }
             }
-            .navigationDestination(item: $selectedImageURL) { url in
-                    FullImageDetailView(url: url)
+        }
+        .toolbar(.hidden, for: .navigationBar)
+        .onAppear {
+            viewModel.clearSelectedPlaces()
+            isComparing = false
+        }
+        .overlay(alignment: .bottom) {
+            if isComparing && viewModel.isCompareLimitReached {
+                Button {
+                    isNavigatingToCompare = true
+                } label: {
+                    HStack(spacing: 8) {
+                        Text("Compare (\(viewModel.selectedPlaces.count) places)")
+                            .font(.system(size: 16, weight: .bold))
+                        Image(systemName: "arrow.right")
+                    }
+                    .foregroundColor(.black)
+                    .padding(.vertical, 16)
+                    .frame(maxWidth: .infinity)
+                    .background(Color("color_green"))
+                    .clipShape(Capsule())
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 20)
+                }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
             }
+        }
+        .navigationDestination(item: $selectedImageURL) { url in
+            FullImageDetailView(url: url)
+        }
+        .fullScreenCover(item: $selectedPlace) { place in
+            NavigationStack {
+                DetailPlaceView(place: place)
+            }
+        }
+        .fullScreenCover(isPresented: $isNavigatingToCompare) {
+            if viewModel.selectedPlaces.count >= 2 {
+                NavigationStack {
+                    CompareView(placeA: viewModel.selectedPlaces[0], placeB: viewModel.selectedPlaces[1])
+                        .navigationTitle("Compare")
+                        .navigationBarTitleDisplayMode(.inline)
+                }
+            }
+        }
+        .fullScreenCover(isPresented: $isShowingEditPreference) {
+            EditPreferenceView()
         }
     }
 }
 
 #Preview {
-    ResultView()
+    ResultView(viewModel: DecideViewModel())
 }
