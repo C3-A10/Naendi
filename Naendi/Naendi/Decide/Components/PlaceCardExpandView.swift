@@ -13,7 +13,7 @@ struct PlaceCardExpandView: View {
     let place: Place
     @Binding var isExpanded: Bool
     @Binding var isComparing: Bool
-    let viewModel: DecideViewModel
+    @State var viewModel: DecideViewModel
     @Binding var selectedImageURL: URL?
     
     // Helper status

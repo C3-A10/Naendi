@@ -7,14 +7,12 @@
 
 import Foundation
 import Observation
-import CoreLocation
 
 @Observable
 class DecideViewModel {
     var places: [Place] = []
     var isLoading: Bool = false
     var errorMessage: String?
-    private let mapKitService = MapKitService()
     
     // 1. Array untuk menampung maksimal 2 objek Place yang dipilih
     var selectedPlaces: [Place] = []
@@ -56,9 +54,5 @@ class DecideViewModel {
                 self.isLoading = false
             }
         }
-    }
-    
-    func openRoute(to place: Place) {
-        mapKitService.openAppleMapsRoute(to: place)
     }
 }

@@ -11,10 +11,18 @@ struct PlaceResultCardView: View {
     let place: Place
     let isDetail: Bool
     @State private var isExpanded: Bool = false
-    let viewModel: DecideViewModel
+    @State var viewModel: DecideViewModel
     @State private var isNavigating: Bool = false
     @Binding var isComparing: Bool
     @Binding var selectedImageURL: URL?
+    
+    init(place: Place, isDetail: Bool, viewModel: DecideViewModel, isComparing: Binding<Bool>, selectedImageURL: Binding<URL?>) {
+        self.place = place
+        self.isDetail = isDetail
+        self._viewModel = State(initialValue: viewModel)
+        self._isComparing = isComparing
+        self._selectedImageURL = selectedImageURL
+    }
     
     var body: some View {
         ZStack {

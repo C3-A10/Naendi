@@ -9,12 +9,12 @@ import SwiftUI
 
 struct DetailPlaceView: View {
     let place: Place
-    
+
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel = DecideViewModel()
     @State private var isComparing: Bool = false
     @State private var selectedImageURL: URL? = nil
-    
+
     var body: some View {
         VStack {
             Spacer()
@@ -27,14 +27,14 @@ struct DetailPlaceView: View {
                 selectedImageURL: $selectedImageURL
             )
             .frame(maxWidth: .infinity)
-            
+
             // Button
             CustomActionButton(
                 text: "Go to Destination",
                 backgroundColor: Color(red: 207/255, green: 245/255, blue: 64/255),
                 textColor: .black,
                 action: {
-                    viewModel.openRoute(to: place)
+                    print("Location Selected!")
                 }
             )
             .padding(.vertical, 20)
