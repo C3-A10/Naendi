@@ -165,11 +165,13 @@ struct ResultView: View {
                 DetailPlaceView(place: place)
             }
         }
-        .navigationDestination(isPresented: $isNavigatingToCompare) {
+        .fullScreenCover(isPresented: $isNavigatingToCompare) {
             if viewModel.selectedPlaces.count >= 2 {
-                CompareView(placeA: viewModel.selectedPlaces[0], placeB: viewModel.selectedPlaces[1])
-                    .navigationTitle("Compare")
-                    .navigationBarTitleDisplayMode(.inline)
+                NavigationStack {
+                    CompareView(placeA: viewModel.selectedPlaces[0], placeB: viewModel.selectedPlaces[1])
+                        .navigationTitle("Compare")
+                        .navigationBarTitleDisplayMode(.inline)
+                }
             }
         }
     }
