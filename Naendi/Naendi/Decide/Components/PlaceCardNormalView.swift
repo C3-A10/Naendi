@@ -11,6 +11,7 @@ import SwiftUI
 struct PlaceCardNormalView: View {
     let place: Place
     var mode: PlaceCardMode = .landing
+    let isReported: Bool=false
     @Binding var isExpanded: Bool
     @Binding var isComparing: Bool
     @State var viewModel: DecideViewModel

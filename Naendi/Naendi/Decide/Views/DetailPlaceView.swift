@@ -31,7 +31,7 @@ struct DetailPlaceView: View {
                 backgroundColor: Color(red: 207/255, green: 245/255, blue: 64/255),
                 textColor: .black,
                 action: {
-                    print("Location Selected!")
+                    viewModel.openRoute(to: place)
                 }
             )
             .padding(.vertical, 20)
