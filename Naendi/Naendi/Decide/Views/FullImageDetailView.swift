@@ -10,6 +10,7 @@ import SwiftUI
 struct FullImageDetailView: View {
     let url: URL
     
+    @Environment(\.dismiss) private var dismiss
     @State private var scale: CGFloat = 1.0
     @State private var lastScale: CGFloat = 1.0
     
@@ -74,11 +75,18 @@ struct FullImageDetailView: View {
                 }
             }
         }
-        // Konfigurasi Navigation Bar agar menyatu dengan tema gelap
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarColorScheme(.dark, for: .navigationBar) // Memastikan tombol "Back" berwarna putih/terang
+        .toolbarColorScheme(.dark, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
-        .toolbarBackground(Color.black, for: .navigationBar) // Navbar diwarnai hitam senada
+        .toolbarBackground(Color.black, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: { dismiss() }) {
+                    Image(systemName: "chevron.backward")
+                        .foregroundColor(.white) // Pastikan dikunci warna putih
+                }
+            }
+        }
     }
 }
 

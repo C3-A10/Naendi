@@ -40,8 +40,10 @@ struct LandingView: View {
             viewModel.clearSelectedPlaces()
             isComparing = false
         }
-        .navigationDestination(item: $selectedImageURL) { url in
-            FullImageDetailView(url: url)
+        .fullScreenCover(item: $selectedImageURL) { url in
+            NavigationStack {
+                FullImageDetailView(url: url)
+            }
         }
         .fullScreenCover(item: $selectedPlace) { place in
             NavigationStack {
