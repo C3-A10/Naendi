@@ -11,6 +11,7 @@ import Observation
 @Observable
 class DecideViewModel {
     var places: [Place] = []
+    var landingPagePlaces: [Place] = []
     var isLoading: Bool = false
     var errorMessage: String?
     
@@ -49,8 +50,18 @@ class DecideViewModel {
         Task {
             try? await Task.sleep(nanoseconds: 800_000_000)
             await MainActor.run {
-                self.places = Place.dummyData
-                // self.places = []
+                //self.places = Place.dummyData
+                self.isLoading = false
+            }
+        }
+    }
+    
+    func loadLandingPageData() {
+        self.isLoading = true
+        Task {
+            try? await Task.sleep(nanoseconds: 800_000_000)
+            await MainActor.run {
+                self.landingPagePlaces = Place.dummyData
                 self.isLoading = false
             }
         }
