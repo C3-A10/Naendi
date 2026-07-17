@@ -1,3 +1,10 @@
+//
+//  ResultView.swift
+//  Naendi
+//
+//  Created by Satriya Handha Wibowo on 16/07/26.
+//
+
 import SwiftUI
 
 struct ResultView: View {
@@ -6,10 +13,10 @@ struct ResultView: View {
     @State private var isComparing: Bool = false
     @State private var selectedImageURL: URL? = nil
     @State private var isNavigatingToCompare: Bool = false
+    @State private var selectedPlace: Place? = nil
     
     var body: some View {
         VStack(spacing: 0) {
-            // MARK: - Custom Header
             HStack(alignment: .center) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(isComparing ? "Compare" : "Results")
@@ -59,7 +66,7 @@ struct ResultView: View {
                         .transition(.scale.combined(with: .opacity))
                         
                         Button {
-                            
+                            // Aksi edit atau filter
                         } label: {
                             Image(systemName: "pencil")
                                 .font(.system(size: 16, weight: .semibold))
@@ -72,24 +79,26 @@ struct ResultView: View {
                     }
                 }
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, 16)
             .padding(.top, 10)
             .padding(.bottom, 16)
             
-            // MARK: - Konten Utama
             ZStack {
                 ScrollView {
                     LazyVStack(spacing: 20) {
                         ForEach(viewModel.places) { place in
-                            PlaceResultCardView(
+                            PlaceCardView(
                                 place: place,
+                                mode: .result,
                                 viewModel: viewModel,
                                 isComparing: $isComparing,
-                                selectedImageURL: $selectedImageURL
+                                selectedImageURL: $selectedImageURL,
+                                selectedPlace: $selectedPlace 
                             )
                         }
                     }
                     .padding(.vertical, 16)
+                    .padding(.horizontal, 20)
                     .padding(.bottom, viewModel.isCompareLimitReached ? 80 : 16)
                 }
             }
@@ -99,7 +108,6 @@ struct ResultView: View {
             viewModel.clearSelectedPlaces()
             isComparing = false
         }
-        // MARK: - Tombol Melayang "Compare"
         .overlay(alignment: .bottom) {
             if isComparing && viewModel.isCompareLimitReached {
                 Button {
@@ -123,6 +131,9 @@ struct ResultView: View {
         }
         .navigationDestination(item: $selectedImageURL) { url in
             FullImageDetailView(url: url)
+        }
+        .navigationDestination(item: $selectedPlace) { place in
+            DetailPlaceView(place: place)
         }
         .navigationDestination(isPresented: $isNavigatingToCompare) {
             if viewModel.selectedPlaces.count >= 2 {

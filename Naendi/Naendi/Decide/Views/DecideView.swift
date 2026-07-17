@@ -19,13 +19,17 @@ struct DecideView: View {
                         .scaleEffect(1.1)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if viewModel.places.isEmpty {
-                    LandingView()
+                    LandingView(viewModel: viewModel)
                 } else {
                     ResultView(viewModel: viewModel)
                 }
             }
             .onAppear {
                 viewModel.loadDummyData()
+
+                if (viewModel.places.isEmpty) {
+                    viewModel.loadLandingPageData()
+                }
             }
         }
     }

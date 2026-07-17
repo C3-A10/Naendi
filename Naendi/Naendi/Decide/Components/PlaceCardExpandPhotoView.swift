@@ -98,13 +98,13 @@ struct PlaceCardExpandPhotoView: View {
             }
             .frame(height: 240)
             
-            // --- Overlay: Pill Jarak dan Checkbox Kanan ---
             DistanceCheckmarkView(
                 isComparing: isComparing,
                 isSelected: isSelected,
                 isCheckDisabled: isCheckDisabled,
                 place: place,
-                viewModel: viewModel
+                viewModel: viewModel,
+                distancePillColor: Color("color_green")
             )
         }
         .frame(height: 240)
