@@ -145,12 +145,23 @@ struct BudgetRow: View {
 struct PreferenceOptionRow: View {
     let title: String
     let value: String
+    let showsDisclosure: Bool
+
+    init(
+        title: String,
+        value: String,
+        showsDisclosure: Bool = true
+    ) {
+        self.title = title
+        self.value = value
+        self.showsDisclosure = showsDisclosure
+    }
 
     var body: some View {
         PreferenceOptionRowContent(
             title: title,
             value: value,
-            showsDisclosure: true
+            showsDisclosure: showsDisclosure
         )
     }
 }
@@ -217,7 +228,7 @@ private struct PreferenceOptionRowContent: View {
     }
 }
 
-private struct RadiusSlider: View {
+struct RadiusSlider: View {
     @Binding var value: Double
 
     let range: ClosedRange<Double>

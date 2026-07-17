@@ -12,15 +12,15 @@ struct CustomBudgetRow: View {
     }
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 6) {
             Text("Custom Budget")
                 .font(.system(size: 18))
                 .foregroundStyle(.primary)
                 .lineLimit(1)
-                .fixedSize(horizontal: true, vertical: false)
+                .minimumScaleFactor(0.8)
                 .layoutPriority(1)
 
-            Spacer(minLength: 12)
+            Spacer(minLength: 8)
 
             budgetField(
                 placeholder: "Min",
@@ -31,7 +31,6 @@ struct CustomBudgetRow: View {
             Text("–")
                 .font(.system(size: 18))
                 .foregroundStyle(.secondary)
-                .fixedSize(horizontal: true, vertical: false)
 
             budgetField(
                 placeholder: "Max",
@@ -41,6 +40,7 @@ struct CustomBudgetRow: View {
         }
         .padding(.horizontal, 18)
         .frame(height: 60)
+        .frame(maxWidth: .infinity)
         .background(Color(uiColor: .secondarySystemGroupedBackground))
         .clipShape(Capsule())
         .overlay {
@@ -66,7 +66,7 @@ struct CustomBudgetRow: View {
             .lineLimit(1)
             .minimumScaleFactor(0.75)
             .padding(.horizontal, 6)
-            .frame(width: 88, height: 32)
+            .frame(width: 56, height: 32)
             .background(Color(uiColor: .systemBackground).opacity(0.9))
             .clipShape(Capsule())
             .contentShape(Capsule())
