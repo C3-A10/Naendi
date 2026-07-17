@@ -13,6 +13,7 @@ struct DistanceCheckmarkView: View {
     let isCheckDisabled: Bool
     let place: Place
     let viewModel: DecideViewModel
+    let distancePillColor: Color
     
     var body: some View {
         HStack(alignment: .top) {
@@ -22,7 +23,7 @@ struct DistanceCheckmarkView: View {
                 .foregroundColor(.black)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
-                .background(Color("color_green"))
+                .background(distancePillColor)
                 .clipShape(Capsule())
             
             Spacer()

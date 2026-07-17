@@ -21,7 +21,7 @@ struct NaendiApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ResultView()
+            DecideView()
         }
         .modelContainer(Self.container)
     }

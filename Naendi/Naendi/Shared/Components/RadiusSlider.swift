@@ -1,0 +1,83 @@
+import SwiftUI
+
+struct RadiusSlider: View {
+    @Binding var value: Double
+
+    let range: ClosedRange<Double>
+    let step: Double
+
+    private var progress: CGFloat {
+        CGFloat((value - range.lowerBound) / (range.upperBound - range.lowerBound))
+    }
+
+    var body: some View {
+        GeometryReader { proxy in
+            let trackWidth = proxy.size.width
+            let knobSize: CGFloat = 24
+            let knobX = max(0, min(trackWidth - knobSize, progress * (trackWidth - knobSize)))
+            let labelX = max(18, min(trackWidth - 18, knobX + knobSize / 2))
+
+            ZStack(alignment: .topLeading) {
+                Capsule()
+                    .fill(Color(uiColor: .secondarySystemBackground))
+                    .frame(height: 5)
+                    .offset(y: 8)
+
+                Capsule()
+                    .fill(Color("color_green"))
+                    .frame(width: knobX + knobSize / 2, height: 5)
+                    .offset(y: 8)
+
+                Circle()
+                    .fill(Color("color_green"))
+                    .frame(width: knobSize, height: knobSize)
+                    .offset(x: knobX)
+
+                Text("0,5")
+                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
+                    .offset(y: 28)
+
+                Text(formattedValue)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(.primary)
+                    .frame(width: 36)
+                    .offset(x: labelX - 18, y: 28)
+
+                Text("10")
+                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 22, alignment: .trailing)
+                    .offset(x: trackWidth - 22, y: 28)
+            }
+            .contentShape(Rectangle())
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { gesture in
+                        updateValue(at: gesture.location.x, width: trackWidth, knobSize: knobSize)
+                    }
+            )
+        }
+        .frame(height: 48)
+    }
+
+    private var formattedValue: String {
+        let fractionLength = value.truncatingRemainder(dividingBy: 1) == 0 ? 0 : 1
+        return value.formatted(.number.precision(.fractionLength(fractionLength)))
+    }
+
+    private func updateValue(at xPosition: CGFloat, width: CGFloat, knobSize: CGFloat) {
+        let usableWidth = max(width - knobSize, 1)
+        let rawProgress = min(max((xPosition - knobSize / 2) / usableWidth, 0), 1)
+        let rawValue = range.lowerBound + Double(rawProgress) * (range.upperBound - range.lowerBound)
+        let steppedValue = (rawValue / step).rounded() * step
+        value = min(max(steppedValue, range.lowerBound), range.upperBound)
+    }
+}
+
+#Preview {
+    @Previewable @State var radius = 1.0
+
+    RadiusSlider(value: $radius, range: 0.5...10, step: 0.5)
+        .padding(.horizontal, 32)
+}
