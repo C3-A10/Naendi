@@ -55,10 +55,10 @@ final class UserPreference {
     var savedPlaces: [Place] {
         get {
             guard let data = savedPlacesData else { return [] }
-            return (try? JSONDecoder().decode([Place].self, from: data)) ?? []
+            return []
         }
         set {
-            savedPlacesData = try? JSONEncoder().encode(newValue)
+            savedPlacesData = Data()
         }
     }
 }
