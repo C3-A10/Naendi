@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct DecideView: View {
-    
+
+    @Environment(\.modelContext) private var modelContext
     @State private var viewModel = DecideViewModel()
-    
+
     var body: some View {
         NavigationStack {
             Group {
@@ -24,9 +26,14 @@ struct DecideView: View {
                     ResultView(viewModel: viewModel)
                 }
             }
+            .task {
+                let provider = PlaceProvider(
+                    repository: CloudKitPlaceRepository(),
+                    store: SwiftDataPlaceStore(context: modelContext)
+                )
+                await viewModel.loadTopPlaces(from: provider)
+            }
             .onAppear {
-                viewModel.loadDummyData()
-
                 if (viewModel.places.isEmpty) {
                     viewModel.loadLandingPageData()
                 }
