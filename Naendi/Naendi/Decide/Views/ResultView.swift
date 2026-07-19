@@ -129,23 +129,18 @@ struct ResultView: View {
         }
         .overlay(alignment: .bottom) {
             if isComparing && viewModel.isCompareLimitReached {
-                Button {
+                CustomActionButton(text: "Compare (\(viewModel.selectedPlaces.count) places)", backgroundColor: Color("color_green"), textColor: .black) {
                     isNavigatingToCompare = true
-                } label: {
-                    HStack(spacing: 8) {
-                        Text("Compare (\(viewModel.selectedPlaces.count) places)")
-                            .font(.system(size: 16, weight: .bold))
-                        Image(systemName: "arrow.right")
-                    }
-                    .foregroundColor(.black)
-                    .padding(.vertical, 16)
-                    .frame(maxWidth: .infinity)
-                    .background(Color("color_green"))
-                    .clipShape(Capsule())
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 20)
                 }
-                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .foregroundColor(.black)
+                .padding(.vertical, 16)
+                .frame(maxWidth: .infinity)
+                .background(Color("color_green"))
+                .clipShape(Capsule())
+                .padding(.horizontal, 24)
+                .padding(.bottom, 20)
+            }
+            .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
         .navigationDestination(item: $selectedImageURL) { url in
