@@ -33,7 +33,7 @@ struct RadiusSlider: View {
                     .frame(width: knobSize, height: knobSize)
                     .offset(x: knobX)
 
-                Text("0,5")
+                Text(formatted(range.lowerBound))
                     .font(.system(size: 12))
                     .foregroundStyle(.secondary)
                     .offset(y: 28)
@@ -44,7 +44,7 @@ struct RadiusSlider: View {
                     .frame(width: 36)
                     .offset(x: labelX - 18, y: 28)
 
-                Text("10")
+                Text(formatted(range.upperBound))
                     .font(.system(size: 12))
                     .foregroundStyle(.secondary)
                     .frame(width: 22, alignment: .trailing)
@@ -62,8 +62,12 @@ struct RadiusSlider: View {
     }
 
     private var formattedValue: String {
-        let fractionLength = value.truncatingRemainder(dividingBy: 1) == 0 ? 0 : 1
-        return value.formatted(.number.precision(.fractionLength(fractionLength)))
+        formatted(value)
+    }
+
+    private func formatted(_ number: Double) -> String {
+        let fractionLength = number.truncatingRemainder(dividingBy: 1) == 0 ? 0 : 1
+        return number.formatted(.number.precision(.fractionLength(fractionLength)))
     }
 
     private func updateValue(at xPosition: CGFloat, width: CGFloat, knobSize: CGFloat) {

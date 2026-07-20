@@ -12,7 +12,13 @@
     "testTimeoutsEnabled" : true
   },
   "testTargets" : [
-
+    {
+      "target" : {
+        "containerPath" : "container:Naendi.xcodeproj",
+        "identifier" : "352E20B63008B5280096F685",
+        "name" : "NaendiTests"
+      }
+    }
   ],
   "version" : 1
 }
