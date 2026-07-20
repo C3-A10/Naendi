@@ -11,6 +11,8 @@ struct CompareCard: View {
     let item: Place
     let isSelected: Bool
     let onTap: () -> Void
+    let viewModel: DecideViewModel
+    
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -106,10 +108,8 @@ struct CompareCard: View {
                     }
                 }
                 
-                //TODO: benarkan jarak sesuai jarak terbaru dan pin(bila ada)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("0,9 KM dari lokasi Anda saat ini")
-                    Text("0,1 KM dari GWalk")
+                    Text("\(viewModel.calculateDistance(to: item)) dari lokasi Anda saat ini.")
                 }
                 .font(.system(size: 12))
                 .foregroundColor(.gray)
@@ -176,7 +176,8 @@ struct DetailRowView: View {
     CompareCard(
         item: Place.dummyData[1],
         isSelected: true,
-        onTap: {}
+        onTap: {},
+        viewModel: DecideViewModel()
     )
 }
 
@@ -184,6 +185,7 @@ struct DetailRowView: View {
     CompareCard(
         item: Place.dummyData[1],
         isSelected: false,
-        onTap: {}
+        onTap: {},
+        viewModel: DecideViewModel()
     )
 }

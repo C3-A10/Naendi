@@ -152,7 +152,11 @@ struct ResultView: View {
         .fullScreenCover(isPresented: $isNavigatingToCompare) {
             if viewModel.selectedPlaces.count >= 2 {
                 NavigationStack {
-                    CompareView(placeA: viewModel.selectedPlaces[0], placeB: viewModel.selectedPlaces[1])
+                    CompareView(
+                        placeA: viewModel.selectedPlaces[0],
+                        placeB: viewModel.selectedPlaces[1],
+                        viewModel: viewModel
+                    )
                         .navigationTitle("Compare")
                         .navigationBarTitleDisplayMode(.inline)
                 }

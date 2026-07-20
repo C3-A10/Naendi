@@ -11,6 +11,7 @@ import SwiftUI
 struct CompareTable: View {
     let placeA: Place
     let placeB: Place
+    let viewModel: DecideViewModel
     
     @Binding var selectedPlace: Place?
     
@@ -18,18 +19,22 @@ struct CompareTable: View {
         HStack(alignment: .top, spacing: 10) {
             CompareCard(
                 item: placeA,
-                isSelected: selectedPlace?.id == placeA.id
-            ) {
-                selectedPlace = placeA
-            }
+                isSelected: selectedPlace?.id == placeA.id,
+                onTap: {
+                    selectedPlace = placeA
+                },
+                viewModel: viewModel
+            )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
             CompareCard(
                 item: placeB,
-                isSelected: selectedPlace?.id == placeB.id
-            ) {
-                selectedPlace = placeB
-            }
+                isSelected: selectedPlace?.id == placeB.id,
+                onTap: {
+                    selectedPlace = placeB
+                },
+                viewModel: viewModel
+            )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .padding(.horizontal, 16)
@@ -41,6 +46,10 @@ struct CompareTable: View {
 
 // MARK: - PREVIEW
 #Preview {
-    CompareTable(placeA: Place.dummyData[1], placeB: Place.dummyData[2],selectedPlace: .constant(nil))
-
+    CompareTable(
+        placeA: Place.dummyData[1],
+        placeB: Place.dummyData[2],
+        viewModel: DecideViewModel(),
+        selectedPlace: .constant(nil)
+    )
 }
