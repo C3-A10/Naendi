@@ -253,6 +253,9 @@ struct EditPreferenceView: View {
                 .presentationDetents([.height(300)])
                 .presentationDragIndicator(.visible)
         }
+        .background {
+            GreenBlurBackground()
+        }
     }
 
     // MARK: - Criteria conversion

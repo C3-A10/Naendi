@@ -11,6 +11,7 @@ import Combine
 struct PlaceCardExpandView: View {
     
     let place: Place
+    let isChooseThisLocationBtnVisible: Bool
     @Binding var isExpanded: Bool
     @Binding var isComparing: Bool
     @State var viewModel: DecideViewModel
@@ -35,7 +36,7 @@ struct PlaceCardExpandView: View {
             )
             
             PlaceCardExpandInfoView(
-                place: place,
+                place: place, isChooseThisLocationBtnVisible: isChooseThisLocationBtnVisible,
                 isExpanded: $isExpanded, selectedPlace: $selectedPlace
             )
         }
@@ -53,7 +54,7 @@ struct PlaceCardExpandView: View {
         
         ScrollView {
             PlaceCardExpandView(
-                place: Place.dummyData[0],
+                place: Place.dummyData[0], isChooseThisLocationBtnVisible: false,
                 isExpanded: .constant(false),
                 isComparing: .constant(true),
                 viewModel: DecideViewModel(),

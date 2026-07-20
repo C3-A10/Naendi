@@ -122,6 +122,7 @@ struct ResultView: View {
                                 PlaceCardView(
                                     place: place,
                                     mode: .result,
+                                    isChooseThisLocationBtnVisible: true,
                                     viewModel: viewModel,
                                     isComparing: $isComparing,
                                     selectedImageURL: $selectedImageURL,
@@ -161,9 +162,6 @@ struct ResultView: View {
         .fullScreenCover(item: $selectedPlace) { place in
             NavigationStack {
                 DetailPlaceView(place: place)
-                .background {
-                    GreenBlurBackground()
-                }
             }
         }
         .fullScreenCover(isPresented: $isNavigatingToCompare) {
@@ -176,9 +174,6 @@ struct ResultView: View {
                     )
                     .navigationTitle("Compare")
                     .navigationBarTitleDisplayMode(.inline)
-                    .background {
-                        GreenBlurBackground()
-                    }
                 }
             }
         }
@@ -191,9 +186,6 @@ struct ResultView: View {
                         provider: AppServices.placeProvider(context: modelContext)
                     )
                 }
-            }
-            .background {
-                GreenBlurBackground()
             }
         }
         .alert(
