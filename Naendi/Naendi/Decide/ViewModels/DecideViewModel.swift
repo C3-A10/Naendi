@@ -10,22 +10,26 @@ import Observation
 import CoreLocation
 
 @Observable
-class DecideViewModel {
+class DecideViewModel: NSObject, CLLocationManagerDelegate {
+    
+    private let locationManager = CLLocationManager()
+    private let mapKitService = MapKitService()
+
     var places: [Place] = []
     var landingPagePlaces: [Place] = []
     var isLoading: Bool = false
     var errorMessage: String?
-    private let mapKitService = MapKitService()
-    
-    // 1. Array untuk menampung maksimal 2 objek Place yang dipilih
     var selectedPlaces: [Place] = []
+    var isCompareLimitReached: Bool { selectedPlaces.count >= 2 }
     
-    // Helper untuk mengecek apakah kuota compare sudah penuh (2 tempat)
-    var isCompareLimitReached: Bool {
-        selectedPlaces.count >= 2
+    var userLocation: CLLocation?
+    
+    override init() {
+        super.init()
+        setupLocationManager()
     }
     
-    // Helper untuk mengecek apakah suatu tempat sedang terpilih
+    // fungsi untuk mengecek apakah suatu tempat sedang terpilih
     func isSelected(_ place: Place) -> Bool {
         selectedPlaces.contains { $0.id == place.id }
     }
@@ -87,8 +91,41 @@ class DecideViewModel {
         }
     }
     
+    private func setupLocationManager() {
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.requestWhenInUseAuthorization() // minta izin lokasi ke user
+        locationManager.startUpdatingLocation()
+        locationManager.distanceFilter = 10.0 // panggil fungsi hanya jika user berjalan/berpindah sejauh 10 meter
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else { return }
+        self.userLocation = location
+    }
+    
     // fungsi untuk routing di apple map
     func openRoute(to place: Place) {
         mapKitService.openAppleMapsRoute(to: place)
+    }
+    
+    // fungsi untuk hitung jarak di cardview
+    func calculateDistance(to place: Place) -> String {
+        guard let userLocation = userLocation else {
+            return "-" // tampilkan tanda strip jika GPS user belum didapat/tdk diizinkan
+        }
+        
+        let placeLocation = CLLocation(latitude: place.latitude, longitude: place.longitude)
+        
+        // menghitung jarak dalam satuan meter
+        let distanceInMeters = userLocation.distance(from: placeLocation)
+        
+        // format tampilan teks (jika < 1 km tampilkan "500 m", jika lebih tampilkan "1.2 km")
+        if distanceInMeters < 1000 {
+            return String(format: "%.0f m", distanceInMeters)
+        } else {
+            let distanceInKm = distanceInMeters / 1000
+            return String(format: "%.1f km", distanceInKm)
+        }
     }
 }
