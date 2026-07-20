@@ -22,10 +22,6 @@ final class UserPreference {
     var outputResult: Int
     var sortBy: String
     
-    // --- Penyimpanan Array Place (Caching CloudKit Data) ---
-    // Kita simpan sebagai Data agar tidak mengganggu relasi SwiftData
-    private var savedPlacesData: Data?
-    
     init(radius: Double = 1.0,
          budgetCategory: String = "$$",
          minBudget: Double = 10000,
@@ -49,16 +45,5 @@ final class UserPreference {
         self.isHalalOnly = isHalalOnly
         self.outputResult = outputResult
         self.sortBy = sortBy
-    }
-    
-    // Helper property untuk mengakses array Place dengan mudah
-    var savedPlaces: [Place] {
-        get {
-            guard let data = savedPlacesData else { return [] }
-            return []
-        }
-        set {
-            savedPlacesData = Data()
-        }
     }
 }
