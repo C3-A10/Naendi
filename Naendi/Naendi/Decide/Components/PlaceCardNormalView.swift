@@ -140,8 +140,13 @@ struct PlaceCardNormalView: View {
                             
                             // Baris 1: Area Badges
                             HStack(spacing: 4) {
-                                TagView(text: place.typeTempat, backgroundColor: Color(red: 0.78, green: 0.98, blue: 0.35), textColor: Color(red: 0.15, green: 0.35, blue: 0.05))
-                                TagView(text: place.vibe, backgroundColor: Color(red: 0.75, green: 0.92, blue: 0.85), textColor: Color(red: 0.05, green: 0.30, blue: 0.25))
+                                TagView(text: place.typeTempat, backgroundColor: Color.orange.opacity(0.15), textColor: Color(red: 0.90, green: 0.45, blue: 0.10))
+
+                                TagView(text: place.vibe, backgroundColor: Color.blue.opacity(0.15), textColor: Color(red: 0.10, green: 0.45, blue: 0.90))
+                                
+                                if place.isHalalConfirmed {
+                                    TagView(text: "Halal", backgroundColor: Color.green.opacity(0.15), textColor: Color(red: 0.15, green: 0.65, blue: 0.30))
+                                }
                                 Spacer()
                             }
                             .frame(height: 10)
@@ -175,8 +180,8 @@ struct PlaceCardNormalView: View {
                         .frame(height: 130)
                         .background(
                             FolderTabShape(
-                                tabWidth: 150,
-                                slopeWidth: 25,
+                                tabWidth: 190,
+                                slopeWidth: 40,
                                 leftTabHeight: 135,
                                 rightTabHeight: 101,
                                 leftCornerRadius: 20,
