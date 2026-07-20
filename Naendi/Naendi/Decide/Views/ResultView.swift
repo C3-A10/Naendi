@@ -147,19 +147,26 @@ struct ResultView: View {
         .fullScreenCover(item: $selectedPlace) { place in
             NavigationStack {
                 DetailPlaceView(place: place)
+                .background {
+                    GreenBlurBackground()
+                }
             }
         }
         .fullScreenCover(isPresented: $isNavigatingToCompare) {
             if viewModel.selectedPlaces.count >= 2 {
                 NavigationStack {
                     CompareView(placeA: viewModel.selectedPlaces[0], placeB: viewModel.selectedPlaces[1])
-                        .navigationTitle("Compare")
-                        .navigationBarTitleDisplayMode(.inline)
+                    .background {
+                        GreenBlurBackground()
+                    }
                 }
             }
         }
         .fullScreenCover(isPresented: $isShowingEditPreference) {
             EditPreferenceView()
+            .background {
+                GreenBlurBackground()
+            }
         }
     }
 }

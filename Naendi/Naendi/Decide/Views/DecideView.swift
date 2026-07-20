@@ -22,9 +22,14 @@ struct DecideView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if viewModel.places.isEmpty {
                     LandingView(viewModel: viewModel)
+                        
                 } else {
                     ResultView(viewModel: viewModel)
                 }
+                
+            }
+            .background {
+                GreenBlurBackground()
             }
             .task {
                 let provider = PlaceProvider(

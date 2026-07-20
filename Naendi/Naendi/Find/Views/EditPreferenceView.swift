@@ -198,7 +198,6 @@ struct EditPreferenceView: View {
             }
             .scrollIndicators(.hidden)
         }
-        .background(Color(uiColor: .systemBackground))
         .fullScreenCover(isPresented: $isSelectingLocation) {
             SelectLocationView(
                 selectedLocationName: $selectedLocationName,
