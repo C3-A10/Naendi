@@ -16,7 +16,7 @@ struct DistanceCheckmarkView: View {
     let distancePillColor: Color
     
     var body: some View {
-        HStack(alignment: .top) {
+        HStack(alignment: .center) {
             // 1. Badge Jarak
             Text(viewModel.calculateDistance(to: place))
                 .font(.system(size: 14, weight: .semibold))
@@ -25,6 +25,13 @@ struct DistanceCheckmarkView: View {
                 .padding(.vertical, 8)
                 .background(distancePillColor)
                 .clipShape(Capsule())
+            
+            TagView(text: "Viral", backgroundColor: .red, textColor: .white)
+            
+            TagView(text: "Trending", backgroundColor: .yellow, textColor: .black)
+            
+            TagView(text: "Top rating", backgroundColor: .blue, textColor: .white)
+
             
             Spacer()
             
@@ -50,6 +57,18 @@ struct DistanceCheckmarkView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(isCheckDisabled)
+            } else {
+                Button {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        viewModel.toggleSelection(for: place)
+                    }
+                } label: {
+                    Image(systemName: "exclamationmark.bubble")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(.white)
+                        .frame(width: 32, height: 32)
+                }
+                .buttonStyle(.plain)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)

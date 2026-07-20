@@ -188,6 +188,8 @@ struct PlaceCardNormalView: View {
                                 rightCornerRadius: 20
                             )
                             .fill(Color.white)
+                            .shadow(color: Color.black.opacity(0.2), radius: 12, x: 0, y: 6)
+
                         )
                     }
                 }
@@ -195,7 +197,7 @@ struct PlaceCardNormalView: View {
                 .frame(height: 310)
                 .background(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                .shadow(color: Color.black.opacity(0.12), radius: 12, x: 0, y: 6)
+                .shadow(color: Color.black.opacity(0.3), radius: 12, x: 0, y: 6)
             }
             .contentShape(Rectangle())
         }
