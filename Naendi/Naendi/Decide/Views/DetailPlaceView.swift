@@ -42,9 +42,10 @@ struct DetailPlaceView: View {
         .navigationBarTitleDisplayMode(.inline)
         .padding(.horizontal, 16)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
+            ToolbarItem(placement: .topBarTrailing) {
                 Button(action: { dismiss() }) {
-                    Image(systemName: "chevron.backward")
+                    Image(systemName: "xmark")
+                        .font(.headline)
                 }
             }
         }
