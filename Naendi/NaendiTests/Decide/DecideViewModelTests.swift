@@ -33,4 +33,66 @@ struct DecideViewModelTests {
         #expect(viewModel.places.count == 3)
         #expect(viewModel.places.first?.jumlahReview == 3)
     }
+    
+    @Test("selecting two places stores both selected places")
+        func selectingTwoPlacesStoresCorrectPlaces() {
+            let viewModel = DecideViewModel()
+
+            let place1 = Place.stub(id: "1", nama: "Cafe A")
+            let place2 = Place.stub(id: "2", nama: "Cafe B")
+
+            viewModel.toggleSelection(for: place1)
+            viewModel.toggleSelection(for: place2)
+
+            #expect(viewModel.selectedPlaces.count == 2)
+            #expect(viewModel.selectedPlaces[0].id == place1.id)
+            #expect(viewModel.selectedPlaces[1].id == place2.id)
+            #expect(viewModel.isCompareLimitReached)
+        }
+
+        @Test("selecting the same place twice removes it")
+        func selectingSamePlaceTwiceRemovesIt() {
+            let viewModel = DecideViewModel()
+
+            let place = Place.stub(id: "1", nama: "Cafe A")
+
+            viewModel.toggleSelection(for: place)
+            viewModel.toggleSelection(for: place)
+
+            #expect(viewModel.selectedPlaces.isEmpty)
+            #expect(!viewModel.isCompareLimitReached)
+        }
+
+        @Test("cannot select more than two places")
+        func cannotSelectMoreThanTwoPlaces() {
+            let viewModel = DecideViewModel()
+
+            let place1 = Place.stub(id: "1")
+            let place2 = Place.stub(id: "2")
+            let place3 = Place.stub(id: "3")
+
+            viewModel.toggleSelection(for: place1)
+            viewModel.toggleSelection(for: place2)
+            viewModel.toggleSelection(for: place3)
+
+            #expect(viewModel.selectedPlaces.count == 2)
+            #expect(viewModel.selectedPlaces.contains(where: { $0.id == place1.id }))
+            #expect(viewModel.selectedPlaces.contains(where: { $0.id == place2.id }))
+            #expect(!viewModel.selectedPlaces.contains(where: { $0.id == place3.id }))
+        }
+
+        @Test("clearSelectedPlaces removes all selected places")
+        func clearSelectedPlacesRemovesEverything() {
+            let viewModel = DecideViewModel()
+
+            viewModel.toggleSelection(for: Place.stub(id: "1"))
+            viewModel.toggleSelection(for: Place.stub(id: "2"))
+
+            #expect(viewModel.selectedPlaces.count == 2)
+
+            viewModel.clearSelectedPlaces()
+
+            #expect(viewModel.selectedPlaces.isEmpty)
+            #expect(!viewModel.isCompareLimitReached)
+        }
 }
