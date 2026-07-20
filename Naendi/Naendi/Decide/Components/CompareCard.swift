@@ -109,6 +109,8 @@ struct CompareCard: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 2) {
+                //TODO: beri jarak dari pin
+                    Text("x dari x,")
                     Text("\(viewModel.calculateDistance(to: item)) dari lokasi Anda saat ini.")
                 }
                 .font(.system(size: 12))
