@@ -52,7 +52,11 @@ struct CompareTable: View {
 
     private func selectionButton(for place: Place) -> some View {
         Button(action: {
-            selectedPlace = place
+            if selectedPlace?.id == place.id {
+                selectedPlace = nil
+            } else {
+                selectedPlace = place
+            }
         }) {
             ZStack {
                 Circle()
