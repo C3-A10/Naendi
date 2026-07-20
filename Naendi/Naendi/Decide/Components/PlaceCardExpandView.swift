@@ -15,6 +15,7 @@ struct PlaceCardExpandView: View {
     @Binding var isComparing: Bool
     @State var viewModel: DecideViewModel
     @Binding var selectedImageURL: URL?
+    @Binding var selectedPlace: Place?
     
     // Helper status
     private var isSelected: Bool { viewModel.isSelected(place) }
@@ -35,7 +36,7 @@ struct PlaceCardExpandView: View {
             
             PlaceCardExpandInfoView(
                 place: place,
-                isExpanded: $isExpanded
+                isExpanded: $isExpanded, selectedPlace: $selectedPlace
             )
         }
         .background(Color.white)
@@ -55,7 +56,9 @@ struct PlaceCardExpandView: View {
                 place: Place.dummyData[0],
                 isExpanded: .constant(false),
                 isComparing: .constant(true),
-                viewModel: DecideViewModel(), selectedImageURL: .constant(URL(string: Place.dummyData[0].imgUrl ?? ""))
+                viewModel: DecideViewModel(),
+                selectedImageURL: .constant(URL(string: Place.dummyData[0].imgUrl ?? "")),
+                selectedPlace: .constant(nil),
             )
             .padding(.horizontal)
             .padding(.vertical)

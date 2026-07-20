@@ -25,7 +25,7 @@ struct PlaceCardView: View {
         ZStack {
             VStack(spacing: 0) {
                 if isExpanded {
-                    PlaceCardExpandView(place: place, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel, selectedImageURL: $selectedImageURL)
+                    PlaceCardExpandView(place: place, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel, selectedImageURL: $selectedImageURL, selectedPlace: $selectedPlace)
                 } else {
                     PlaceCardNormalView(place: place, mode: mode, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel)
                 }
@@ -36,9 +36,7 @@ struct PlaceCardView: View {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                         viewModel.toggleSelection(for: place)
                     }
-                } else {
-                    selectedPlace = place
-                }
+                } 
             }
         }
     }

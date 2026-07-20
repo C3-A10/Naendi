@@ -10,6 +10,7 @@ import SwiftUI
 struct PlaceCardExpandInfoView: View {
     let place: Place
     @Binding var isExpanded: Bool
+    @Binding var selectedPlace: Place?
     
     private var reviewItems: [(title: String, text: String, isPositive: Bool)] {
         var items: [(String, String, Bool)] = []
@@ -116,6 +117,13 @@ struct PlaceCardExpandInfoView: View {
                 }
             }
             .padding(.horizontal, 12)
+            
+            Divider()
+                .padding(.vertical, 2)
+            
+            CustomActionButton(text: "Choose this location", backgroundColor: Color("color_green"), textColor: .black) {
+                selectedPlace = place
+            }
         }
         .padding(.horizontal, 12)
         .padding(.bottom, 12)
@@ -123,6 +131,9 @@ struct PlaceCardExpandInfoView: View {
 }
 
 #Preview {
-    PlaceCardExpandInfoView( place: Place.dummyData[0],
-                             isExpanded: .constant(false) )
+    PlaceCardExpandInfoView(
+        place: Place.dummyData[0],
+        isExpanded: .constant(false),
+        selectedPlace: .constant(nil)
+    )
 }
