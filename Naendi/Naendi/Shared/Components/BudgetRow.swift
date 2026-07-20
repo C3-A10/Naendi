@@ -23,7 +23,9 @@ struct BudgetRow: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Budget")
-        .accessibilityValue(selection.title)
+        .accessibilityValue(selection.accessibilityDescription)
+        .accessibilityHint("Double-tap to choose a budget range.")
+        .accessibilityInputLabels(["Budget"])
     }
 }
 

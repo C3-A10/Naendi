@@ -47,7 +47,7 @@ struct SelectLocationView: View {
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 34, style: .continuous))
 
-                PreferenceSearchField(query: $query, placeholder: "Search")
+                PreferenceSearchField(query: $query, placeholder: "Search location")
                     .onSubmit(submitSearch)
                     .padding(20)
 
@@ -94,7 +94,9 @@ struct SelectLocationView: View {
             Spacer()
 
             Text("Select your Location")
-                .font(.system(size: 22, weight: .bold))
+                .font(.headline)
+                .multilineTextAlignment(.center)
+                .accessibilityAddTraits(.isHeader)
 
             Spacer()
 
@@ -110,7 +112,7 @@ struct SelectLocationView: View {
     private var radiusControl: some View {
         VStack(alignment: .leading, spacing: 14) {
             Text("Custom local radius (km)")
-                .font(.system(size: 16))
+                .font(.body)
 
             RadiusSlider(value: $radius, range: 0.5...10, step: 0.5)
         }

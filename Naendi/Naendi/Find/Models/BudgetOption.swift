@@ -23,4 +23,19 @@ enum BudgetOption: String, CaseIterable, Identifiable, Hashable {
             "Custom"
         }
     }
+
+    var accessibilityDescription: String {
+        switch self {
+        case .any:
+            "Any budget"
+        case .tenToFifty:
+            "10 thousand to 50 thousand rupiah"
+        case .fiftyToOneHundred:
+            "50 thousand to 100 thousand rupiah"
+        case .oneHundredToTwoFifty:
+            "100 thousand to 250 thousand rupiah"
+        case .custom:
+            "Custom"
+        }
+    }
 }

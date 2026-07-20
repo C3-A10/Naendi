@@ -38,10 +38,10 @@ struct LocationMapView: View {
             .animation(.smooth(duration: 0.2), value: radius)
             .animation(.smooth(duration: 0.2), value: selectedCoordinate.latitude)
             .animation(.smooth(duration: 0.2), value: selectedCoordinate.longitude)
+            .accessibilityHidden(true)
 
             centerPin
                 .allowsHitTesting(false)
-                .accessibilityHidden(true)
         }
     }
 
@@ -52,6 +52,10 @@ struct LocationMapView: View {
             .foregroundStyle(.white, Color.red)
             .shadow(color: .black.opacity(0.22), radius: 4, y: 2)
             .offset(y: -19)
+            .accessibilityElement()
+            .accessibilityLabel("Selected location")
+            .accessibilityValue(selectedLocationName)
+            .accessibilityHint("Use the search field to adjust the location.")
     }
 
     @MainActor

@@ -70,6 +70,9 @@ struct EditPreferenceView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("Location")
+                    .accessibilityValue(selectedLocationName)
+                    .accessibilityHint("Double-tap to choose a location and search radius.")
 
                     BudgetRow(selection: $viewModel.selectedBudgetOption)
 
@@ -309,7 +312,7 @@ struct EditPreferenceView: View {
                         in: Capsule()
                     )
             }
-            .font(.system(size: 17))
+            .font(.body)
             .contentShape(Rectangle())
             .padding(.horizontal, 20)
             .padding(.vertical, 10)
@@ -347,19 +350,26 @@ struct EditPreferenceView: View {
             HStack {
                 CircleIconButton(
                     systemName: "chevron.left",
-                    accessibilityLabel: "Back"
+                    accessibilityLabel: "Back",
+                    accessibilityInputLabels: ["Back"]
                 ) { dismiss() }
+                .accessibilitySortPriority(3)
 
                 Spacer()
 
                 CircleIconButton(
                     systemName: "checkmark",
-                    accessibilityLabel: "Save"
+                    accessibilityLabel: "Save preferences",
+                    accessibilityInputLabels: ["Save", "Save preferences"]
                 ) { dismiss() }
+                .accessibilitySortPriority(1)
             }
 
             Text("Edit Preference")
-                .font(.system(size: 24, weight: .bold))
+                .font(.title2.bold())
+                .multilineTextAlignment(.center)
+                .accessibilityAddTraits(.isHeader)
+                .accessibilitySortPriority(2)
         }
         .padding(.horizontal, 24)
         .padding(.top, 12)

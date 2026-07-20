@@ -3,6 +3,8 @@ import SwiftUI
 struct CircleIconButton: View {
     let systemName: String
     let accessibilityLabel: String
+    let accessibilityHint: String?
+    let accessibilityInputLabels: [String]
     let foregroundColor: Color
     let backgroundColor: Color
     let size: CGFloat
@@ -14,6 +16,8 @@ struct CircleIconButton: View {
     init(
         systemName: String,
         accessibilityLabel: String,
+        accessibilityHint: String? = nil,
+        accessibilityInputLabels: [String]? = nil,
         foregroundColor: Color = .primary,
         backgroundColor: Color = .white,
         size: CGFloat = 44,
@@ -21,6 +25,8 @@ struct CircleIconButton: View {
     ) {
         self.systemName = systemName
         self.accessibilityLabel = accessibilityLabel
+        self.accessibilityHint = accessibilityHint
+        self.accessibilityInputLabels = accessibilityInputLabels ?? [accessibilityLabel]
         self.foregroundColor = foregroundColor
         self.backgroundColor = backgroundColor
         self.size = max(size, 44)
@@ -53,6 +59,8 @@ struct CircleIconButton: View {
         .animation(.smooth(duration: 0.18), value: isPressed)
         .simultaneousGesture(pressGesture)
         .accessibilityLabel(Text(accessibilityLabel))
+        .accessibilityHint(Text(accessibilityHint ?? ""))
+        .accessibilityInputLabels(accessibilityInputLabels.map(Text.init))
     }
 
     private var pressGesture: some Gesture {
