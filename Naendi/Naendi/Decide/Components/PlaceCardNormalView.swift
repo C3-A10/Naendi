@@ -188,7 +188,7 @@ struct PlaceCardNormalView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .frame(height: 310)
-                .background(Color("color_green"))
+                .background(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                 .shadow(color: Color.black.opacity(0.12), radius: 12, x: 0, y: 6)
             }
