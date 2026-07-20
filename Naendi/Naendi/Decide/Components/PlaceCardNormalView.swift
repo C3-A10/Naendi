@@ -86,16 +86,8 @@ struct PlaceCardNormalView: View {
             .shadow(color: Color.black.opacity(0.12), radius: 12, x: 0, y: 6)
             
         } else if mode == .landing {
-            ZStack {
+            ZStack (alignment: .bottom) {
                 VStack(spacing: 0) {
-                    // MARK: - 1. HEADER TEKS ("People's Favourite")
-                    Text("People's Favourite")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.black)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.top, 18)
-                        .padding(.bottom, 12)
-                    
                     // MARK: - 2. KARTU DALAM (GAMBAR & FOLDER PUTIH)
                     ZStack(alignment: .bottom) {
                         
@@ -131,7 +123,7 @@ struct PlaceCardNormalView: View {
                             viewModel: viewModel,
                             distancePillColor: .white
                         )
-                        .padding(.top, -8)
+                        .padding(.top, 4)
                         .padding(.horizontal, 2)
 
                         
@@ -194,7 +186,7 @@ struct PlaceCardNormalView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .frame(height: 310)
+                .frame(height: 278)
                 .background(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                 .shadow(color: Color.black.opacity(0.3), radius: 12, x: 0, y: 6)
