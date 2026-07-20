@@ -33,7 +33,7 @@ struct PlaceMatcherTests {
     private func matches(
         _ place: Place,
         _ criteria: PreferenceCriteria,
-        origin: Coordinate? = nil
+        origin: Coordinate? = Coordinate(latitude: 0, longitude: 0)
     ) -> Bool {
         matcher.matches(place, criteria: criteria, origin: origin, now: Self.monday)
     }
@@ -66,7 +66,7 @@ struct PlaceMatcherTests {
 
     // MARK: - Halal
 
-    @Test("Any halal preference accepts every status", arguments: ["halal", "non-halal", "unknown"])
+    @Test("Any halal preference accepts every status", arguments: ["yes", "halal", "no", "non-halal", "unknown"])
     func anyHalalAcceptsEverything(status: String) {
         #expect(matches(.stub(halal: status), PreferenceCriteria(halal: .any)))
     }
@@ -74,14 +74,17 @@ struct PlaceMatcherTests {
     @Test("Halal accepts verified and unverified places but rejects non-halal")
     func halalAcceptsUnknown() {
         let criteria = PreferenceCriteria(halal: .halal)
+        #expect(matches(.stub(halal: "yes"), criteria))
         #expect(matches(.stub(halal: "halal"), criteria))
         #expect(matches(.stub(halal: "unknown"), criteria))
+        #expect(matches(.stub(halal: "no"), criteria) == false)
         #expect(matches(.stub(halal: "non-halal"), criteria) == false)
     }
 
     @Test("Non-halal accepts only places known to be non-halal")
     func nonHalalIsExclusive() {
         let criteria = PreferenceCriteria(halal: .nonHalal)
+        #expect(matches(.stub(halal: "no"), criteria))
         #expect(matches(.stub(halal: "non-halal"), criteria))
         #expect(matches(.stub(halal: "unknown"), criteria) == false)
         #expect(matches(.stub(halal: "halal"), criteria) == false)
@@ -89,10 +92,10 @@ struct PlaceMatcherTests {
 
     // MARK: - Radius
 
-    @Test("radius is skipped when there is no origin to measure from")
-    func noOriginSkipsRadius() {
+    @Test("radius rejects matches when there is no origin to measure from")
+    func noOriginCannotApplyRadius() {
         let faraway = Place.stub(latitude: 50, longitude: 50)
-        #expect(matches(faraway, PreferenceCriteria(radiusKm: 1), origin: nil))
+        #expect(matches(faraway, PreferenceCriteria(radiusKm: 1), origin: nil) == false)
     }
 
     @Test("the radius bound is inclusive")

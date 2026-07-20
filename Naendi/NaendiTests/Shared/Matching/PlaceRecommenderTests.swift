@@ -58,13 +58,13 @@ struct PlaceRecommenderTests {
         #expect(result.count == 12)
     }
 
-    @Test("distance sort falls back to review count when there is no origin")
-    func distanceFallsBackWithoutOrigin() {
+    @Test("recommendations are unavailable when radius has no origin")
+    func recommendationsRequireOrigin() {
         let result = recommend(
             PreferenceCriteria(outputResult: 3, sortBy: .distance),
             origin: nil
         )
-        #expect(result.map(\.jumlahReview) == [12, 11, 10])
+        #expect(result.isEmpty)
     }
 
     @Test("the same seed reproduces the same surprise order")

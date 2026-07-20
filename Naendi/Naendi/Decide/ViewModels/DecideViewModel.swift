@@ -22,6 +22,7 @@ class DecideViewModel {
     var landingPagePlaces: [Place] = []
     var isLoading: Bool = false
     var errorMessage: String?
+    var persistenceErrorMessage: String?
     var selectedPlaces: [Place] = []
     var isCompareLimitReached: Bool { selectedPlaces.count >= 2 }
 
@@ -105,6 +106,14 @@ class DecideViewModel {
         isLoading = true
         errorMessage = nil
 
+        guard let origin else {
+            places = []
+            isLoading = false
+            errorMessage = "Location is unavailable. Search for a location or allow location access to apply the selected radius."
+            phase = .results
+            return
+        }
+
         do {
             let all = try await provider.places()
             places = recommender.recommend(
@@ -133,7 +142,12 @@ class DecideViewModel {
         store: PreferenceStoring,
         provider: PlaceProviding
     ) async {
-        try? store.saveCriteria(criteria)
+        do {
+            try store.saveCriteria(criteria)
+            persistenceErrorMessage = nil
+        } catch {
+            persistenceErrorMessage = "Your preferences were applied for this session but could not be saved."
+        }
         await loadRecommendations(from: provider, criteria: criteria)
     }
 

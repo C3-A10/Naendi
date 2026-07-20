@@ -80,6 +80,14 @@ struct OpeningHoursTests {
         #expect(subject?.isOpen(during: MinuteInterval(start: 24 * 60, end: 25 * 60), onWeekday: Self.senin) == true)
     }
 
+    @Test("an early-morning window uses the previous day's overnight hours")
+    func earlyMorningUsesPreviousDay() {
+        let subject = hours(#"{"Senin": ["18.00–02.00"], "Selasa": ["Tutup"]}"#)
+        let window = MinuteInterval(startHour: 1, endHour: 2)
+
+        #expect(subject?.isOpen(during: window, onWeekday: Self.selasa) == true)
+    }
+
     @Test("minutes are parsed, not just whole hours")
     func parsesMinutes() {
         let subject = hours(#"{"Senin": ["06.30–21.30"]}"#)

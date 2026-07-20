@@ -16,8 +16,16 @@ struct NaendiApp: App {
 
         do {
             return try ModelContainer(for: schema, configurations: [configuration])
-        } catch {
-            fatalError("Could not create ModelContainer at \(configuration.url): \(error)")
+        } catch let initialError {
+            do {
+                try PersistentStoreRecovery.removeStore(at: configuration.url)
+                return try ModelContainer(for: schema, configurations: [configuration])
+            } catch let recoveryError {
+                fatalError(
+                    "Could not recover ModelContainer at \(configuration.url). "
+                        + "Initial error: \(initialError). Recovery error: \(recoveryError)"
+                )
+            }
         }
     }()
 

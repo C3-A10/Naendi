@@ -12,7 +12,7 @@ import CoreLocation
 struct DecideViewModelTests {
 
     private func makeViewModel(
-        location: CLLocation? = nil
+        location: CLLocation? = CLLocation(latitude: 0, longitude: 0)
     ) -> DecideViewModel {
         DecideViewModel(locationProvider: FakeLocationProvider(currentLocation: location))
     }
@@ -100,6 +100,33 @@ struct DecideViewModelTests {
         #expect(viewModel.phase == .results)
         #expect(viewModel.errorMessage != nil)
         #expect(viewModel.isLoading == false)
+    }
+
+    @Test("a legitimate empty result does not report a provider error")
+    func emptyResultIsNotAnError() async {
+        let viewModel = makeViewModel()
+
+        await viewModel.loadRecommendations(
+            from: FakePlaceProvider(stubbed: [Place.stub(typeTempat: "PKL")]),
+            criteria: PreferenceCriteria(type: "Cafe")
+        )
+
+        #expect(viewModel.places.isEmpty)
+        #expect(viewModel.errorMessage == nil)
+    }
+
+    @Test("recommendations explain when radius has no origin")
+    func missingOriginIsReported() async {
+        let viewModel = makeViewModel(location: nil)
+
+        await viewModel.loadRecommendations(
+            from: FakePlaceProvider(stubbed: [.stub()]),
+            criteria: .default
+        )
+
+        #expect(viewModel.places.isEmpty)
+        #expect(viewModel.errorMessage?.contains("Location is unavailable") == true)
+        #expect(viewModel.phase == .results)
     }
 
     @Test("the requested output count caps the results")
@@ -209,5 +236,20 @@ struct DecideViewModelTests {
 
         #expect(viewModel.places.map(\.id) == ["cafe"])
         #expect(viewModel.phase == .results)
+        #expect(viewModel.persistenceErrorMessage != nil)
+    }
+
+    @Test("a successful save clears an earlier persistence warning")
+    func successfulSaveClearsPersistenceWarning() async {
+        let viewModel = makeViewModel()
+        viewModel.persistenceErrorMessage = "Old error"
+
+        await viewModel.applyPreferences(
+            .default,
+            store: FakePreferenceStore(),
+            provider: FakePlaceProvider(stubbed: [.stub()])
+        )
+
+        #expect(viewModel.persistenceErrorMessage == nil)
     }
 }

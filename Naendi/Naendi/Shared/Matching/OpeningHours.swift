@@ -47,9 +47,26 @@ struct OpeningHours {
     func isOpen(during window: MinuteInterval, onWeekday weekday: Int) -> Bool? {
         let dayIndex = weekday - 1
         guard Self.indonesianDays.indices.contains(dayIndex) else { return nil }
-        guard let intervals = intervalsByDay[Self.indonesianDays[dayIndex]] else { return nil }
+        let currentDay = Self.indonesianDays[dayIndex]
+        let previousDay = Self.indonesianDays[(dayIndex + Self.indonesianDays.count - 1) % Self.indonesianDays.count]
+        let normalizedWindow = MinuteInterval(
+            start: window.start,
+            end: window.end < window.start ? window.end + 24 * 60 : window.end
+        )
 
-        return intervals.contains { $0.contains(window) }
+        if intervalsByDay[currentDay]?.contains(where: { $0.contains(normalizedWindow) }) == true {
+            return true
+        }
+
+        let shiftedWindow = MinuteInterval(
+            start: normalizedWindow.start + 24 * 60,
+            end: normalizedWindow.end + 24 * 60
+        )
+        if intervalsByDay[previousDay]?.contains(where: { $0.contains(shiftedWindow) }) == true {
+            return true
+        }
+
+        return intervalsByDay[currentDay] == nil ? nil : false
     }
 
     private static func interval(from slot: String) -> MinuteInterval? {

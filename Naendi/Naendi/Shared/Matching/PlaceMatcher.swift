@@ -18,6 +18,23 @@ extension Place {
     }
 }
 
+enum PlaceHalalStatus: Equatable {
+    case halal
+    case nonHalal
+    case unknown
+
+    init(rawValue: String) {
+        switch rawValue.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) {
+        case "yes", "halal":
+            self = .halal
+        case "no", "non-halal", "non halal":
+            self = .nonHalal
+        default:
+            self = .unknown
+        }
+    }
+}
+
 struct PlaceMatcher {
     var calendar: Calendar = .current
 
@@ -50,14 +67,14 @@ struct PlaceMatcher {
     }
 
     private func matchesHalal(_ place: Place, criteria: PreferenceCriteria) -> Bool {
-        let status = place.halal.lowercased().trimmingCharacters(in: .whitespaces)
+        let status = PlaceHalalStatus(rawValue: place.halal)
         switch criteria.halal {
         case .any:
             return true
         case .halal:
-            return status != HalalPreference.nonHalal.rawValue
+            return status != .nonHalal
         case .nonHalal:
-            return status == HalalPreference.nonHalal.rawValue
+            return status == .nonHalal
         }
     }
 
@@ -66,7 +83,7 @@ struct PlaceMatcher {
         criteria: PreferenceCriteria,
         origin: Coordinate?
     ) -> Bool {
-        guard let origin else { return true }
+        guard let origin else { return false }
         let distance = origin.clLocation.distance(from: place.coordinate.clLocation)
         return distance <= criteria.radiusKm * 1_000
     }

@@ -91,6 +91,18 @@ struct ResultView: View {
                     ProgressView("Memuat rekomendasi...")
                         .scaleEffect(1.1)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if let errorMessage = viewModel.errorMessage {
+                    VStack(spacing: 16) {
+                        Text("Unable to load recommendations")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                        Text(errorMessage)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 40)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if viewModel.places.isEmpty {
                     VStack(spacing: 16) {
                         Text("No results found")
@@ -170,6 +182,23 @@ struct ResultView: View {
                     )
                 }
             }
+        }
+        .alert(
+            "Preferences not saved",
+            isPresented: Binding(
+                get: { viewModel.persistenceErrorMessage != nil },
+                set: { isPresented in
+                    if !isPresented {
+                        viewModel.persistenceErrorMessage = nil
+                    }
+                }
+            )
+        ) {
+            Button("OK", role: .cancel) {
+                viewModel.persistenceErrorMessage = nil
+            }
+        } message: {
+            Text(viewModel.persistenceErrorMessage ?? "")
         }
     }
 }
