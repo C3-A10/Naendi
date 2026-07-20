@@ -19,9 +19,7 @@ struct EditPreferenceView: View {
     @State private var selectedLocationName = "Search Location"
     @State private var selectedCoordinate = CLLocationCoordinate2D(latitude: 37.3377, longitude: -121.8787)
     @State private var radius = 1.0
-    @State private var selectedBudgetOption: BudgetOption = .any
-    @State private var minimumBudget = ""
-    @State private var maximumBudget = ""
+    @State private var viewModel = EditPreferenceViewModel()
     @State private var selectedType = "Cafe"
     @State private var selectedVibe = "Lively"
     @State private var selectedHalalOption = "Halal"
@@ -73,12 +71,12 @@ struct EditPreferenceView: View {
                     }
                     .buttonStyle(.plain)
 
-                    BudgetRow(selection: $selectedBudgetOption)
+                    BudgetRow(selection: $viewModel.selectedBudgetOption)
 
-                    if selectedBudgetOption == .custom {
+                    if viewModel.isCustomBudgetRowVisible {
                         CustomBudgetRow(
-                            minimumBudget: $minimumBudget,
-                            maximumBudget: $maximumBudget
+                            minimumBudget: $viewModel.minimumBudget,
+                            maximumBudget: $viewModel.maximumBudget
                         )
                         .transition(.move(edge: .top).combined(with: .opacity))
                     }
@@ -194,7 +192,7 @@ struct EditPreferenceView: View {
                 .padding(.horizontal, 32)
                 .padding(.top, 8)
                 .padding(.bottom, 40)
-                .animation(.snappy(duration: 0.24), value: selectedBudgetOption)
+                .animation(.snappy(duration: 0.24), value: viewModel.selectedBudgetOption)
             }
             .scrollIndicators(.hidden)
         }
