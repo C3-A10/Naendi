@@ -39,7 +39,9 @@ struct CompareView: View {
                 Spacer(minLength: 0)
             }
             
-            .fullScreenCover(isPresented: $isShowingDetail) {
+            .fullScreenCover(isPresented: $isShowingDetail, onDismiss: {
+                dismiss()
+            }) {
                 if let selectedPlace {
                     NavigationStack {
                         DetailPlaceView(place: selectedPlace)
@@ -52,9 +54,10 @@ struct CompareView: View {
         .navigationTitle("Compare")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
+            ToolbarItem(placement: .topBarTrailing) {
                 Button(action: { dismiss() }) {
-                    Image(systemName: "chevron.backward")
+                    Image(systemName: "xmark")
+                        .font(.headline)
                 }
             }
         }
