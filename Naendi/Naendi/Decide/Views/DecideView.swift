@@ -16,16 +16,6 @@ struct DecideView: View {
     var body: some View {
         NavigationStack {
             Group {
-<<<<<<< HEAD
-                if viewModel.isLoading {
-                    ProgressView("Memuat rekomendasi...")
-                        .scaleEffect(1.1)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if viewModel.places.isEmpty {
-                    LandingView(viewModel: viewModel)
-                        
-                } else {
-=======
                 switch viewModel.phase {
                 case .loading:
                     loadingIndicator
@@ -38,10 +28,8 @@ struct DecideView: View {
                     }
 
                 case .results:
->>>>>>> dev
                     ResultView(viewModel: viewModel)
-                }
-                
+                } 
             }
             .background {
                 GreenBlurBackground()
