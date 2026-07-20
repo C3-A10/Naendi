@@ -25,16 +25,12 @@ struct PlaceMatcher {
         self.calendar = calendar
     }
 
-    /// - Parameter origin: where the radius is measured from. When `nil` (no
-    ///   selected location and no GPS fix) the radius criterion is skipped.
     func matches(
         _ place: Place,
         criteria: PreferenceCriteria,
         origin: Coordinate?,
         now: Date
     ) -> Bool {
-        // Ordered cheapest-first so the price and schedule parsers run on the
-        // fewest possible rows.
         matchesType(place, criteria: criteria)
             && matchesVibe(place, criteria: criteria)
             && matchesHalal(place, criteria: criteria)
@@ -59,8 +55,6 @@ struct PlaceMatcher {
         case .any:
             return true
         case .halal:
-            // An unverified place is a candidate; only a known non-halal one is
-            // a contradiction.
             return status != HalalPreference.nonHalal.rawValue
         case .nonHalal:
             return status == HalalPreference.nonHalal.rawValue

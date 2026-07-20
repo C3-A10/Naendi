@@ -17,23 +17,9 @@ struct NaendiApp: App {
         do {
             return try ModelContainer(for: schema, configurations: [configuration])
         } catch {
-            destroyStore(at: configuration.url)
-
-            do {
-                return try ModelContainer(for: schema, configurations: [configuration])
-            } catch {
-                fatalError("Could not create ModelContainer after resetting the local store: \(error)")
-            }
+            fatalError("Could not create ModelContainer at \(configuration.url): \(error)")
         }
     }()
-
-    private static func destroyStore(at url: URL) {
-        let directory = url.deletingLastPathComponent()
-        for suffix in ["", "-shm", "-wal"] {
-            let file = directory.appendingPathComponent(url.lastPathComponent + suffix)
-            try? FileManager.default.removeItem(at: file)
-        }
-    }
 
     var body: some Scene {
         WindowGroup {

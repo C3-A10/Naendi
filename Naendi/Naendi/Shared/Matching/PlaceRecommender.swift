@@ -9,9 +9,6 @@
 import CoreLocation
 import Foundation
 
-/// A small seedable generator. `SystemRandomNumberGenerator` cannot be seeded,
-/// and "Surprise Me" needs an order that stays put until the user re-applies
-/// their preferences — and that tests can reproduce.
 struct SplitMix64: RandomNumberGenerator {
     private var state: UInt64
 
@@ -35,8 +32,6 @@ struct PlaceRecommender {
         self.matcher = matcher
     }
 
-    /// Ordering happens before the limit is applied, so "Surprise Me" returns a
-    /// random sample of everything that matched rather than a shuffled top-N.
     func recommend(
         _ places: [Place],
         criteria: PreferenceCriteria,
@@ -64,8 +59,6 @@ struct PlaceRecommender {
             return places.shuffled(using: &generator)
 
         case .distance:
-            // Without an origin there is no distance to sort on. Fall back to
-            // review count so the order is at least meaningful and stable.
             guard let origin else {
                 return places.sorted { $0.jumlahReview > $1.jumlahReview }
             }

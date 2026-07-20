@@ -8,8 +8,6 @@
 
 import Foundation
 
-/// Minutes from midnight. `end` may exceed 1440 for a slot that runs past
-/// midnight, e.g. "18.00–02.00" becomes 1080...1560.
 struct MinuteInterval: Equatable {
     let start: Int
     let end: Int
@@ -29,15 +27,10 @@ struct MinuteInterval: Equatable {
 }
 
 struct OpeningHours {
-    /// Indexed by `Calendar.component(.weekday)` minus one, so Sunday is first.
-    /// Deliberately hardcoded rather than derived from a DateFormatter with an
-    /// id_ID locale — that route depends on ICU data and varies by platform.
     static let indonesianDays = [
         "Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"
     ]
 
-    /// A present-but-empty value means the place is explicitly closed that day.
-    /// An absent key means the schedule is unknown for that day.
     private let intervalsByDay: [String: [MinuteInterval]]
 
     init?(json: String) {
@@ -51,15 +44,11 @@ struct OpeningHours {
         }
     }
 
-    /// Returns `nil` when the schedule for that day is unknown, which callers
-    /// treat as a pass rather than a non-match.
     func isOpen(during window: MinuteInterval, onWeekday weekday: Int) -> Bool? {
         let dayIndex = weekday - 1
         guard Self.indonesianDays.indices.contains(dayIndex) else { return nil }
         guard let intervals = intervalsByDay[Self.indonesianDays[dayIndex]] else { return nil }
 
-        // Whole-window containment: the place must be open for the entire
-        // requested window. Swap `contains` for an overlap test to loosen this.
         return intervals.contains { $0.contains(window) }
     }
 
@@ -76,7 +65,6 @@ struct OpeningHours {
             let close = minutes(from: parts[1])
         else { return nil }
 
-        // A closing time at or before the opening time runs past midnight.
         return MinuteInterval(start: open, end: close <= open ? close + 24 * 60 : close)
     }
 
@@ -94,8 +82,6 @@ struct OpeningHours {
         return hour * 60 + minute
     }
 
-    /// Collapses overlapping or touching slots so a split schedule like
-    /// "08.00–12.00" + "12.00–20.00" is treated as one continuous stretch.
     private static func merge(_ intervals: [MinuteInterval]) -> [MinuteInterval] {
         let sorted = intervals.sorted { $0.start < $1.start }
         return sorted.reduce(into: [MinuteInterval]()) { merged, next in
@@ -112,6 +98,5 @@ struct OpeningHours {
 }
 
 extension Place {
-    /// `nil` when `jamBuka` is missing or malformed.
     var openingHours: OpeningHours? { OpeningHours(json: jamBuka) }
 }

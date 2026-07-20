@@ -21,8 +21,6 @@ struct DecideView: View {
                     loadingIndicator
 
                 case .landing:
-                    // Only cover the first fetch; afterwards the carousel has
-                    // content to show.
                     if viewModel.isLoading && viewModel.landingPagePlaces.isEmpty {
                         loadingIndicator
                     } else {
@@ -30,8 +28,6 @@ struct DecideView: View {
                     }
 
                 case .results:
-                    // ResultView renders its own empty state, so zero matches
-                    // stay here rather than falling back to the landing page.
                     ResultView(viewModel: viewModel)
                 }
             }

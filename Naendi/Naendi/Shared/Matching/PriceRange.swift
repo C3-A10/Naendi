@@ -8,8 +8,6 @@
 
 import Foundation
 
-/// A price band in rupiah. An open end means "unbounded in that direction",
-/// which is how `"Rp 250.000+"` is represented.
 struct PriceRange: Equatable {
     let lowerBound: Double?
     let upperBound: Double?
@@ -19,9 +17,6 @@ struct PriceRange: Equatable {
         self.upperBound = upperBound
     }
 
-    /// Returns `nil` when the string is empty or carries no parseable number.
-    /// Roughly 21% of the dataset has an empty `range_harga`, and callers treat
-    /// that as "price unknown" rather than as a non-match.
     init?(parsing raw: String) {
         let text = raw
             .trimmingCharacters(in: .whitespacesAndNewlines)
@@ -32,8 +27,6 @@ struct PriceRange: Equatable {
         let isOpenEndedAbove = text.contains("+") || text.contains("di atas")
         let isOpenEndedBelow = text.contains("di bawah")
 
-        // A "rb"/"jt" suffix scales every number in the string, so
-        // "Rp 25–50 rb" is 25_000...50_000 rather than 25...50_000.
         let scale: Double
         if text.contains("jt") || text.contains("juta") {
             scale = 1_000_000
@@ -48,7 +41,6 @@ struct PriceRange: Equatable {
             stripped = stripped.replacingOccurrences(of: noise, with: " ")
         }
 
-        // The dataset uses an en-dash (U+2013); accept a plain hyphen too.
         let numbers = stripped
             .components(separatedBy: CharacterSet(charactersIn: "\u{2013}-"))
             .compactMap { Self.number(from: $0, scale: scale) }
@@ -74,8 +66,6 @@ struct PriceRange: Equatable {
         let trimmed = token.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return nil }
 
-        // A dot is a thousands separator ("250.000") unless a scale suffix is
-        // present and it reads as a decimal fraction ("1.5 jt").
         let isDecimalFraction: Bool
         if scale > 1, let dot = trimmed.lastIndex(of: ".") {
             let fraction = trimmed[trimmed.index(after: dot)...]
@@ -93,8 +83,6 @@ struct PriceRange: Equatable {
         return value * scale
     }
 
-    /// Two bands match when they share any common price, not when one contains
-    /// the other — a place priced "Rp 25–50 rb" satisfies a 10k–50k budget.
     func overlaps(_ other: PriceRange) -> Bool {
         let ourLow = lowerBound ?? -.greatestFiniteMagnitude
         let ourHigh = upperBound ?? .greatestFiniteMagnitude
