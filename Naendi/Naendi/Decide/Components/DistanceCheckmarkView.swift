@@ -18,7 +18,7 @@ struct DistanceCheckmarkView: View {
     var body: some View {
         HStack(alignment: .top) {
             // 1. Badge Jarak
-            Text("0.5 km")
+            Text(viewModel.calculateDistance(to: place))
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(.black)
                 .padding(.horizontal, 14)
