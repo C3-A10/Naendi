@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ResultView: View {
+    @Environment(\.modelContext) private var modelContext
     @State var viewModel: DecideViewModel
     @State private var isComparing = false
     @State private var selectedImageURL: URL?
@@ -159,7 +161,15 @@ struct ResultView: View {
             }
         }
         .fullScreenCover(isPresented: $isShowingEditPreference) {
-            EditPreferenceView()
+            EditPreferenceView(criteria: viewModel.criteria) { criteria in
+                Task {
+                    await viewModel.applyPreferences(
+                        criteria,
+                        store: AppServices.preferenceStore(context: modelContext),
+                        provider: AppServices.placeProvider(context: modelContext)
+                    )
+                }
+            }
         }
     }
 }
