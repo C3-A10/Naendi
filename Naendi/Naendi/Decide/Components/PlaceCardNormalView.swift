@@ -90,9 +90,7 @@ struct PlaceCardNormalView: View {
                 VStack(spacing: 0) {
                     // MARK: - 2. KARTU DALAM (GAMBAR & FOLDER PUTIH)
                     ZStack(alignment: .bottom) {
-                        
-                        // A. GAMBAR KAFE (Dilock mutlak dengan teknik Overlay)
-                        Rectangle()
+                            Rectangle()
                             .fill(Color.gray.opacity(0.1))
                             .frame(height: 240)
                             .overlay {
@@ -127,10 +125,7 @@ struct PlaceCardNormalView: View {
                         .padding(.horizontal, 2)
 
                         
-                        // B. FOLDER TAB PUTIH (MELEBAR FULL SAMPAI UJUNG HIJAU)
                         VStack(alignment: .leading, spacing: 16) {
-                            
-                            // Baris 1: Area Badges
                             HStack(spacing: 4) {
                                 TagView(text: place.typeTempat, backgroundColor: Color.orange.opacity(0.15), textColor: Color(red: 0.90, green: 0.45, blue: 0.10))
 
@@ -168,7 +163,7 @@ struct PlaceCardNormalView: View {
                             .buttonStyle(.plain)
                         }
                         .padding(12)
-                        .frame(maxWidth: .infinity) // Kunci folder putih selalu full width
+                        .frame(maxWidth: .infinity)
                         .frame(height: 130)
                         .background(
                             FolderTabShape(
