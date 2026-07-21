@@ -14,6 +14,9 @@ import SwiftUI
 struct PlaceCardView: View {
     let place: Place
     let mode: PlaceCardMode
+    let isChooseThisLocationBtnVisible: Bool
+    let isTagVisible: Bool
+    let isReportVisible: Bool
     @State private var isExpanded: Bool = false
     @State var viewModel: DecideViewModel
     
@@ -25,9 +28,9 @@ struct PlaceCardView: View {
         ZStack {
             VStack(spacing: 0) {
                 if isExpanded {
-                    PlaceCardExpandView(place: place, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel, selectedImageURL: $selectedImageURL)
+                    PlaceCardExpandView(place: place, isChooseThisLocationBtnVisible: isChooseThisLocationBtnVisible, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel, selectedImageURL: $selectedImageURL, selectedPlace: $selectedPlace)
                 } else {
-                    PlaceCardNormalView(place: place, mode: mode, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel)
+                    PlaceCardNormalView(place: place, mode: mode, isReported: isReportVisible, isTagVisible: isTagVisible, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel)
                 }
             }
             .contentShape(Rectangle())
@@ -36,9 +39,7 @@ struct PlaceCardView: View {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                         viewModel.toggleSelection(for: place)
                     }
-                } else {
-                    selectedPlace = place
-                }
+                } 
             }
         }
     }
@@ -52,7 +53,8 @@ struct PlaceCardView: View {
         ScrollView {
             PlaceCardView(
                 place: Place.dummyData[0],
-                mode: .result,
+                mode: .result, isChooseThisLocationBtnVisible: true,
+                isTagVisible: true, isReportVisible: true,
                 viewModel: DecideViewModel(), isComparing: .constant(true),
                 selectedImageURL: .constant(nil), selectedPlace: .constant(Place.dummyData[0])
             )

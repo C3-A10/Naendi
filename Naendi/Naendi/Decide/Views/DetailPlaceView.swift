@@ -21,8 +21,8 @@ struct DetailPlaceView: View {
             Spacer()
             // Card
             
-            PlaceCardView(place: place, mode: .landing, viewModel: viewModel, isComparing: $isComparing, selectedImageURL: $selectedImageURL, selectedPlace: $dummySelectedPlace)
-            
+            PlaceCardView(place: place, mode: .landing, isChooseThisLocationBtnVisible: false, isTagVisible: false, isReportVisible: true, viewModel: viewModel, isComparing: $isComparing, selectedImageURL: $selectedImageURL, selectedPlace: $dummySelectedPlace)
+                        
             .frame(maxWidth: .infinity)
 
             // Button
@@ -48,6 +48,9 @@ struct DetailPlaceView: View {
                         .font(.headline)
                 }
             }
+        }
+        .background {
+            GreenBlurBackground()
         }
     }
 

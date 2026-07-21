@@ -66,8 +66,7 @@ struct RadiusSlider: View {
     }
 
     private func formatted(_ number: Double) -> String {
-        let fractionLength = number.truncatingRemainder(dividingBy: 1) == 0 ? 0 : 1
-        return number.formatted(.number.precision(.fractionLength(fractionLength)))
+        return number.formatted(.number.precision(.fractionLength(0...2)))
     }
 
     private func updateValue(at xPosition: CGFloat, width: CGFloat, knobSize: CGFloat) {
@@ -82,6 +81,6 @@ struct RadiusSlider: View {
 #Preview {
     @Previewable @State var radius = 1.0
 
-    RadiusSlider(value: $radius, range: 0.5...10, step: 0.5)
+    RadiusSlider(value: $radius, range: 0.25...10, step: 0.25)
         .padding(.horizontal, 32)
 }

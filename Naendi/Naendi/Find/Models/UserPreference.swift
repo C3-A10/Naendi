@@ -19,7 +19,7 @@ final class UserPreference {
     /// means no location was picked, and matching falls back to GPS.
     var latitude: Double?
     var longitude: Double?
-    var radius: Double = 3.0
+    var radius: Double = 1.0
     var budgetOptionID: String = BudgetOption.any.rawValue
     var customMinBudget: Double?
     var customMaxBudget: Double?
