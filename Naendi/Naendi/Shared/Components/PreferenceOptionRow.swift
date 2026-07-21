@@ -51,7 +51,7 @@ struct PreferenceOptionRow: View {
     }
 
     private var titleView: some View {
-        Text(title)
+        Text(LocalizedStringKey(title))
             .font(.body)
             .foregroundStyle(.primary)
             .multilineTextAlignment(.leading)

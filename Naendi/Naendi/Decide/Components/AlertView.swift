@@ -17,7 +17,7 @@ struct AlertView: View {
         VStack(alignment: .leading, spacing: 18) {
 
             VStack(alignment: .leading, spacing: 10) {
-                Text(title)
+                Text(LocalizedStringKey(title))
                     .font(.system(size: 18, weight: .bold))
                     .foregroundStyle(.white)
                     .fixedSize(horizontal: false, vertical: true)
@@ -29,7 +29,7 @@ struct AlertView: View {
             }
 
             Button(action: action) {
-                Text(buttonTitle)
+                Text(LocalizedStringKey(buttonTitle))
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)

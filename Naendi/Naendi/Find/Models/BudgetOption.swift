@@ -12,7 +12,7 @@ enum BudgetOption: String, CaseIterable, Identifiable, Hashable {
     var title: String {
         switch self {
         case .any:
-            "Any Budget"
+            String(localized: "Any Budget")
         case .tenToFifty:
             "Rp. 10rb – Rp. 50rb"
         case .fiftyToOneHundred:
@@ -20,22 +20,22 @@ enum BudgetOption: String, CaseIterable, Identifiable, Hashable {
         case .oneHundredToTwoFifty:
             "Rp. 100rb – Rp. 250rb"
         case .custom:
-            "Custom"
+            String(localized: "Custom")
         }
     }
 
     var accessibilityDescription: String {
         switch self {
         case .any:
-            "Any budget"
+            String(localized: "Any budget")
         case .tenToFifty:
-            "10 thousand to 50 thousand rupiah"
+            String(localized: "10 thousand to 50 thousand rupiah")
         case .fiftyToOneHundred:
-            "50 thousand to 100 thousand rupiah"
+            String(localized: "50 thousand to 100 thousand rupiah")
         case .oneHundredToTwoFifty:
-            "100 thousand to 250 thousand rupiah"
+            String(localized: "100 thousand to 250 thousand rupiah")
         case .custom:
-            "Custom"
+            String(localized: "Custom")
         }
     }
 

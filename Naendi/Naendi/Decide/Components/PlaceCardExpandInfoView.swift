@@ -13,8 +13,8 @@ struct PlaceCardExpandInfoView: View {
     
     private var reviewItems: [(title: String, text: String, isPositive: Bool)] {
         var items: [(String, String, Bool)] = []
-        items.append(("What People Love", place.reviewPositif, true))
-        items.append(("Things to Consider", place.reviewNegatif, false))
+        items.append((String(localized: "What People Love"), place.reviewPositif, true))
+        items.append((String(localized: "Things to Consider"), place.reviewNegatif, false))
         return items
     }
     

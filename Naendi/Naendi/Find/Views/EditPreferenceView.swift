@@ -7,7 +7,7 @@ import SwiftUI
 struct EditPreferenceView: View {
     /// Shown in the Type and Vibe menus for "don't filter on this".
     private static let anyOption = "Any"
-    private static let locationPlaceholder = "Search Location"
+    private static let locationPlaceholder = String(localized: "Search Location")
     /// Surabaya city centre — the app's whole dataset is here.
     private static let defaultCoordinate = CLLocationCoordinate2D(
         latitude: -7.2575,
@@ -132,18 +132,21 @@ struct EditPreferenceView: View {
                                 selectedType = type
                             } label: {
                                 if selectedType == type {
-                                    Label(type, systemImage: "checkmark")
+                                    Label(localizedPreferenceValue(type), systemImage: "checkmark")
                                 } else {
-                                    Text(type)
+                                    Text(localizedPreferenceValue(type))
                                 }
                             }
                         }
                     } label: {
-                        PreferenceOptionRow(title: "Type", value: selectedType)
+                        PreferenceOptionRow(
+                            title: "Type",
+                            value: localizedPreferenceValue(selectedType)
+                        )
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Type")
-                    .accessibilityValue(selectedType)
+                    .accessibilityValue(localizedPreferenceValue(selectedType))
                     .accessibilityHint("Double tap to choose a place type")
                     Menu {
                         ForEach(vibeOptions, id: \.self) { vibe in
@@ -151,18 +154,21 @@ struct EditPreferenceView: View {
                                 selectedVibe = vibe
                             } label: {
                                 if selectedVibe == vibe {
-                                    Label(vibe, systemImage: "checkmark")
+                                    Label(localizedPreferenceValue(vibe), systemImage: "checkmark")
                                 } else {
-                                    Text(vibe)
+                                    Text(localizedPreferenceValue(vibe))
                                 }
                             }
                         }
                     } label: {
-                        PreferenceOptionRow(title: "Vibe", value: selectedVibe)
+                        PreferenceOptionRow(
+                            title: "Vibe",
+                            value: localizedPreferenceValue(selectedVibe)
+                        )
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Vibe")
-                    .accessibilityValue(selectedVibe)
+                    .accessibilityValue(localizedPreferenceValue(selectedVibe))
                     .accessibilityHint("Double tap to choose a vibe")
                     Button {
                         isSelectingPreferredTime = true
@@ -306,6 +312,33 @@ struct EditPreferenceView: View {
         return budgetFormatter.string(from: NSNumber(value: Int(value))) ?? ""
     }
 
+    private func localizedPreferenceValue(_ value: String) -> String {
+        switch value {
+        case "Any":
+            String(localized: "Any")
+        case "Restaurant":
+            String(localized: "Restaurant")
+        case "Cafe":
+            String(localized: "Cafe")
+        case "Warkop":
+            String(localized: "Warkop")
+        case "PKL":
+            String(localized: "PKL")
+        case "Drinks":
+            String(localized: "Drinks")
+        case "Bakery":
+            String(localized: "Bakery")
+        case "Calm":
+            String(localized: "Calm")
+        case "Balanced":
+            String(localized: "Balanced")
+        case "Lively":
+            String(localized: "Lively")
+        default:
+            value
+        }
+    }
+
     /// Mirrors CustomBudgetRow's grouped formatting by ignoring separators.
     private static func budgetValue(_ text: String) -> Double? {
         let digits = text.filter(\.isNumber)
@@ -392,7 +425,7 @@ struct EditPreferenceView: View {
             }
         } label: {
             HStack {
-                Text(title)
+                Text(LocalizedStringKey(title))
                     .foregroundStyle(.primary)
 
                 Spacer()
