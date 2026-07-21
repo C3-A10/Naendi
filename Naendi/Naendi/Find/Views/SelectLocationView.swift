@@ -111,7 +111,7 @@ struct SelectLocationView: View {
             Spacer()
 
             CircleIconButton(systemName: "checkmark", accessibilityLabel: "Confirm location") {
-                dismiss()
+                confirmLocation()
             }
         }
         .padding(.horizontal, 24)
@@ -136,6 +136,23 @@ struct SelectLocationView: View {
         Task { @MainActor in
             submittedSearchQuery = trimmedQuery
         }
+    }
+
+    private func confirmLocation() {
+        if let centerCoordinate = currentCameraCenter {
+            selectedCoordinate = centerCoordinate
+        }
+        dismiss()
+    }
+
+    private var currentCameraCenter: CLLocationCoordinate2D? {
+        if let camera = cameraPosition.camera {
+            return camera.centerCoordinate
+        }
+        if let region = cameraPosition.region {
+            return region.center
+        }
+        return nil
     }
 
     private var isShowingSearchAlert: Binding<Bool> {

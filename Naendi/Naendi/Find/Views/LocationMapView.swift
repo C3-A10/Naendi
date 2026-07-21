@@ -18,6 +18,8 @@ struct LocationMapView: View {
     @Binding var showsUserLocation: Bool
     @Binding var searchState: LocationSearchState
 
+    @State private var reverseGeocodingTask: Task<Void, Never>?
+
     var interactionModes: MapInteractionModes = .all
 
     var body: some View {
@@ -38,15 +40,28 @@ struct LocationMapView: View {
                 MapCompass()
                 MapScaleView()
             }
-            .onMapCameraChange(frequency: .onEnd) { context in
+            .onMapCameraChange(frequency: .continuous) { context in
                 selectedCoordinate = context.camera.centerCoordinate
+                if cameraPosition.positionedByUser {
+                    selectedLocationName = "Pinned Location"
+                }
+            }
+            .onMapCameraChange(frequency: .onEnd) { context in
+                guard cameraPosition.positionedByUser else { return }
+
+                reverseGeocodingTask?.cancel()
+                let coordinate = context.camera.centerCoordinate
+                reverseGeocodingTask = Task {
+                    await updateSelectedLocationName(for: coordinate)
+                }
             }
             .task(id: submittedSearchQuery) {
                 await searchSubmittedLocationIfNeeded()
             }
+            .onDisappear {
+                reverseGeocodingTask?.cancel()
+            }
             .animation(.smooth(duration: 0.2), value: radius)
-            .animation(.smooth(duration: 0.2), value: selectedCoordinate.latitude)
-            .animation(.smooth(duration: 0.2), value: selectedCoordinate.longitude)
             .accessibilityHidden(true)
 
             centerPin
@@ -107,6 +122,38 @@ struct LocationMapView: View {
             return
         } catch {
             searchState = .failure(error.localizedDescription)
+        }
+    }
+
+    @MainActor
+    private func updateSelectedLocationName(for coordinate: CLLocationCoordinate2D) async {
+        let location = CLLocation(
+            latitude: coordinate.latitude,
+            longitude: coordinate.longitude
+        )
+
+        guard let request = MKReverseGeocodingRequest(location: location) else {
+            selectedLocationName = "Pinned Location"
+            return
+        }
+
+        do {
+            let mapItems = try await request.mapItems
+            try Task.checkCancellation()
+
+            guard let mapItem = mapItems.first else {
+                selectedLocationName = "Pinned Location"
+                return
+            }
+
+            selectedLocationName = mapItem.name
+                ?? mapItem.address?.shortAddress
+                ?? mapItem.address?.fullAddress
+                ?? "Pinned Location"
+        } catch is CancellationError {
+            return
+        } catch {
+            selectedLocationName = "Pinned Location"
         }
     }
 }
