@@ -78,9 +78,9 @@ struct DetailPlaceView: View {
                     Color.black.opacity(0.5)
                         .ignoresSafeArea()
                     AlertView(
-                        title: "Make sure you're at the location and that GPS is enabled.",
-                        message: "Report can only be submitted on-site to keep information accurate.",
-                        buttonTitle: "I Understand",
+                        title: "Pastikan anda berada di lokasi dan GPS tidak mati!",
+                        message: "Pelaporan hanya dapat diberikan di lokasi agar menjaga keakuratan informasi.",
+                        buttonTitle: "Aku mengerti",
                         action: {
                             showGPSAlert = false
                         }
@@ -90,13 +90,13 @@ struct DetailPlaceView: View {
             }
         }
         // Confirmation alert when user IS within radius
-        .alert("Report this place?", isPresented: $showReportConfirm) {
-            Button("Cancel", role: .cancel) { }
-            Button("Report", role: .destructive) {
+        .alert("Laporkan Tempat Ini?", isPresented: $showReportConfirm) {
+            Button("Batal", role: .cancel) { }
+            Button("Laporkan", role: .destructive) {
                 // TODO: implement the report action
             }
         } message: {
-            Text("Are you sure you want to report \(place.nama)? This helps keep location information accurate.")
+            Text("Apakah anda yakin ingin melaporkan \(place.nama)? Data ini tidak dapat diubah lagi.")
         }
     }
 
