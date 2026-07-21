@@ -88,6 +88,18 @@ struct DetailPlaceView: View {
         }
         // Start GPS so isWithinReportRadius has a fix to compare against.
         .task { viewModel.startLocationUpdates() }
+        // Report outcome (success / already reported / failure).
+        .alert(
+            "Laporan",
+            isPresented: Binding(
+                get: { viewModel.reportMessage != nil },
+                set: { if !$0 { viewModel.reportMessage = nil } }
+            )
+        ) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(viewModel.reportMessage ?? "")
+        }
     }
 
     // MARK: – Report handling

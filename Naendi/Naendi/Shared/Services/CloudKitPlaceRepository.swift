@@ -9,9 +9,13 @@ import Foundation
 import CloudKit
 
 final class CloudKitPlaceRepository: PlaceRepository {
+    // Single source of truth for the container — reads and report writes must
+    // agree, and this value has already drifted once.
+    private let containerID = "iCloud.naendi"
+    private var container: CKContainer { CKContainer(identifier: containerID) }
+
     func getAllPlaces() async throws -> [Place] {
-        let container = CKContainer(identifier: "iCloud.naendi")
-            let database = container.publicCloudDatabase
+        let database = container.publicCloudDatabase
             let query = CKQuery(recordType: "Places", predicate: NSPredicate(value: true))
 
             var places: [Place] = []
@@ -33,27 +37,57 @@ final class CloudKitPlaceRepository: PlaceRepository {
             return places
     }
     
+    /// Records the current user's report for a place by creating a `Report`
+    /// record (public DB, so no write access to the shared `Places` record is
+    /// needed). Idempotent: the record name is derived from place + user, so a
+    /// user can report a given place at most once. Returns true if this created a
+    /// new report, false if the user had already reported it.
+    /// ponytail: assumes `placeID` is a CloudKit-safe recordName (Google place_id
+    /// is). If a fallback place name with spaces/symbols ever reaches here, the
+    /// save will throw — hash the id then.
     @discardableResult
-    func incrementReportCount(placeID id: String) async throws -> Int {
-        let database = CKContainer(identifier: "iCloud.naendi").publicCloudDatabase
+    func report(placeID: String) async throws -> Bool {
+        let database = container.publicCloudDatabase
+        let userID = try await container.userRecordID()
+        let recordID = CKRecord.ID(recordName: "report_\(placeID)_\(userID.recordName)")
 
-        let record = try await fetchPlace(id: id, in: database)
-        let current = (record["jumlah_report"] as? Int)
-            ?? (record["jumlah_report"] as? Int64).map(Int.init)
-            ?? 0
-        let updated = current + 1
-        record["jumlah_report"] = updated
-        _ = try await database.save(record)
-        return updated
+        do {
+            _ = try await database.record(for: recordID)
+            return false // already reported by this user
+        } catch let error as CKError where error.code == .unknownItem {
+            let report = CKRecord(recordType: "Report", recordID: recordID)
+            report["place_id"] = placeID
+            _ = try await database.save(report)
+            return true
+        }
     }
 
-    private func fetchPlace(id: String, in database: CKDatabase) async throws -> CKRecord {
-        let query = CKQuery(recordType: "Places", predicate: NSPredicate(format: "place_id == %@", id))
-        let matches = try await database.records(matching: query, resultsLimit: 1).matchResults
-        if let (_, result) = matches.first {
-            return try result.get()
+    /// Total report counts per place, keyed by `place_id`. Reads every `Report`
+    /// record and tallies client-side.
+    /// ponytail: full scan + client-side count. Fine while reports are few; move
+    /// to per-place count queries or a server-side aggregate if the type grows large.
+    func reportCounts() async throws -> [String: Int] {
+        let database = container.publicCloudDatabase
+        let query = CKQuery(recordType: "Report", predicate: NSPredicate(value: true))
+        var counts: [String: Int] = [:]
+
+        func tally(_ matchResults: [(CKRecord.ID, Result<CKRecord, Error>)]) {
+            for (_, result) in matchResults {
+                if let record = try? result.get(), let placeID = record["place_id"] as? String {
+                    counts[placeID, default: 0] += 1
+                }
+            }
         }
-        return try await database.record(for: CKRecord.ID(recordName: id))
+
+        let firstPage = try await database.records(matching: query, desiredKeys: ["place_id"])
+        tally(firstPage.matchResults)
+        var cursor = firstPage.queryCursor
+        while let currentCursor = cursor {
+            let nextPage = try await database.records(continuingMatchFrom: currentCursor, desiredKeys: ["place_id"])
+            tally(nextPage.matchResults)
+            cursor = nextPage.queryCursor
+        }
+        return counts
     }
 
     private func addPlaces(

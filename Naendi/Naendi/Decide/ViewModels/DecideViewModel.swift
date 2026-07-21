@@ -8,6 +8,7 @@
 import Foundation
 import Observation
 import CoreLocation
+import CloudKit
 
 @Observable
 class DecideViewModel {
@@ -23,7 +24,10 @@ class DecideViewModel {
     var isLoading: Bool = false
     var errorMessage: String?
     var persistenceErrorMessage: String?
-    var reportErrorMessage: String?
+    var reportMessage: String?
+    /// Live report counts per place id, sourced from the `Report` records rather
+    /// than the stale `jumlah_report` field on `Place`.
+    var reportCounts: [String: Int] = [:]
     var selectedPlaces: [Place] = []
     var isCompareLimitReached: Bool { selectedPlaces.count >= 2 }
 
@@ -89,6 +93,7 @@ class DecideViewModel {
             errorMessage = error.localizedDescription
             landingPagePlaces = []
         }
+        await loadReportCounts()
         isLoading = false
     }
 
@@ -126,6 +131,7 @@ class DecideViewModel {
             places = []
         }
 
+        await loadReportCounts()
         isLoading = false
         phase = .results
     }
@@ -154,18 +160,40 @@ class DecideViewModel {
         mapKitService.openAppleMapsRoute(to: place)
     }
 
-    /// Reports a place, bumping its `jumlah_report` count in CloudKit. Callers are
-    /// expected to have already confirmed proximity via `isWithinReportRadius(of:)`.
-    /// A failure surfaces via `reportErrorMessage`; it never throws to the view.
+    /// Reports a place by recording it in CloudKit. Callers are expected to have
+    /// already confirmed proximity via `isWithinReportRadius(of:)`. The outcome
+    /// (success / already reported / failure) surfaces via `reportMessage`; it
+    /// never throws to the view.
     func reportPlace(
         _ place: Place,
         using repository: CloudKitPlaceRepository = CloudKitPlaceRepository()
     ) async {
         do {
-            _ = try await repository.incrementReportCount(placeID: place.id)
-            reportErrorMessage = nil
+            let isNew = try await repository.report(placeID: place.id)
+            reportMessage = isNew
+                ? "Laporan terkirim. Terima kasih!"
+                : "Kamu sudah pernah melaporkan tempat ini."
+            if isNew {
+                reportCounts[place.id, default: place.reportCount] += 1
+            }
+        } catch let error as CKError where error.code == .notAuthenticated {
+            reportMessage = "Masuk ke iCloud dulu untuk bisa melaporkan tempat."
         } catch {
-            reportErrorMessage = "Couldn't submit your report. Please try again."
+            reportMessage = "Gagal mengirim laporan. Coba lagi nanti."
+        }
+    }
+
+    /// The report count to display for a place: the live count from `Report`
+    /// records when loaded, otherwise the value baked into the place.
+    func reportCount(for place: Place) -> Int {
+        reportCounts[place.id] ?? place.reportCount
+    }
+
+    /// Refreshes `reportCounts` from CloudKit. Best-effort: a failed query leaves
+    /// the previous counts in place rather than blanking the UI.
+    func loadReportCounts(using repository: CloudKitPlaceRepository = CloudKitPlaceRepository()) async {
+        if let counts = try? await repository.reportCounts() {
+            reportCounts = counts
         }
     }
 
