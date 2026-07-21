@@ -81,11 +81,13 @@ struct DetailPlaceView: View {
         .alert("Laporkan Tempat Ini?", isPresented: $showReportConfirm) {
             Button("Batal", role: .cancel) { }
             Button("Laporkan", role: .destructive) {
-                // TODO: implement the report action
+                Task { await viewModel.reportPlace(place) }
             }
         } message: {
             Text("Apakah anda yakin ingin melaporkan \(place.nama)? Data ini tidak dapat diubah lagi.")
         }
+        // Start GPS so isWithinReportRadius has a fix to compare against.
+        .task { viewModel.startLocationUpdates() }
     }
 
     // MARK: – Report handling

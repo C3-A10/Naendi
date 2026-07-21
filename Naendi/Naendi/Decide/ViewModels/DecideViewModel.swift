@@ -154,20 +154,13 @@ class DecideViewModel {
         mapKitService.openAppleMapsRoute(to: place)
     }
 
-    private let reportRadiusMeters: CLLocationDistance = 100
-
+    /// Reports a place, bumping its `jumlah_report` count in CloudKit. Callers are
+    /// expected to have already confirmed proximity via `isWithinReportRadius(of:)`.
+    /// A failure surfaces via `reportErrorMessage`; it never throws to the view.
     func reportPlace(
         _ place: Place,
         using repository: CloudKitPlaceRepository = CloudKitPlaceRepository()
     ) async {
-        guard let here = locationProvider.currentLocation else {
-            reportErrorMessage = "Turn on location access to report a place."
-            return
-        }
-        guard here.distance(from: place.coordinate.clLocation) <= reportRadiusMeters else {
-            reportErrorMessage = "You need to be at this place to report it."
-            return
-        }
         do {
             _ = try await repository.incrementReportCount(placeID: place.id)
             reportErrorMessage = nil
