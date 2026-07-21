@@ -40,7 +40,7 @@ struct PlaceCardExpandView: View {
                 isExpanded: $isExpanded, selectedPlace: $selectedPlace
             )
         }
-        .background(Color.white)
+        .background(Color(.secondarySystemGroupedBackground))
         .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
         .shadow(color: Color.black.opacity(0.12), radius: 12, x: 0, y: 6)
         .transition(.identity)

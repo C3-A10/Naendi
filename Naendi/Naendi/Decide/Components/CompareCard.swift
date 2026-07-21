@@ -162,7 +162,7 @@ struct DetailRowView: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
                 .font(.system(size: 14, weight: .bold))
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
             
             Text(value)
                 .font(.system(size: 12, weight: .regular))
