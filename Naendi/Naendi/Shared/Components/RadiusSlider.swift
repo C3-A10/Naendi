@@ -34,21 +34,24 @@ struct RadiusSlider: View {
                     .offset(x: knobX)
 
                 Text(formatted(range.lowerBound))
-                    .font(.system(size: 12))
+                    .font(.caption)
                     .foregroundStyle(.secondary)
                     .offset(y: 28)
+                    .accessibilityHidden(true)
 
                 Text(formattedValue)
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.caption.weight(.semibold))
                     .foregroundStyle(.primary)
                     .frame(width: 36)
                     .offset(x: labelX - 18, y: 28)
+                    .accessibilityHidden(true)
 
                 Text(formatted(range.upperBound))
-                    .font(.system(size: 12))
+                    .font(.caption)
                     .foregroundStyle(.secondary)
                     .frame(width: 22, alignment: .trailing)
                     .offset(x: trackWidth - 22, y: 28)
+                    .accessibilityHidden(true)
             }
             .contentShape(Rectangle())
             .gesture(
@@ -59,10 +62,29 @@ struct RadiusSlider: View {
             )
         }
         .frame(height: 48)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Maximum search radius")
+        .accessibilityValue(accessibilityValue)
+        .accessibilityHint("Swipe up or down with one finger to adjust the radius.")
+        .accessibilityAdjustableAction { direction in
+            switch direction {
+            case .increment:
+                value = min(value + step, range.upperBound)
+            case .decrement:
+                value = max(value - step, range.lowerBound)
+            @unknown default:
+                break
+            }
+        }
     }
 
     private var formattedValue: String {
         formatted(value)
+    }
+
+    private var accessibilityValue: String {
+        let unit = value == 1 ? "kilometer" : "kilometers"
+        return "\(formattedValue) \(unit)"
     }
 
     private func formatted(_ number: Double) -> String {

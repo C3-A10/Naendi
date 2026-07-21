@@ -18,11 +18,15 @@ struct DecideView: View {
             Group {
                 switch viewModel.phase {
                 case .loading:
-                    loadingIndicator
+                    loadingIndicator()
 
                 case .landing:
                     if viewModel.isLoading && viewModel.landingPagePlaces.isEmpty {
-                        loadingIndicator
+                        loadingIndicator("Loading places…")
+                    } else if let errorMessage = viewModel.errorMessage {
+                        landingErrorState(message: errorMessage)
+                    } else if viewModel.landingPagePlaces.isEmpty {
+                        landingEmptyState
                     } else {
                         LandingView(viewModel: viewModel)
                     }
@@ -42,10 +46,40 @@ struct DecideView: View {
         }
     }
 
-    private var loadingIndicator: some View {
-        ProgressView("Memuat rekomendasi...")
-            .scaleEffect(1.1)
+    private func loadingIndicator(_ title: String = "Finding recommendations…") -> some View {
+        ProgressView(title)
+            .controlSize(.large)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func landingErrorState(message: String) -> some View {
+        ContentUnavailableView {
+            Label("Unable to Load Places", systemImage: "wifi.exclamationmark")
+        } description: {
+            Text(message)
+        } actions: {
+            Button("Try Again", systemImage: "arrow.clockwise") {
+                Task {
+                    await viewModel.loadLandingPlaces(from: placeProvider)
+                }
+            }
+            .buttonStyle(.borderedProminent)
+        }
+    }
+
+    private var landingEmptyState: some View {
+        ContentUnavailableView {
+            Label("No Places Available", systemImage: "mappin.slash")
+        } description: {
+            Text("We couldn't find any places to show right now.")
+        } actions: {
+            Button("Reload", systemImage: "arrow.clockwise") {
+                Task {
+                    await viewModel.loadLandingPlaces(from: placeProvider)
+                }
+            }
+            .buttonStyle(.borderedProminent)
+        }
     }
 
     private var placeProvider: PlaceProviding {

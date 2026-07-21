@@ -50,9 +50,10 @@ final class CloudKitPlaceRepository: PlaceRepository {
     }
     
     func makePlace(from record: CKRecord) -> Place? {
-        guard let nama = record["nama"] as? String else { return nil }
-
-        let location = record["location"] as? CLLocation
+        guard let nama = record["nama"] as? String,
+              let location = record["location"] as? CLLocation else {
+            return nil
+        }
         let jumlahReview = (record["jumlah_review"] as? Int)
             ?? (record["jumlah_review"] as? Int64).map(Int.init)
             ?? 0
@@ -63,8 +64,8 @@ final class CloudKitPlaceRepository: PlaceRepository {
             id: id,
             nama: nama,
             alamat: (record["alamat"] as? String) ?? "",
-            latitude: location?.coordinate.latitude ?? 0,
-            longitude: location?.coordinate.longitude ?? 0,
+            latitude: location.coordinate.latitude,
+            longitude: location.coordinate.longitude,
             rangeHarga: (record["range_harga"] as? String) ?? "",
             jamBuka: (record["jam_buka"] as? String) ?? "",
             typeTempat: (record["type_tempat"] as? String) ?? "",
