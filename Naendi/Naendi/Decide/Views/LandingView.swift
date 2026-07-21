@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct LandingView: View {
+    @Environment(\.modelContext) private var modelContext
     @State var viewModel: DecideViewModel
     @State private var isComparing: Bool = false
     @State private var selectedImageURL: URL? = nil
@@ -130,7 +132,15 @@ struct LandingView: View {
             }
         }
         .fullScreenCover(isPresented: $isShowingEditPreference) {
-            EditPreferenceView()
+            EditPreferenceView(criteria: viewModel.criteria) { criteria in
+                Task {
+                    await viewModel.applyPreferences(
+                        criteria,
+                        store: AppServices.preferenceStore(context: modelContext),
+                        provider: AppServices.placeProvider(context: modelContext)
+                    )
+                }
+            }
         }
     }
     

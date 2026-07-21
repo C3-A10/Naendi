@@ -10,13 +10,23 @@ import SwiftData
 
 @main
 struct NaendiApp: App {
-    // SwiftData is a local cache only; CloudKit is read directly via
-    // CloudKitPlaceRepository. cloudKitDatabase: .none keeps the CloudKit
-    // entitlement from enabling mirroring, which our schema doesn't satisfy.
     private static let container: ModelContainer = {
         let schema = Schema([PlaceEntity.self, UserPreference.self, SeedState.self])
         let configuration = ModelConfiguration(schema: schema, cloudKitDatabase: .none)
-        return try! ModelContainer(for: schema, configurations: [configuration])
+
+        do {
+            return try ModelContainer(for: schema, configurations: [configuration])
+        } catch let initialError {
+            do {
+                try PersistentStoreRecovery.removeStore(at: configuration.url)
+                return try ModelContainer(for: schema, configurations: [configuration])
+            } catch let recoveryError {
+                fatalError(
+                    "Could not recover ModelContainer at \(configuration.url). "
+                        + "Initial error: \(initialError). Recovery error: \(recoveryError)"
+                )
+            }
+        }
     }()
 
     var body: some Scene {

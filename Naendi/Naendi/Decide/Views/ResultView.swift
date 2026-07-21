@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ResultView: View {
+    @Environment(\.modelContext) private var modelContext
     @State var viewModel: DecideViewModel
     @State private var isComparing = false
     @State private var selectedImageURL: URL?
@@ -89,6 +91,18 @@ struct ResultView: View {
                     ProgressView("Memuat rekomendasi...")
                         .scaleEffect(1.1)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if let errorMessage = viewModel.errorMessage {
+                    VStack(spacing: 16) {
+                        Text("Unable to load recommendations")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                        Text(errorMessage)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 40)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if viewModel.places.isEmpty {
                     VStack(spacing: 16) {
                         Text("No results found")
@@ -152,14 +166,43 @@ struct ResultView: View {
         .fullScreenCover(isPresented: $isNavigatingToCompare) {
             if viewModel.selectedPlaces.count >= 2 {
                 NavigationStack {
-                    CompareView(placeA: viewModel.selectedPlaces[0], placeB: viewModel.selectedPlaces[1])
+                    CompareView(
+                        placeA: viewModel.selectedPlaces[0],
+                        placeB: viewModel.selectedPlaces[1],
+                        viewModel: viewModel
+                    )
                         .navigationTitle("Compare")
                         .navigationBarTitleDisplayMode(.inline)
                 }
             }
         }
         .fullScreenCover(isPresented: $isShowingEditPreference) {
-            EditPreferenceView()
+            EditPreferenceView(criteria: viewModel.criteria) { criteria in
+                Task {
+                    await viewModel.applyPreferences(
+                        criteria,
+                        store: AppServices.preferenceStore(context: modelContext),
+                        provider: AppServices.placeProvider(context: modelContext)
+                    )
+                }
+            }
+        }
+        .alert(
+            "Preferences not saved",
+            isPresented: Binding(
+                get: { viewModel.persistenceErrorMessage != nil },
+                set: { isPresented in
+                    if !isPresented {
+                        viewModel.persistenceErrorMessage = nil
+                    }
+                }
+            )
+        ) {
+            Button("OK", role: .cancel) {
+                viewModel.persistenceErrorMessage = nil
+            }
+        } message: {
+            Text(viewModel.persistenceErrorMessage ?? "")
         }
     }
 }
