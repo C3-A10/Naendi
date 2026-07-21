@@ -11,15 +11,27 @@ struct CompareView: View {
     
     let placeA: Place
     let placeB: Place
+    let viewModel: DecideViewModel
     
     @State private var selectedPlace: Place?
     @State private var isShowingDetail = false
+    
+    init(placeA: Place, placeB: Place, viewModel: DecideViewModel = DecideViewModel()) {
+        self.placeA = placeA
+        self.placeB = placeB
+        self.viewModel = viewModel
+    }
     
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
                 // Compare Table
-                CompareTable(placeA: placeA, placeB: placeB, selectedPlace: $selectedPlace)
+                CompareTable(
+                    placeA: placeA,
+                    placeB: placeB,
+                    viewModel: viewModel,
+                    selectedPlace: $selectedPlace
+                )
                 
                 // Button
                 CustomActionButton(
@@ -39,7 +51,9 @@ struct CompareView: View {
                 Spacer(minLength: 0)
             }
             
-            .fullScreenCover(isPresented: $isShowingDetail) {
+            .fullScreenCover(isPresented: $isShowingDetail, onDismiss: {
+                dismiss()
+            }) {
                 if let selectedPlace {
                     NavigationStack {
                         DetailPlaceView(place: selectedPlace)
@@ -52,9 +66,10 @@ struct CompareView: View {
         .navigationTitle("Compare")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
+            ToolbarItem(placement: .topBarTrailing) {
                 Button(action: { dismiss() }) {
-                    Image(systemName: "chevron.backward")
+                    Image(systemName: "xmark")
+                        .font(.headline)
                 }
             }
         }
@@ -62,5 +77,5 @@ struct CompareView: View {
 }
 
 #Preview {
-    CompareView(placeA: Place.dummyData[1], placeB: Place.dummyData[2])
+    CompareView(placeA: Place.dummyData[1], placeB: Place.dummyData[2], viewModel: DecideViewModel())
 }

@@ -12,12 +12,21 @@ import Combine
 class MapKitService: NSObject {
     
     /// Open Apple Maps with navigation from origin to destination
-    func openAppleMapsRoute(from origin:CLLocationCoordinate2D, to destination:CLLocationCoordinate2D) {
-        // TODO: Implement Apple Maps navigation
-        
-        let destinationItem = MKMapItem(placemark: MKPlacemark(coordinate: destination, addressDictionary: nil))
-        destinationItem.openInMaps(launchOptions: [
-            MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
-        ])
-    }
+    func openAppleMapsRoute(to place: Place) {
+                let location = CLLocation(
+                    latitude: place.latitude,
+                    longitude: place.longitude
+                )
+
+                let destination = MKMapItem(
+                    location: location,
+                    address: nil
+                )
+
+                destination.name = place.nama
+
+                destination.openInMaps(launchOptions: [
+                    MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
+                ])
+            }
 }

@@ -38,4 +38,17 @@ enum BudgetOption: String, CaseIterable, Identifiable, Hashable {
             "Custom"
         }
     }
+
+    var range: PriceRange? {
+        switch self {
+        case .any, .custom:
+            nil
+        case .tenToFifty:
+            PriceRange(lowerBound: 10_000, upperBound: 50_000)
+        case .fiftyToOneHundred:
+            PriceRange(lowerBound: 50_000, upperBound: 100_000)
+        case .oneHundredToTwoFifty:
+            PriceRange(lowerBound: 100_000, upperBound: 250_000)
+        }
+    }
 }

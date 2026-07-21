@@ -6,33 +6,113 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct LandingView: View {
+    @Environment(\.modelContext) private var modelContext
     @State var viewModel: DecideViewModel
     @State private var isComparing: Bool = false
     @State private var selectedImageURL: URL? = nil
     @State private var selectedPlace: Place? = nil
+    @State private var scrollOffset: CGFloat = 0
+    @State private var isShowingEditPreference = false
+
 
     var body: some View {
         VStack(spacing: 0) {
-            ZStack {
-                ScrollView {
-                    LazyVStack(spacing: 20) {
-                        ForEach(viewModel.landingPagePlaces) { place in
-                            PlaceCardView(
-                                place: place,
-                                mode: .landing,
-                                viewModel: viewModel,
-                                isComparing: $isComparing,
-                                selectedImageURL: $selectedImageURL,
-                                selectedPlace: $selectedPlace
+            // MARK: - ZSTACK UTAMA: Memisahkan Latar Belakang (Hero) & Konten (Scroll)
+            ZStack(alignment: .top) {
+                ZStack(alignment: .bottom) {
+                    // Gambar Hero & Teks
+                    ZStack(alignment: .top) {
+                        AsyncImage(url: URL(string: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1000&auto=format&fit=crop")) { phase in
+                            if let image = phase.image {
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: UIScreen.main.bounds.width, height: 420)
+                                    .clipped()
+                            } else {
+                                Color(UIColor.darkGray)
+                                    .frame(width: UIScreen.main.bounds.width, height: 420)
+                            }
+                        }
+                        .frame(width: UIScreen.main.bounds.width, height: 420)
+                        .clipped()
+                        
+                        Text("Discover somewhere new")
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundColor(.white)
+                            .shadow(color: .black.opacity(0.4), radius: 4, x: 0, y: 2)
+                            .padding(.top, 64)
+                        
+                        // Gradient Transisi ke Putih (Agar menyatu dengan latar belakang aplikasi)
+                        VStack {
+                            Spacer()
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.0), Color.white.opacity(0.8), Color.white],
+                                startPoint: .top,
+                                endPoint: .bottom
                             )
+                            .frame(height: 140)
                         }
                     }
-                    .padding(.vertical, 16)
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, viewModel.isCompareLimitReached ? 80 : 16)
+                    .frame(width: UIScreen.main.bounds.width, height: 420)
                 }
+                .frame(width: UIScreen.main.bounds.width, height: 420)
+                .blur(radius: calculateBlur())
+                .opacity(calculateOpacity())
+                .offset(y: scrollOffset < 0 ? (scrollOffset / 2) : 0) // Efek paralaks naik perlahan
+                .ignoresSafeArea(edges: .top)
+                
+                ScrollView {
+                    VStack(spacing: 0) {
+                        GeometryReader { proxy -> Color in
+                            let minY = proxy.frame(in: .named("scroll_space")).minY
+                            DispatchQueue.main.async {
+                                self.scrollOffset = minY
+                            }
+                            return Color.clear
+                        }
+                        .frame(height: 0)
+                        
+                     
+                        VStack {
+                            Spacer()
+                            
+                            // Tombol Hijau ("Select Your Preferences") - Berada di atas gambar
+                            CustomActionButton(
+                                text: "Select Your Preferences",
+                                backgroundColor: Color("color_green"),
+                                textColor: Color(red: 0.15, green: 0.25, blue: 0.05)
+                            ) {
+                                isShowingEditPreference = true
+                            }
+                            .frame(width: 250)
+                            .padding(.bottom, 20)
+                        }
+                        .frame(height: 340)
+                        
+                        LazyVStack(spacing: 20) {
+                            ForEach(viewModel.landingPagePlaces) { place in
+                                PlaceCardView(
+                                    place: place,
+                                    mode: .landing,
+                                    viewModel: viewModel,
+                                    isComparing: $isComparing,
+                                    selectedImageURL: $selectedImageURL,
+                                    selectedPlace: $selectedPlace
+                                )
+                            }
+                        }
+                        .padding(.vertical, 16)
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, viewModel.isCompareLimitReached ? 80 : 16)
+                    }
+                    .frame(width: UIScreen.main.bounds.width)
+                }
+                .coordinateSpace(name: "scroll_space")
+                
             }
         }
         .toolbar(.hidden, for: .navigationBar)
@@ -40,13 +120,49 @@ struct LandingView: View {
             viewModel.clearSelectedPlaces()
             isComparing = false
         }
-        .navigationDestination(item: $selectedImageURL) { url in
-            FullImageDetailView(url: url)
+        .navigationTitle(Text("Discover"))
+        .fullScreenCover(item: $selectedImageURL) { url in
+            NavigationStack {
+                FullImageDetailView(url: url)
+            }
         }
         .fullScreenCover(item: $selectedPlace) { place in
             NavigationStack {
                 DetailPlaceView(place: place)
             }
+        }
+        .fullScreenCover(isPresented: $isShowingEditPreference) {
+            EditPreferenceView(criteria: viewModel.criteria) { criteria in
+                Task {
+                    await viewModel.applyPreferences(
+                        criteria,
+                        store: AppServices.preferenceStore(context: modelContext),
+                        provider: AppServices.placeProvider(context: modelContext)
+                    )
+                }
+            }
+        }
+    }
+    
+    // MARK: - Rumus Hitung Efek Blur & Fade Out
+    
+    // Menghitung intensitas blur: Semakin ke bawah di-scroll, semakin blur (maksimal radius 15)
+    private func calculateBlur() -> CGFloat {
+        if scrollOffset >= 0 {
+            return 0
+        } else {
+            let progress = abs(scrollOffset) / 200.0
+            return min(CGFloat(progress * 15.0), 15.0)
+        }
+    }
+    
+    // Menghitung opasitas: Gambar memudar perlahan agar tidak mengganggu keterbacaan kartu
+    private func calculateOpacity() -> Double {
+        if scrollOffset >= 0 {
+            return 1.0
+        } else {
+            let progress = abs(scrollOffset) / 280.0
+            return max(0.0, 1.0 - progress)
         }
     }
 }

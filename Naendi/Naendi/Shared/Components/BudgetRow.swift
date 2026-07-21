@@ -9,10 +9,11 @@ struct BudgetRow: View {
                 Button {
                     selection = option
                 } label: {
-                    Label(
-                        option.title,
-                        systemImage: selection == option ? "checkmark" : ""
-                    )
+                    if selection == option {
+                        Label(option.title, systemImage: "checkmark")
+                    } else {
+                        Text(option.title)
+                    }
                 }
             }
         } label: {

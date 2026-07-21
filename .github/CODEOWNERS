@@ -1,0 +1,7 @@
+# Code owners. Any PR that changes a matched path requires review/approval
+# from the listed owner before it can be merged (when branch protection has
+# "Require review from Code Owners" enabled).
+
+# App entitlements — CloudKit container config. Owned so it can't be changed
+# by others without explicit approval.
+/Naendi/Naendi/Naendi.entitlements @mozaldy

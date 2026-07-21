@@ -31,7 +31,7 @@ struct DetailPlaceView: View {
                 backgroundColor: Color(red: 207/255, green: 245/255, blue: 64/255),
                 textColor: .black,
                 action: {
-                    print("Location Selected!")
+                    viewModel.openRoute(to: place)
                 }
             )
             .padding(.vertical, 20)
@@ -42,9 +42,10 @@ struct DetailPlaceView: View {
         .navigationBarTitleDisplayMode(.inline)
         .padding(.horizontal, 16)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
+            ToolbarItem(placement: .topBarTrailing) {
                 Button(action: { dismiss() }) {
-                    Image(systemName: "chevron.backward")
+                    Image(systemName: "xmark")
+                        .font(.headline)
                 }
             }
         }

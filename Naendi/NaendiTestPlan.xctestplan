@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "3AD0675D-D076-4A03-80B7-99C3C52B3B7F",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Naendi.xcodeproj",
+        "identifier" : "352E20B63008B5280096F685",
+        "name" : "NaendiTests"
+      }
+    }
+  ],
+  "version" : 1
+}
