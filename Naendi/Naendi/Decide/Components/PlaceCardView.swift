@@ -58,7 +58,7 @@ struct PlaceCardView: View {
                 if isExpanded {
                     PlaceCardExpandView(place: place, isChooseThisLocationBtnVisible: isChooseThisLocationBtnVisible, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel, selectedImageURL: $selectedImageURL, selectedPlace: $selectedPlace, isDetail: isDetail, onReport: onReport)
                 } else {
-                    PlaceCardNormalView(place: place, mode: mode, isReported: isReportVisible, isTagVisible: isTagVisible, isDetail: isDetail, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel)
+                    PlaceCardNormalView(place: place, mode: mode, isReported: isReportVisible, isTagVisible: isTagVisible, isDetail: isDetail, onReport: onReport, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel)
                 }
             }
             .contentShape(Rectangle())

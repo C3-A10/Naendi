@@ -197,4 +197,10 @@ class DecideViewModel {
             return String(format: "%.1f km", distanceInKm)
         }
     }
+
+    /// Returns true when GPS is available and the user is within 250 m of the place.
+    func isWithinReportRadius(of place: Place) -> Bool {
+        guard let userLocation else { return false }
+        return userLocation.distance(from: place.coordinate.clLocation) <= 250
+    }
 }

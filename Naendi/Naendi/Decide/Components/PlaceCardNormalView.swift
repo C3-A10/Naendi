@@ -14,6 +14,7 @@ struct PlaceCardNormalView: View {
     let isReported: Bool
     let isTagVisible: Bool
     let isDetail: Bool
+    let onReport: () -> Void
     @Binding var isExpanded: Bool
     @Binding var isComparing: Bool
     @State var viewModel: DecideViewModel
@@ -24,6 +25,7 @@ struct PlaceCardNormalView: View {
         isReported: Bool,
         isTagVisible: Bool,
         isDetail: Bool = false,
+        onReport: @escaping () -> Void = {},
         isExpanded: Binding<Bool>,
         isComparing: Binding<Bool>,
         viewModel: DecideViewModel
@@ -33,6 +35,7 @@ struct PlaceCardNormalView: View {
         self.isReported = isReported
         self.isTagVisible = isTagVisible
         self.isDetail = isDetail
+        self.onReport = onReport
         self._isExpanded = isExpanded
         self._isComparing = isComparing
         self._viewModel = State(initialValue: viewModel)
@@ -74,7 +77,7 @@ struct PlaceCardNormalView: View {
                     distancePillColor: Color("color_green"),
                     isTagVisible: isTagVisible,
                     isDetail: isDetail,
-                    onReport: {}
+                    onReport: onReport
                 )
                 
                 // Tombol Expand
@@ -147,7 +150,7 @@ struct PlaceCardNormalView: View {
                             distancePillColor: .white,
                             isTagVisible: isTagVisible,
                             isDetail: isDetail,
-                            onReport: {}
+                            onReport: onReport
                         )
                         .padding(.top, 4)
                         .padding(.horizontal, 2)
