@@ -112,7 +112,7 @@ struct SelectLocationView: View {
             Text("Custom local radius (km)")
                 .font(.system(size: 16))
 
-            RadiusSlider(value: $radius, range: 0.5...10, step: 0.5)
+            RadiusSlider(value: $radius, range: 0.25...10, step: 0.25)
         }
     }
 

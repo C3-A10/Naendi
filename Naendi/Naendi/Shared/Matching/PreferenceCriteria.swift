@@ -81,7 +81,7 @@ struct PreferenceCriteria: Equatable {
     init(
         locationName: String? = nil,
         coordinate: Coordinate? = nil,
-        radiusKm: Double = 3.0,
+        radiusKm: Double = 1.0,
         budget: BudgetOption = .any,
         customMinBudget: Double? = nil,
         customMaxBudget: Double? = nil,
