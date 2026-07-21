@@ -85,7 +85,6 @@ struct CompareCard: View {
                                 .font(.system(size: 12, weight: .semibold))
                                 .foregroundColor(.gray)
                         }
-                        //                    .padding(.trailing, 4)
                         
                         TagView(
                             text: item.vibe,
@@ -93,13 +92,13 @@ struct CompareCard: View {
                             textColor: Color(red: 0.22, green: 0.55, blue: 0.42)
                         )
                         
-                        if item.halal.lowercased() == "yes" {
+                        if item.halal.lowercased() == "halal" {
                             TagView(
                                 text: "Halal",
                                 backgroundColor: Color(red: 0.98, green: 0.84, blue: 0.53),
                                 textColor: Color(red: 0.72, green: 0.44, blue: 0.16)
                             )
-                        } else {
+                        } else if item.halal.lowercased() == "non-halal"{
                             TagView(
                                 text: "Non-Halal",
                                 backgroundColor: Color(red: 0.98, green: 0.85, blue: 0.85),
@@ -109,9 +108,11 @@ struct CompareCard: View {
                     }
                     
                     VStack(alignment: .leading, spacing: 2) {
-                        //TODO: beri jarak dari pin
-                        Text("x dari x,")
-                        Text("\(viewModel.calculateDistance(to: item)) dari lokasi Anda saat ini.")
+                        if let locationName = viewModel.criteria.locationName,
+                           viewModel.criteria.coordinate != nil {
+                            Text("\(viewModel.calculateDistance(to: item)) dari \(locationName),")
+                        };
+                            Text("\(viewModel.calculateDistanceFromMe(to: item)) dari lokasi Anda saat ini.")
                     }
                     .font(.system(size: 12))
                     .foregroundColor(.gray)
@@ -141,6 +142,7 @@ struct CompareCard: View {
                     )
             )
             .animation(.easeInOut(duration: 0.2), value: isSelected)
+            .onTapGesture { onTap() }
         }
     }
         

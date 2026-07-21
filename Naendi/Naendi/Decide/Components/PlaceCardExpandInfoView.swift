@@ -58,11 +58,14 @@ struct PlaceCardExpandInfoView: View {
                     // Badges Type - Vibe - Halal
                     HStack(spacing: 6) {
                         TagView(text: place.typeTempat, backgroundColor: Color.orange.opacity(0.15), textColor: Color(red: 0.90, green: 0.45, blue: 0.10))
-
+                        
                         TagView(text: place.vibe, backgroundColor: Color.blue.opacity(0.15), textColor: Color(red: 0.10, green: 0.45, blue: 0.90))
                         
                         if place.isHalalConfirmed {
                             TagView(text: "Halal", backgroundColor: Color.green.opacity(0.15), textColor: Color(red: 0.15, green: 0.65, blue: 0.30))
+                        } else if place.halal.lowercased() == "non-halal" {
+                            TagView(text: "Non-Halal", backgroundColor: Color(red: 0.98, green: 0.85, blue: 0.85),
+                                    textColor: Color(red: 0.75, green: 0.22, blue: 0.22))
                         }
                     }
                 }
@@ -79,7 +82,7 @@ struct PlaceCardExpandInfoView: View {
                 }
             }
             .padding(.bottom, 8)
-
+            
             Divider()
                 .padding(.vertical, 2)
             
