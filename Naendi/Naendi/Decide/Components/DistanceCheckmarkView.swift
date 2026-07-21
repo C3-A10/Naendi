@@ -72,21 +72,10 @@ struct DistanceCheckmarkView: View {
                 }
                 .buttonStyle(.plain)
             } else {
-                HStack(spacing: -6) {
-                    Text("\(place.reportCount)")
-                        .font(.system(size: 9, weight: .bold))
-                        .foregroundColor(.white)
-                        .frame(width: 16, height: 16)
-                        .background(Color(red: 0.61, green: 0.80, blue: 0.22))
-                        .clipShape(Circle())
-                    
-                    Image(systemName: "exclamationmark.bubble.fill")
-                        .font(.system(size: 20))
-                        .foregroundColor(.white)
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .clipShape(Capsule())
+                ReportBubbleView(reportCount: place.reportCount)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .clipShape(Capsule())
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
