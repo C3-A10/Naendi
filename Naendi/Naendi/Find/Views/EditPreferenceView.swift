@@ -449,7 +449,8 @@ struct EditPreferenceView: View {
                 CircleIconButton(
                     systemName: "chevron.left",
                     accessibilityLabel: "Back",
-                    accessibilityInputLabels: ["Back"]
+                    accessibilityInputLabels: ["Back"],
+                    backgroundColor: Color(.systemBackground)
                 ) { dismiss() }
                 .accessibilitySortPriority(3)
 
@@ -458,7 +459,8 @@ struct EditPreferenceView: View {
                 CircleIconButton(
                     systemName: "checkmark",
                     accessibilityLabel: "Save preferences",
-                    accessibilityInputLabels: ["Save", "Save preferences"]
+                    accessibilityInputLabels: ["Save", "Save preferences"],
+                    backgroundColor: Color(.systemBackground)
                 ) {
                     onSave(editedCriteria)
                     dismiss()
