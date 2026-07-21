@@ -180,4 +180,21 @@ class DecideViewModel {
             return String(format: "%.1f km", distanceInKm)
         }
     }
+
+    // fungsi untuk hitung jarak dari tempat user saat ini
+    func calculateDistanceFromMe(to place: Place) -> String {
+        guard let userLocation else {
+            return "-" // tampilkan tanda strip jika GPS user belum didapat/tdk diizinkan
+        }
+
+        let distanceInMeters = userLocation.distance(from: place.coordinate.clLocation)
+
+        // format tampilan teks (jika < 1 km tampilkan "500 m", jika lebih tampilkan "1.2 km")
+        if distanceInMeters < 1000 {
+            return String(format: "%.0f m", distanceInMeters)
+        } else {
+            let distanceInKm = distanceInMeters / 1000
+            return String(format: "%.1f km", distanceInKm)
+        }
+    }
 }

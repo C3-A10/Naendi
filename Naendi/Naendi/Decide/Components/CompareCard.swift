@@ -112,7 +112,7 @@ struct CompareCard: View {
                            viewModel.criteria.coordinate != nil {
                             Text("\(viewModel.calculateDistance(to: item)) dari \(locationName),")
                         };
-                            Text("\(viewModel.calculateDistance(to: item)) dari lokasi Anda saat ini.")
+                            Text("\(viewModel.calculateDistanceFromMe(to: item)) dari lokasi Anda saat ini.")
                     }
                     .font(.system(size: 12))
                     .foregroundColor(.gray)
@@ -142,6 +142,7 @@ struct CompareCard: View {
                     )
             )
             .animation(.easeInOut(duration: 0.2), value: isSelected)
+            .onTapGesture { onTap() }
         }
     }
         
