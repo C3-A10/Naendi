@@ -85,7 +85,6 @@ struct CompareCard: View {
                                 .font(.system(size: 12, weight: .semibold))
                                 .foregroundColor(.gray)
                         }
-                        //                    .padding(.trailing, 4)
                         
                         TagView(
                             text: item.vibe,
