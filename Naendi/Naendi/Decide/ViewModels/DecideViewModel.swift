@@ -23,6 +23,7 @@ class DecideViewModel {
     var isLoading: Bool = false
     var errorMessage: String?
     var persistenceErrorMessage: String?
+    var reportErrorMessage: String?
     var selectedPlaces: [Place] = []
     var isCompareLimitReached: Bool { selectedPlaces.count >= 2 }
 
@@ -76,8 +77,6 @@ class DecideViewModel {
         selectedPlaces.removeAll()
     }
 
-    /// Fills the landing page showcase with the most-reviewed places. This is a
-    /// teaser, not a search — preferences deliberately don't apply.
     func loadLandingPlaces(from provider: PlaceProviding, limit: Int = 10) async {
         isLoading = true
         errorMessage = nil
@@ -93,7 +92,6 @@ class DecideViewModel {
         isLoading = false
     }
 
-    /// Applies the user's preferences and moves to the results screen.
     func loadRecommendations(
         from provider: PlaceProviding,
         criteria: PreferenceCriteria,
@@ -129,14 +127,9 @@ class DecideViewModel {
         }
 
         isLoading = false
-        // Unconditional: matching nothing is a valid outcome that belongs on the
-        // results screen, not a reason to fall back to the landing page.
         phase = .results
     }
 
-    /// Persists the user's edited preferences and immediately searches with them.
-    /// A failed write is not fatal — the search still runs, the choice just
-    /// won't survive a relaunch.
     func applyPreferences(
         _ criteria: PreferenceCriteria,
         store: PreferenceStoring,
@@ -151,7 +144,6 @@ class DecideViewModel {
         await loadRecommendations(from: provider, criteria: criteria)
     }
 
-    /// Restores previously saved preferences, if any, without running a search.
     func restoreCriteria(from store: PreferenceStoring) {
         guard let stored = try? store.loadCriteria() else { return }
         criteria = stored
@@ -160,6 +152,28 @@ class DecideViewModel {
     // fungsi untuk routing di apple map
     func openRoute(to place: Place) {
         mapKitService.openAppleMapsRoute(to: place)
+    }
+
+    private let reportRadiusMeters: CLLocationDistance = 100
+
+    func reportPlace(
+        _ place: Place,
+        using repository: CloudKitPlaceRepository = CloudKitPlaceRepository()
+    ) async {
+        guard let here = locationProvider.currentLocation else {
+            reportErrorMessage = "Turn on location access to report a place."
+            return
+        }
+        guard here.distance(from: place.coordinate.clLocation) <= reportRadiusMeters else {
+            reportErrorMessage = "You need to be at this place to report it."
+            return
+        }
+        do {
+            _ = try await repository.incrementReportCount(placeID: place.id)
+            reportErrorMessage = nil
+        } catch {
+            reportErrorMessage = "Couldn't submit your report. Please try again."
+        }
     }
 
     // fungsi untuk hitung jarak di cardview

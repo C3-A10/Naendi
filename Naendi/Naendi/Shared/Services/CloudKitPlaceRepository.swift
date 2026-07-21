@@ -33,6 +33,29 @@ final class CloudKitPlaceRepository: PlaceRepository {
             return places
     }
     
+    @discardableResult
+    func incrementReportCount(placeID id: String) async throws -> Int {
+        let database = CKContainer(identifier: "iCloud.naendi").publicCloudDatabase
+
+        let record = try await fetchPlace(id: id, in: database)
+        let current = (record["jumlah_report"] as? Int)
+            ?? (record["jumlah_report"] as? Int64).map(Int.init)
+            ?? 0
+        let updated = current + 1
+        record["jumlah_report"] = updated
+        _ = try await database.save(record)
+        return updated
+    }
+
+    private func fetchPlace(id: String, in database: CKDatabase) async throws -> CKRecord {
+        let query = CKQuery(recordType: "Places", predicate: NSPredicate(format: "place_id == %@", id))
+        let matches = try await database.records(matching: query, resultsLimit: 1).matchResults
+        if let (_, result) = matches.first {
+            return try result.get()
+        }
+        return try await database.record(for: CKRecord.ID(recordName: id))
+    }
+
     private func addPlaces(
         from matchResults: [(CKRecord.ID, Result<CKRecord, Error>)],
         into places: inout [Place]
@@ -56,7 +79,6 @@ final class CloudKitPlaceRepository: PlaceRepository {
         let jumlahReview = (record["jumlah_review"] as? Int)
             ?? (record["jumlah_review"] as? Int64).map(Int.init)
             ?? 0
-        // Prefer the stable place_id; fall back to the record's own name so id is never empty.
         let id = (record["place_id"] as? String) ?? record.recordID.recordName
 
         return Place(
