@@ -13,6 +13,7 @@ struct SelectLocationView: View {
     @State private var cameraPosition: MapCameraPosition
     @State private var showsUserLocation = true
     @State private var isMapExpanded = false
+    @State private var searchState = LocationSearchState.idle
 
     init(
         selectedLocationName: Binding<String>,
@@ -43,7 +44,8 @@ struct SelectLocationView: View {
                     selectedCoordinate: $selectedCoordinate,
                     radius: $radius,
                     submittedSearchQuery: $submittedSearchQuery,
-                    showsUserLocation: $showsUserLocation
+                    showsUserLocation: $showsUserLocation,
+                    searchState: $searchState
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 34, style: .continuous))
 
@@ -80,8 +82,16 @@ struct SelectLocationView: View {
                 selectedCoordinate: $selectedCoordinate,
                 radius: $radius,
                 submittedSearchQuery: $submittedSearchQuery,
-                showsUserLocation: $showsUserLocation
+                showsUserLocation: $showsUserLocation,
+                searchState: $searchState
             )
+        }
+        .alert(searchAlertTitle, isPresented: isShowingSearchAlert) {
+            Button("OK", role: .cancel) {
+                searchState = .idle
+            }
+        } message: {
+            Text(searchAlertMessage)
         }
     }
 
@@ -127,6 +137,46 @@ struct SelectLocationView: View {
             submittedSearchQuery = trimmedQuery
         }
     }
+
+    private var isShowingSearchAlert: Binding<Bool> {
+        Binding(
+            get: {
+                switch searchState {
+                case .emptyResult, .failure:
+                    true
+                case .idle, .searching, .success:
+                    false
+                }
+            },
+            set: { isPresented in
+                if !isPresented {
+                    searchState = .idle
+                }
+            }
+        )
+    }
+
+    private var searchAlertTitle: String {
+        switch searchState {
+        case .emptyResult:
+            "Location Not Found"
+        case .failure:
+            "Unable to Search"
+        case .idle, .searching, .success:
+            ""
+        }
+    }
+
+    private var searchAlertMessage: String {
+        switch searchState {
+        case .emptyResult:
+            "Try a different city, place, or address."
+        case .failure(let message):
+            message
+        case .idle, .searching, .success:
+            ""
+        }
+    }
 }
 
 private struct ExpandedLocationMapView: View {
@@ -138,6 +188,7 @@ private struct ExpandedLocationMapView: View {
     @Binding var radius: Double
     @Binding var submittedSearchQuery: String
     @Binding var showsUserLocation: Bool
+    @Binding var searchState: LocationSearchState
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -147,7 +198,8 @@ private struct ExpandedLocationMapView: View {
                 selectedCoordinate: $selectedCoordinate,
                 radius: $radius,
                 submittedSearchQuery: $submittedSearchQuery,
-                showsUserLocation: $showsUserLocation
+                showsUserLocation: $showsUserLocation,
+                searchState: $searchState
             )
             .ignoresSafeArea()
 

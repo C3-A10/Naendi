@@ -88,31 +88,31 @@ struct ResultView: View {
 
             ZStack {
                 if viewModel.isLoading {
-                    ProgressView("Memuat rekomendasi...")
-                        .scaleEffect(1.1)
+                    ProgressView("Finding recommendations…")
+                        .controlSize(.large)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if let errorMessage = viewModel.errorMessage {
-                    VStack(spacing: 16) {
-                        Text("Unable to load recommendations")
-                            .font(.title2)
-                            .fontWeight(.bold)
+                    ContentUnavailableView {
+                        Label("Unable to Load Recommendations", systemImage: "exclamationmark.triangle")
+                    } description: {
                         Text(errorMessage)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 40)
+                    } actions: {
+                        Button("Try Again", systemImage: "arrow.clockwise") {
+                            reloadRecommendations()
+                        }
+                        .buttonStyle(.borderedProminent)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if viewModel.places.isEmpty {
-                    VStack(spacing: 16) {
-                        Text("No results found")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                        Text("Edit Your Preference First To get results")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 40)
+                    ContentUnavailableView {
+                        Label("No Results Found", systemImage: "magnifyingglass")
+                    } description: {
+                        Text("Try adjusting your preferences or increasing the search radius.")
+                    } actions: {
+                        Button("Edit Preferences", systemImage: "slider.horizontal.3") {
+                            isShowingEditPreference = true
+                        }
+                        .buttonStyle(.borderedProminent)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -203,6 +203,15 @@ struct ResultView: View {
             }
         } message: {
             Text(viewModel.persistenceErrorMessage ?? "")
+        }
+    }
+
+    private func reloadRecommendations() {
+        Task {
+            await viewModel.loadRecommendations(
+                from: AppServices.placeProvider(context: modelContext),
+                criteria: viewModel.criteria
+            )
         }
     }
 }

@@ -201,6 +201,19 @@ struct DecideViewModelTests {
         let viewModel = makeViewModel()
         viewModel.restoreCriteria(from: FakePreferenceStore(stored: nil))
         #expect(viewModel.criteria == .default)
+        #expect(viewModel.persistenceErrorMessage == nil)
+    }
+
+    @Test("a restore failure keeps defaults and exposes a persistence warning")
+    func restoreFailureIsNonBlocking() {
+        let store = FakePreferenceStore()
+        store.errorToThrow = FakePlaceProviderError.boom
+        let viewModel = makeViewModel()
+
+        viewModel.restoreCriteria(from: store)
+
+        #expect(viewModel.criteria == .default)
+        #expect(viewModel.persistenceErrorMessage != nil)
     }
 
     @Test("applying preferences saves them and searches")

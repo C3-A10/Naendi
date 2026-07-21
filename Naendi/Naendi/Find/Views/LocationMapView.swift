@@ -1,6 +1,14 @@
 import MapKit
 import SwiftUI
 
+enum LocationSearchState: Equatable {
+    case idle
+    case searching
+    case success
+    case emptyResult
+    case failure(String)
+}
+
 struct LocationMapView: View {
     @Binding var cameraPosition: MapCameraPosition
     @Binding var selectedLocationName: String
@@ -8,6 +16,7 @@ struct LocationMapView: View {
     @Binding var radius: Double
     @Binding var submittedSearchQuery: String
     @Binding var showsUserLocation: Bool
+    @Binding var searchState: LocationSearchState
 
     var interactionModes: MapInteractionModes = .all
 
@@ -63,8 +72,11 @@ struct LocationMapView: View {
         let query = submittedSearchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
 
         guard !query.isEmpty else {
+            searchState = .idle
             return
         }
+
+        searchState = .searching
 
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = query
@@ -74,6 +86,7 @@ struct LocationMapView: View {
             let response = try await MKLocalSearch(request: request).start()
 
             guard let mapItem = response.mapItems.first else {
+                searchState = .emptyResult
                 return
             }
 
@@ -89,8 +102,11 @@ struct LocationMapView: View {
             withAnimation(.smooth(duration: 0.45)) {
                 cameraPosition = .region(region)
             }
-        } catch {
+            searchState = .success
+        } catch is CancellationError {
             return
+        } catch {
+            searchState = .failure(error.localizedDescription)
         }
     }
 }
@@ -102,6 +118,7 @@ struct LocationMapView: View {
     @Previewable @State var radius = 1.0
     @Previewable @State var submittedSearchQuery = ""
     @Previewable @State var showsUserLocation = true
+    @Previewable @State var searchState = LocationSearchState.idle
 
     LocationMapView(
         cameraPosition: $cameraPosition,
@@ -109,6 +126,7 @@ struct LocationMapView: View {
         selectedCoordinate: $selectedCoordinate,
         radius: $radius,
         submittedSearchQuery: $submittedSearchQuery,
-        showsUserLocation: $showsUserLocation
+        showsUserLocation: $showsUserLocation,
+        searchState: $searchState
     )
 }
