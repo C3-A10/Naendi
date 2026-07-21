@@ -123,6 +123,8 @@ struct ResultView: View {
                                     place: place,
                                     mode: .result,
                                     isChooseThisLocationBtnVisible: true,
+                                    isTagVisible: false,
+                                    isReportVisible: false,
                                     viewModel: viewModel,
                                     isComparing: $isComparing,
                                     selectedImageURL: $selectedImageURL,

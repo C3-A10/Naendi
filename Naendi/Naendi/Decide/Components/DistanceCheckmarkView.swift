@@ -14,6 +14,7 @@ struct DistanceCheckmarkView: View {
     let place: Place
     let viewModel: DecideViewModel
     let distancePillColor: Color
+    let isTagVisible: Bool
     
     var body: some View {
         HStack(alignment: .center) {
@@ -26,13 +27,14 @@ struct DistanceCheckmarkView: View {
                 .background(distancePillColor)
                 .clipShape(Capsule())
             
-            TagView(text: "Viral", backgroundColor: .red, textColor: .white)
-            
-            TagView(text: "Trending", backgroundColor: .yellow, textColor: .black)
-            
-            TagView(text: "Top rating", backgroundColor: .blue, textColor: .white)
-
-            
+            if isTagVisible {
+                TagView(text: "Viral", backgroundColor: .red, textColor: .white)
+                
+                TagView(text: "Trending", backgroundColor: .yellow, textColor: .black)
+                
+                TagView(text: "Top rating", backgroundColor: .blue, textColor: .white)
+            }
+          
             Spacer()
             
             // 2. Checkbox

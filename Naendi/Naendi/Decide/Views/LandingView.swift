@@ -95,7 +95,8 @@ struct LandingView: View {
                         
                         LazyVStack(spacing: 20) {
                             ForEach(viewModel.landingPagePlaces) { place in
-                                PlaceCardView(place: place, mode: .landing, isChooseThisLocationBtnVisible: true, viewModel: viewModel, isComparing: $isComparing, selectedImageURL: $selectedImageURL, selectedPlace: $selectedPlace)
+                                
+                                PlaceCardView(place: place, mode: .landing, isChooseThisLocationBtnVisible: true, isTagVisible: true, isReportVisible: false, viewModel: viewModel, isComparing: $isComparing, selectedImageURL: $selectedImageURL, selectedPlace: $selectedPlace)
 
                             }
                         }

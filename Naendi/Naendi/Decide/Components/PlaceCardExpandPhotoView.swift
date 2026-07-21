@@ -105,7 +105,8 @@ struct PlaceCardExpandPhotoView: View {
                 isCheckDisabled: isCheckDisabled,
                 place: place,
                 viewModel: viewModel,
-                distancePillColor: Color("color_green")
+                distancePillColor: Color("color_green"),
+                isTagVisible: false
             )
         }
         .frame(height: 240)

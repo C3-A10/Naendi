@@ -11,7 +11,8 @@ import SwiftUI
 struct PlaceCardNormalView: View {
     let place: Place
     var mode: PlaceCardMode = .landing
-    let isReported: Bool=false
+    let isReported: Bool
+    let isTagVisible: Bool
     @Binding var isExpanded: Bool
     @Binding var isComparing: Bool
     @State var viewModel: DecideViewModel
@@ -49,7 +50,8 @@ struct PlaceCardNormalView: View {
                     isCheckDisabled: isCheckDisabled,
                     place: place,
                     viewModel: viewModel,
-                    distancePillColor: Color("color_green")
+                    distancePillColor: Color("color_green"),
+                    isTagVisible: isTagVisible
                 )
                 
                 // Tombol Expand
@@ -119,7 +121,8 @@ struct PlaceCardNormalView: View {
                             isCheckDisabled: true,
                             place: place,
                             viewModel: viewModel,
-                            distancePillColor: .white
+                            distancePillColor: .white,
+                            isTagVisible: isTagVisible
                         )
                         .padding(.top, 4)
                         .padding(.horizontal, 2)
@@ -195,13 +198,7 @@ struct PlaceCardNormalView: View {
     ZStack {
         Color(UIColor.systemGray6).ignoresSafeArea()
         
-        PlaceCardNormalView(
-            place: Place.dummyData[0],
-            mode: .landing,
-            isExpanded: .constant(false),
-            isComparing: .constant(true),
-            viewModel: DecideViewModel()
-        )
+//        PlaceCardNormalView(place: <#T##Place#>, isReported: <#T##Bool#>, isTagVisible: <#T##Bool#>, isExpanded: <#T##Binding<Bool>#>, isComparing: <#T##Binding<Bool>#>, viewModel: <#T##DecideViewModel#>)
         .padding()
     }
 }
