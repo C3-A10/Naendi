@@ -26,8 +26,9 @@ struct Place: Identifiable, Codable, Hashable {
     let reviewPositif: String
     let reviewNegatif: String
     
+    
     // tambahan
-    let imgUrl: String?
+    let imgUrls: String?
     let reportCount: Int
     
     // Mapping dari snake_case (CSV) ke camelCase (Swift)
@@ -47,8 +48,9 @@ struct Place: Identifiable, Codable, Hashable {
         case halalEvidence = "halal_evidence"
         case reviewPositif = "review_positif"
         case reviewNegatif = "review_negatif"
-        case imgUrl
+        case imgUrls = "images"
         case reportCount
+        
         
     }
 }
@@ -121,6 +123,29 @@ extension Place {
         return jadwalHariIni // fallback jika format tidak sesuai
     }
     
+    var parsedImageUrls: [String] {
+            guard let jsonString = imgUrls, let data = jsonString.data(using: .utf8) else {
+                return []
+            }
+            
+            // Struct internal untuk menangkap key "image" dari JSON
+            struct ImagePayload: Decodable {
+                let image: String
+            }
+            
+            do {
+                let items = try JSONDecoder().decode([ImagePayload].self, from: data)
+                return items.map { $0.image }
+            } catch {
+                print("Gagal memparsing imgUrls untuk ID \(id): \(error)")
+                return []
+            }
+        }
+    
+    var imgUrl: String? {
+        return parsedImageUrls.first
+    }
+    
     static let dummyData: [Place] = [
         // 1. Mie Mapan
         Place(
@@ -139,7 +164,7 @@ extension Place {
             halalEvidence: "Sertifikat Halal MUI",
             reviewPositif: "Mie Mapan ini emang jadi legend di Surabaya, rasanya konsisten enak dari dulu sampai sekarang. Pelayanan di sini juga jempolan, cepet, ramah, dan tempatnya bersih.",
             reviewNegatif: "Beberapa pengunjung merasa AC di sini kurang dingin, bikin gerah pas cuaca Surabaya lagi panas.",
-            imgUrl: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=800&auto=format&fit=crop",
+            imgUrls: #"[{"title": "Semua", "image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnNalJT0yVWoj17g7uVGbXqOwPPMd4Jrp6PhkdZPiNCY_pozkVsCYw_8qkT_U0fuNic9LnqrppvgsH1jeBfOogTMDwKY8cVIWRVsT-WWw3PQcAmH64U5LMWqQ3z7kDD4SE_bGOBww=w224-h298-k-no"}, {"title": "Menu", "image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmxlwzbPD8mt9qF4VjD54NrhAQ3VGDMzqqmqB_iSAjmGeWn6gMCAKHMqDuxSzs5EpZ-aP2aTNYM3ACdFKd2t2Yoev6BoNT_wF5YiOy6ImyMDn3HcK3-jYIuWEe38U-uK2kBkQQG=w224-h298-k-no"}, {"title": "Makanan & minuman", "image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkvrSNt78A1OtXFBZ20F2Pgz2DcoiOIKKG4l8xKBjLd4m7KXsNCTiqnqHiouPiucqWKUW-3Tj0U9hZEXzL0FALQijIgDukWEWawBSuNrQUAtpKOM9e0FSbECj4PdrbWYLFk5X9_Pb_OIho=w224-h398-k-no"}, {"title": "Nasi goreng", "image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWngM2ezo7FZh_MZet5nBSujT6W0uGw_r_I3VcyzAv_UuHs1N_XMM-qSxk1Nclz5HFAMyFFVGdD3dYE9oVwmlZlz6TqW8Q37zP2nnyTxRi8Cp7WwBtRmqIkHegLztLrfBlKJBFI=w224-h398-k-no"}, {"title": "Oleh pemilik", "image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnNalJT0yVWoj17g7uVGbXqOwPPMd4Jrp6PhkdZPiNCY_pozkVsCYw_8qkT_U0fuNic9LnqrppvgsH1jeBfOogTMDwKY8cVIWRVsT-WWw3PQcAmH64U5LMWqQ3z7kDD4SE_bGOBww=w224-h298-k-no"}]"#,
             reportCount: 0
         ),
         
@@ -160,7 +185,7 @@ extension Place {
             halalEvidence: "No Pork No Lard",
             reviewPositif: "Porsi martabak dan terang bulannya tuh super big banget, bikin nagih deh pokoknya. Topingnya melimpah, jadi worth it lah.",
             reviewNegatif: "Agak pricey sih buat sebagian orang, tapi ada juga yang bilang porsinya gede jadi lumayan.",
-            imgUrl: "https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=800&auto=format&fit=crop",
+            imgUrls: #"[{"title": "Semua", "image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnNalJT0yVWoj17g7uVGbXqOwPPMd4Jrp6PhkdZPiNCY_pozkVsCYw_8qkT_U0fuNic9LnqrppvgsH1jeBfOogTMDwKY8cVIWRVsT-WWw3PQcAmH64U5LMWqQ3z7kDD4SE_bGOBww=w224-h298-k-no"}, {"title": "Menu", "image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmxlwzbPD8mt9qF4VjD54NrhAQ3VGDMzqqmqB_iSAjmGeWn6gMCAKHMqDuxSzs5EpZ-aP2aTNYM3ACdFKd2t2Yoev6BoNT_wF5YiOy6ImyMDn3HcK3-jYIuWEe38U-uK2kBkQQG=w224-h298-k-no"}, {"title": "Makanan & minuman", "image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkvrSNt78A1OtXFBZ20F2Pgz2DcoiOIKKG4l8xKBjLd4m7KXsNCTiqnqHiouPiucqWKUW-3Tj0U9hZEXzL0FALQijIgDukWEWawBSuNrQUAtpKOM9e0FSbECj4PdrbWYLFk5X9_Pb_OIho=w224-h398-k-no"}, {"title": "Nasi goreng", "image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWngM2ezo7FZh_MZet5nBSujT6W0uGw_r_I3VcyzAv_UuHs1N_XMM-qSxk1Nclz5HFAMyFFVGdD3dYE9oVwmlZlz6TqW8Q37zP2nnyTxRi8Cp7WwBtRmqIkHegLztLrfBlKJBFI=w224-h398-k-no"}, {"title": "Oleh pemilik", "image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnNalJT0yVWoj17g7uVGbXqOwPPMd4Jrp6PhkdZPiNCY_pozkVsCYw_8qkT_U0fuNic9LnqrppvgsH1jeBfOogTMDwKY8cVIWRVsT-WWw3PQcAmH64U5LMWqQ3z7kDD4SE_bGOBww=w224-h298-k-no"}]"#,
             reportCount: 0
         ),
         
@@ -181,7 +206,7 @@ extension Place {
             halalEvidence: "No Pork No Lard",
             reviewPositif: "Harga sangat terjangkau untuk mahasiswa, rasanya pas tidak terlalu manis dan adonannya lembut.",
             reviewNegatif: "Antrean lumayan panjang kalau malam minggu dan tempat parkirnya agak sempit untuk mobil.",
-            imgUrl: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=800&auto=format&fit=crop",
+            imgUrls: #"[{"title": "Semua", "image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnNalJT0yVWoj17g7uVGbXqOwPPMd4Jrp6PhkdZPiNCY_pozkVsCYw_8qkT_U0fuNic9LnqrppvgsH1jeBfOogTMDwKY8cVIWRVsT-WWw3PQcAmH64U5LMWqQ3z7kDD4SE_bGOBww=w224-h298-k-no"}, {"title": "Menu", "image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmxlwzbPD8mt9qF4VjD54NrhAQ3VGDMzqqmqB_iSAjmGeWn6gMCAKHMqDuxSzs5EpZ-aP2aTNYM3ACdFKd2t2Yoev6BoNT_wF5YiOy6ImyMDn3HcK3-jYIuWEe38U-uK2kBkQQG=w224-h298-k-no"}, {"title": "Makanan & minuman", "image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkvrSNt78A1OtXFBZ20F2Pgz2DcoiOIKKG4l8xKBjLd4m7KXsNCTiqnqHiouPiucqWKUW-3Tj0U9hZEXzL0FALQijIgDukWEWawBSuNrQUAtpKOM9e0FSbECj4PdrbWYLFk5X9_Pb_OIho=w224-h398-k-no"}, {"title": "Nasi goreng", "image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWngM2ezo7FZh_MZet5nBSujT6W0uGw_r_I3VcyzAv_UuHs1N_XMM-qSxk1Nclz5HFAMyFFVGdD3dYE9oVwmlZlz6TqW8Q37zP2nnyTxRi8Cp7WwBtRmqIkHegLztLrfBlKJBFI=w224-h398-k-no"}, {"title": "Oleh pemilik", "image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnNalJT0yVWoj17g7uVGbXqOwPPMd4Jrp6PhkdZPiNCY_pozkVsCYw_8qkT_U0fuNic9LnqrppvgsH1jeBfOogTMDwKY8cVIWRVsT-WWw3PQcAmH64U5LMWqQ3z7kDD4SE_bGOBww=w224-h298-k-no"}]"#,
             reportCount: 0
         ),
         
@@ -202,7 +227,7 @@ extension Place {
             halalEvidence: "Sertifikat Halal MUI",
             reviewPositif: "Kuah sotonya sangat gurih dan kental, apalagi ditambah bubuk koya khasnya yang bikin rasa makin mantap. Daging ayamnya melimpah.",
             reviewNegatif: "Kalau jam makan siang sangat ramai sampai susah cari meja kosong.",
-            imgUrl: "https://images.unsplash.com/photo-1572656631137-7935297eff55?q=80&w=800&auto=format&fit=crop",
+            imgUrls: #"[{"title": "Semua", "image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnNalJT0yVWoj17g7uVGbXqOwPPMd4Jrp6PhkdZPiNCY_pozkVsCYw_8qkT_U0fuNic9LnqrppvgsH1jeBfOogTMDwKY8cVIWRVsT-WWw3PQcAmH64U5LMWqQ3z7kDD4SE_bGOBww=w224-h298-k-no"}, {"title": "Menu", "image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmxlwzbPD8mt9qF4VjD54NrhAQ3VGDMzqqmqB_iSAjmGeWn6gMCAKHMqDuxSzs5EpZ-aP2aTNYM3ACdFKd2t2Yoev6BoNT_wF5YiOy6ImyMDn3HcK3-jYIuWEe38U-uK2kBkQQG=w224-h298-k-no"}, {"title": "Makanan & minuman", "image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkvrSNt78A1OtXFBZ20F2Pgz2DcoiOIKKG4l8xKBjLd4m7KXsNCTiqnqHiouPiucqWKUW-3Tj0U9hZEXzL0FALQijIgDukWEWawBSuNrQUAtpKOM9e0FSbECj4PdrbWYLFk5X9_Pb_OIho=w224-h398-k-no"}, {"title": "Nasi goreng", "image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWngM2ezo7FZh_MZet5nBSujT6W0uGw_r_I3VcyzAv_UuHs1N_XMM-qSxk1Nclz5HFAMyFFVGdD3dYE9oVwmlZlz6TqW8Q37zP2nnyTxRi8Cp7WwBtRmqIkHegLztLrfBlKJBFI=w224-h398-k-no"}, {"title": "Oleh pemilik", "image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnNalJT0yVWoj17g7uVGbXqOwPPMd4Jrp6PhkdZPiNCY_pozkVsCYw_8qkT_U0fuNic9LnqrppvgsH1jeBfOogTMDwKY8cVIWRVsT-WWw3PQcAmH64U5LMWqQ3z7kDD4SE_bGOBww=w224-h298-k-no"}]"#,
             reportCount: 0
         )
     ]
