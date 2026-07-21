@@ -122,6 +122,9 @@ struct ResultView: View {
                                 PlaceCardView(
                                     place: place,
                                     mode: .result,
+                                    isChooseThisLocationBtnVisible: true,
+                                    isTagVisible: false,
+                                    isReportVisible: false,
                                     viewModel: viewModel,
                                     isComparing: $isComparing,
                                     selectedImageURL: $selectedImageURL,
@@ -165,18 +168,18 @@ struct ResultView: View {
         }
         .fullScreenCover(isPresented: $isNavigatingToCompare) {
             if viewModel.selectedPlaces.count >= 2 {
-                NavigationStack {
+                NavigationStack {                   
                     CompareView(
                         placeA: viewModel.selectedPlaces[0],
                         placeB: viewModel.selectedPlaces[1],
                         viewModel: viewModel
                     )
-                        .navigationTitle("Compare")
-                        .navigationBarTitleDisplayMode(.inline)
+                    .navigationTitle("Compare")
+                    .navigationBarTitleDisplayMode(.inline)
                 }
             }
         }
-        .fullScreenCover(isPresented: $isShowingEditPreference) {
+        .fullScreenCover(isPresented: $isShowingEditPreference) {           
             EditPreferenceView(criteria: viewModel.criteria) { criteria in
                 Task {
                     await viewModel.applyPreferences(
