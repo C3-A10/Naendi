@@ -71,23 +71,11 @@ struct DetailPlaceView: View {
         .background {
             GreenBlurBackground()
         }
-        // GPS / out-of-radius alert overlay
-        .overlay {
-            if showGPSAlert {
-                ZStack {
-                    Color.black.opacity(0.5)
-                        .ignoresSafeArea()
-                    AlertView(
-                        title: "Pastikan anda berada di lokasi dan GPS tidak mati!",
-                        message: "Pelaporan hanya dapat diberikan di lokasi agar menjaga keakuratan informasi.",
-                        buttonTitle: "Aku mengerti",
-                        action: {
-                            showGPSAlert = false
-                        }
-                    )
-                    .padding(.horizontal, 24)
-                }
-            }
+        // GPS / out-of-radius alert
+        .alert("Pastikan kamu berada di lokasi!", isPresented: $showGPSAlert) {
+            Button("Aku mengerti", role: .cancel) { }
+        } message: {
+            Text("Pelaporan hanya dapat diberikan di lokasi agar menjaga keakuratan informasi.")
         }
         // Confirmation alert when user IS within radius
         .alert("Laporkan Tempat Ini?", isPresented: $showReportConfirm) {
