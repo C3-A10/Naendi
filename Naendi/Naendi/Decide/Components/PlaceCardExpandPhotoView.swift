@@ -17,15 +17,18 @@ struct PlaceCardExpandPhotoView: View {
     @Binding var selectedImageURL: URL?
     
     private var imageGallery: [String] {
-        var images: [String] = []
-        if let mainImg = place.imgUrl {
-            images.append(mainImg)
+        let urls = place.parsedImageUrls
+        
+        if !urls.isEmpty {
+            return urls
         }
-        images.append("https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop")
-        images.append("https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=800&auto=format&fit=crop")
-        images.append("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop")
-        images.append("https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop")
-        return images
+        
+        // (Opsional) Fallback: Jika tempat tersebut sama sekali tidak punya gambar di JSON
+        // Gunakan 1 atau 2 gambar default agar layout grid di UI tidak rusak/kosong
+        return [
+            "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=800&auto=format&fit=crop"
+        ]
     }
     
     var body: some View {

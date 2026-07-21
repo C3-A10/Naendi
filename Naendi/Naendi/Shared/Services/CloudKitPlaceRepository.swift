@@ -75,7 +75,7 @@ final class CloudKitPlaceRepository: PlaceRepository {
             halalEvidence: (record["halal_evidence"] as? String) ?? "",
             reviewPositif: (record["review_positif"] as? String) ?? "",
             reviewNegatif: (record["review_negatif"] as? String) ?? "",
-            imgUrl: (record["thumbnail"] as? String) ?? (record["images"] as? String),
+            imgUrls: (record["images"] as? String) ?? (record["images"] as? String),
             reportCount: 0
         )
     }
