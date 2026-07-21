@@ -63,6 +63,9 @@ struct CompareView: View {
                 }
             }
         }
+        .background {
+            GreenBlurBackground()
+        }
         .navigationTitle("Compare")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -73,6 +76,7 @@ struct CompareView: View {
                 }
             }
         }
+        
     }
 }
 

@@ -9,7 +9,9 @@ import SwiftUI
 
 struct PlaceCardExpandInfoView: View {
     let place: Place
+    let isChooseThisLocationBtnVisible: Bool
     @Binding var isExpanded: Bool
+    @Binding var selectedPlace: Place?
     
     private var reviewItems: [(title: String, text: String, isPositive: Bool)] {
         var items: [(String, String, Bool)] = []
@@ -81,13 +83,14 @@ struct PlaceCardExpandInfoView: View {
             Divider()
                 .padding(.vertical, 2)
             
-            DetailRowView(title: "Location", value: place.alamat)            .padding(.horizontal, 12)
+            DetailRowView(title: "Location", value: place.alamat)
+                .padding(.horizontal, 12)
             
             Divider()
                 .padding(.vertical, 2)
             
             DetailRowView(title: "Operational Hours", value: "\(place.jamHariIniFormatted) WIB")
-            .padding(.horizontal, 12)
+                .padding(.horizontal, 12)
             
             Divider()
                 .padding(.vertical, 2)
@@ -116,6 +119,14 @@ struct PlaceCardExpandInfoView: View {
                 }
             }
             .padding(.horizontal, 12)
+            
+            if isChooseThisLocationBtnVisible {
+                Divider()
+                    .padding(.vertical, 2)
+                CustomActionButton(text: "Choose this location", backgroundColor: Color("color_green"), textColor: .black) {
+                    selectedPlace = place
+                }
+            }
         }
         .padding(.horizontal, 12)
         .padding(.bottom, 12)
@@ -123,6 +134,10 @@ struct PlaceCardExpandInfoView: View {
 }
 
 #Preview {
-    PlaceCardExpandInfoView( place: Place.dummyData[0],
-                             isExpanded: .constant(false) )
+    PlaceCardExpandInfoView(
+        place: Place.dummyData[0],
+        isChooseThisLocationBtnVisible: true,
+        isExpanded: .constant(false),
+        selectedPlace: .constant(nil)
+    )
 }
