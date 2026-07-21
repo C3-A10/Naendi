@@ -8,13 +8,19 @@
 import SwiftUI
 
 struct GreenBlurBackground: View {
+    @Environment(\.colorScheme) private var colorScheme
+
+    private var baseColor: Color {
+        colorScheme == .dark ? .black : .white
+    }
+
     var body: some View {
         LinearGradient(
             stops: [
-                .init(color: Color("color_green_background"), location: 0.0),          // Atas layar (Status bar)
-                .init(color: Color("color_green_background").opacity(0.8), location: 0.25), // Area judul "Results"
-                .init(color: .white, location: 0.55),                       // Area kartu kedua (mulai putih total)
-                .init(color: .white, location: 1.0)                         // Dasar layar
+                .init(color: Color("color_green_background"), location: 0.0),              // Atas layar (Status bar)
+                .init(color: Color("color_green_background").opacity(0.8), location: 0.25), // Area judul
+                .init(color: baseColor, location: 0.55),                                    // Transisi ke warna dasar
+                .init(color: baseColor, location: 1.0)                                      // Dasar layar
             ],
             startPoint: .top,
             endPoint: .bottom
@@ -24,5 +30,8 @@ struct GreenBlurBackground: View {
 }
 
 #Preview {
-    GreenBlurBackground()
+    VStack {
+        GreenBlurBackground()
+    }
+    .preferredColorScheme(.dark)
 }

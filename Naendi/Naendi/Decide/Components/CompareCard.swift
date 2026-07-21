@@ -52,7 +52,7 @@ struct CompareCard: View {
                     HStack(spacing: -6) {
                         Text("\(item.reportCount)")
                             .font(.system(size: 9, weight: .bold))
-                            .foregroundColor(.white)
+                            .foregroundColor(Color.black)
                             .frame(width: 16, height: 16)
                             .background(Color(red: 0.61, green: 0.80, blue: 0.22))
                             .clipShape(Circle())
@@ -73,6 +73,7 @@ struct CompareCard: View {
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
                         .padding(.top, 10)
+                        .foregroundColor(.black)
                     
                     BrickLayout(spacing: 6) {
                         
@@ -161,7 +162,7 @@ struct DetailRowView: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
                 .font(.system(size: 14, weight: .bold))
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
             
             Text(value)
                 .font(.system(size: 12, weight: .regular))

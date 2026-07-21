@@ -30,7 +30,7 @@ struct PlaceCardExpandInfoView: View {
                     // Nama tempat
                     Text(place.nama)
                         .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                     
                     // Rating - jml rating - range harga
                     HStack(spacing: 6) {
@@ -43,7 +43,7 @@ struct PlaceCardExpandInfoView: View {
                         // rating
                         Text("\(place.rating, specifier: "%.1f")")
                             .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                         
                         Text("•").foregroundColor(.secondary)
                         
@@ -72,7 +72,7 @@ struct PlaceCardExpandInfoView: View {
                 Spacer()
                 Image(systemName: "chevron.up")
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.black)
+                    .foregroundColor(.primary)
                     .padding(4)
             }
             .padding(.horizontal, 12)

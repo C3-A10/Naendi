@@ -62,19 +62,19 @@ struct PlaceCardNormalView: View {
                 } label: {
                     HStack {
                         VStack(alignment: .leading, spacing: 6) {
-                            Text(place.nama).font(.system(size: 22, weight: .bold)).foregroundColor(.black).lineLimit(1)
+                            Text(place.nama).font(.system(size: 22, weight: .bold)).foregroundColor(.primary).lineLimit(1)
                             HStack(spacing: 6) {
                                 Image(systemName: "star.fill").foregroundColor(.yellow).font(.system(size: 15))
-                                Text("\(place.rating, specifier: "%.1f")").font(.system(size: 15, weight: .semibold)).foregroundColor(.black)
+                                Text("\(place.rating, specifier: "%.1f")").font(.system(size: 15, weight: .semibold)).foregroundColor(.primary)
                                 Text("•").foregroundColor(.secondary)
                                 Text("(\(place.jumlahReview))").font(.system(size: 14)).foregroundColor(.secondary)
                             }
                         }
                         Spacer()
-                        Image(systemName: "chevron.down").font(.system(size: 18, weight: .bold)).foregroundColor(.black)
+                        Image(systemName: "chevron.down").font(.system(size: 18, weight: .bold)).foregroundColor(.primary)
                     }
                     .padding(16)
-                    .background(Color.white)
+                    .background(Color(.secondarySystemGroupedBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                     .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
                     .padding(12)
@@ -83,7 +83,7 @@ struct PlaceCardNormalView: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 240)
-            .background(Color.white)
+            .background(Color(.secondarySystemGroupedBackground))
             .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
             .shadow(color: Color.black.opacity(0.12), radius: 12, x: 0, y: 6)
             
@@ -149,16 +149,16 @@ struct PlaceCardNormalView: View {
                             } label: {
                                 HStack {
                                     VStack(alignment: .leading, spacing: 6) {
-                                        Text(place.nama).font(.system(size: 22, weight: .bold)).foregroundColor(.black).lineLimit(1)
+                                        Text(place.nama).font(.system(size: 22, weight: .bold)).foregroundColor(.primary).lineLimit(1)
                                         HStack(spacing: 6) {
                                             Image(systemName: "star.fill").foregroundColor(.yellow).font(.system(size: 15))
-                                            Text("\(place.rating, specifier: "%.1f")").font(.system(size: 15, weight: .semibold)).foregroundColor(.black)
+                                            Text("\(place.rating, specifier: "%.1f")").font(.system(size: 15, weight: .semibold)).foregroundColor(.primary)
                                             Text("•").foregroundColor(.secondary)
                                             Text("(\(place.jumlahReview))").font(.system(size: 14)).foregroundColor(.secondary)
                                         }
                                     }
                                     Spacer()
-                                    Image(systemName: "chevron.down").font(.system(size: 18, weight: .bold)).foregroundColor(.black)
+                                    Image(systemName: "chevron.down").font(.system(size: 18, weight: .bold)).foregroundColor(.primary)
                                 }
                                 .padding(12)
                                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
@@ -177,7 +177,7 @@ struct PlaceCardNormalView: View {
                                 leftCornerRadius: 20,
                                 rightCornerRadius: 20
                             )
-                            .fill(Color.white)
+                            .fill(Color(.secondarySystemGroupedBackground))
                             .shadow(color: Color.black.opacity(0.2), radius: 12, x: 0, y: 6)
 
                         )
@@ -185,7 +185,7 @@ struct PlaceCardNormalView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .frame(height: 278)
-                .background(.white)
+                .background(Color(.secondarySystemGroupedBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                 .shadow(color: Color.black.opacity(0.3), radius: 12, x: 0, y: 6)
             }
