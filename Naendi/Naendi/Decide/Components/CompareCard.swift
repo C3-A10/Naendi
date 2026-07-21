@@ -49,7 +49,7 @@ struct CompareCard: View {
                         placeholderView
                     }
                     
-                    ReportBubbleView(reportCount: item.reportCount)
+                    ReportBubbleView(reportCount: viewModel.reportCount(for: item))
                         .padding(.top, 10)
                 }
                 

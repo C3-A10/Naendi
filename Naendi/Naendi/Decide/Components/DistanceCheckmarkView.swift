@@ -72,7 +72,7 @@ struct DistanceCheckmarkView: View {
                 }
                 .buttonStyle(.plain)
             } else {
-                ReportBubbleView(reportCount: place.reportCount)
+                ReportBubbleView(reportCount: viewModel.reportCount(for: place))
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
                     .clipShape(Capsule())
