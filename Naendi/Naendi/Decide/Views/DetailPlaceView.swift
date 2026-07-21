@@ -17,30 +17,34 @@ struct DetailPlaceView: View {
     @State private var dummySelectedPlace: Place? = nil
 
     var body: some View {
-        VStack {
-            Spacer()
-            // Card
-            
-            PlaceCardView(place: place, mode: .landing, isChooseThisLocationBtnVisible: false, isTagVisible: false, isReportVisible: true, isDetail: true, viewModel: viewModel, isComparing: $isComparing, selectedImageURL: $selectedImageURL, selectedPlace: $dummySelectedPlace)
-                        
-            .frame(maxWidth: .infinity)
+        GeometryReader { geo in
+            ScrollView {
+                VStack {
+                    Spacer()
+                    // Card
 
-            // Button
-            CustomActionButton(
-                text: "Go to Destination",
-                backgroundColor: Color(red: 207/255, green: 245/255, blue: 64/255),
-                textColor: .black,
-                action: {
-                    viewModel.openRoute(to: place)
+                    PlaceCardView(place: place, mode: .landing, isChooseThisLocationBtnVisible: false, isTagVisible: false, isReportVisible: true, isDetail: true, viewModel: viewModel, isComparing: $isComparing, selectedImageURL: $selectedImageURL, selectedPlace: $dummySelectedPlace)
+
+                    .frame(maxWidth: .infinity)
+
+                    // Button
+                    CustomActionButton(
+                        text: "Go to Destination",
+                        backgroundColor: Color(red: 207/255, green: 245/255, blue: 64/255),
+                        textColor: .black,
+                        action: {
+                            viewModel.openRoute(to: place)
+                        }
+                    )
+                    .padding(.vertical, 20)
+                    Spacer()
                 }
-            )
-            .padding(.vertical, 20)
-            Spacer()
+                .frame(minHeight: geo.size.height, alignment: .center)
+                .padding(.horizontal, 16)
+            }
         }
-        .frame(alignment: .center)
         .navigationTitle(place.nama)
         .navigationBarTitleDisplayMode(.inline)
-        .padding(.horizontal, 16)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: { dismiss() }) {
