@@ -17,7 +17,7 @@ struct DistanceCheckmarkView: View {
     let isTagVisible: Bool
     
     var body: some View {
-        HStack(alignment: .center) {
+        HStack(alignment: .center, spacing: 6) {
             // 1. Badge Jarak
             Text(viewModel.calculateDistance(to: place))
                 .font(.system(size: 14, weight: .semibold))
@@ -28,11 +28,14 @@ struct DistanceCheckmarkView: View {
                 .clipShape(Capsule())
             
             if isTagVisible {
-                TagView(text: "Viral", backgroundColor: .red, textColor: .white)
-                
-                TagView(text: "Trending", backgroundColor: .yellow, textColor: .black)
-                
-                TagView(text: "Top rating", backgroundColor: .blue, textColor: .white)
+                let isNearby = Bool.random() // Peluang 50:50 antara Nearby atau Top
+                if isNearby {
+                    PlaceTagPillView(title: "Nearby", style: .pinLight)
+                    
+                } else {
+                    let randomTopStyle: PlaceTagStyle = Bool.random() ? .topDark : .topLight
+                    PlaceTagPillView(title: "Top \(place.typeTempat)", style: randomTopStyle)
+                }
             }
           
             Spacer()
@@ -78,6 +81,11 @@ struct DistanceCheckmarkView: View {
     }
 }
 
+enum DistanceTagType {
+    case top
+    case nearby
+}
+
 #Preview {
-    
+    DistanceCheckmarkView(isComparing: false, isSelected: false, isCheckDisabled: false, place: Place.dummyData[0], viewModel: DecideViewModel(), distancePillColor: .green, isTagVisible: true)
 }
