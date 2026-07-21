@@ -87,7 +87,7 @@ struct ResultView: View {
             .padding(.bottom, 16)
 
             ZStack {
-                if viewModel.isLoading {
+                if viewModel.isLoading && viewModel.places.isEmpty {
                     ProgressView("Memuat rekomendasi...")
                         .scaleEffect(1.1)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -135,6 +135,12 @@ struct ResultView: View {
                         .padding(.vertical, 16)
                         .padding(.horizontal, 20)
                         .padding(.bottom, (isComparing && viewModel.isCompareLimitReached) ? 80 : 16)
+                    }
+                    .refreshable {
+                        await viewModel.loadRecommendations(
+                            from: AppServices.placeProvider(context: modelContext),
+                            criteria: viewModel.criteria
+                        )
                     }
                 }
             }
