@@ -10,12 +10,33 @@ import SwiftUI
 
 struct PlaceCardNormalView: View {
     let place: Place
-    var mode: PlaceCardMode = .landing
+    var mode: PlaceCardMode
     let isReported: Bool
     let isTagVisible: Bool
+    let isDetail: Bool
     @Binding var isExpanded: Bool
     @Binding var isComparing: Bool
     @State var viewModel: DecideViewModel
+    
+    init(
+        place: Place,
+        mode: PlaceCardMode = .landing,
+        isReported: Bool,
+        isTagVisible: Bool,
+        isDetail: Bool = false,
+        isExpanded: Binding<Bool>,
+        isComparing: Binding<Bool>,
+        viewModel: DecideViewModel
+    ) {
+        self.place = place
+        self.mode = mode
+        self.isReported = isReported
+        self.isTagVisible = isTagVisible
+        self.isDetail = isDetail
+        self._isExpanded = isExpanded
+        self._isComparing = isComparing
+        self._viewModel = State(initialValue: viewModel)
+    }
     
     var isSelected: Bool { viewModel.isSelected(place) }
     var isCheckDisabled: Bool { viewModel.isCompareLimitReached && !isSelected }
@@ -51,7 +72,9 @@ struct PlaceCardNormalView: View {
                     place: place,
                     viewModel: viewModel,
                     distancePillColor: Color("color_green"),
-                    isTagVisible: isTagVisible
+                    isTagVisible: isTagVisible,
+                    isDetail: isDetail,
+                    onReport: {}
                 )
                 
                 // Tombol Expand
@@ -122,7 +145,9 @@ struct PlaceCardNormalView: View {
                             place: place,
                             viewModel: viewModel,
                             distancePillColor: .white,
-                            isTagVisible: isTagVisible
+                            isTagVisible: isTagVisible,
+                            isDetail: isDetail,
+                            onReport: {}
                         )
                         .padding(.top, 4)
                         .padding(.horizontal, 2)

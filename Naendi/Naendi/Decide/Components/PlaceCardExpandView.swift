@@ -17,6 +17,30 @@ struct PlaceCardExpandView: View {
     @State var viewModel: DecideViewModel
     @Binding var selectedImageURL: URL?
     @Binding var selectedPlace: Place?
+    let isDetail: Bool
+    let onReport: () -> Void
+    
+    init(
+        place: Place,
+        isChooseThisLocationBtnVisible: Bool,
+        isExpanded: Binding<Bool>,
+        isComparing: Binding<Bool>,
+        viewModel: DecideViewModel,
+        selectedImageURL: Binding<URL?>,
+        selectedPlace: Binding<Place?>,
+        isDetail: Bool = false,
+        onReport: @escaping () -> Void = {}
+    ) {
+        self.place = place
+        self.isChooseThisLocationBtnVisible = isChooseThisLocationBtnVisible
+        self._isExpanded = isExpanded
+        self._isComparing = isComparing
+        self._viewModel = State(initialValue: viewModel)
+        self._selectedImageURL = selectedImageURL
+        self._selectedPlace = selectedPlace
+        self.isDetail = isDetail
+        self.onReport = onReport
+    }
     
     // Helper status
     private var isSelected: Bool { viewModel.isSelected(place) }
@@ -32,6 +56,8 @@ struct PlaceCardExpandView: View {
                 isCheckDisabled: isCheckDisabled,
                 place: place,
                 viewModel: viewModel,
+                isDetail: isDetail,
+                onReport: onReport,
                 selectedImageURL: $selectedImageURL
             )
             

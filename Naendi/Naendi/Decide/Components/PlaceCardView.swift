@@ -17,6 +17,8 @@ struct PlaceCardView: View {
     let isChooseThisLocationBtnVisible: Bool
     let isTagVisible: Bool
     let isReportVisible: Bool
+    let isDetail: Bool
+    let onReport: () -> Void
     @State private var isExpanded: Bool = false
     @State var viewModel: DecideViewModel
     
@@ -24,13 +26,39 @@ struct PlaceCardView: View {
     @Binding var selectedImageURL: URL?
     @Binding var selectedPlace: Place?
     
+    init(
+        place: Place,
+        mode: PlaceCardMode,
+        isChooseThisLocationBtnVisible: Bool,
+        isTagVisible: Bool,
+        isReportVisible: Bool,
+        isDetail: Bool = false,
+        onReport: @escaping () -> Void = {},
+        viewModel: DecideViewModel,
+        isComparing: Binding<Bool>,
+        selectedImageURL: Binding<URL?>,
+        selectedPlace: Binding<Place?>
+    ) {
+        self.place = place
+        self.mode = mode
+        self.isChooseThisLocationBtnVisible = isChooseThisLocationBtnVisible
+        self.isTagVisible = isTagVisible
+        self.isReportVisible = isReportVisible
+        self.isDetail = isDetail
+        self.onReport = onReport
+        self._viewModel = State(initialValue: viewModel)
+        self._isComparing = isComparing
+        self._selectedImageURL = selectedImageURL
+        self._selectedPlace = selectedPlace
+    }
+    
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
                 if isExpanded {
-                    PlaceCardExpandView(place: place, isChooseThisLocationBtnVisible: isChooseThisLocationBtnVisible, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel, selectedImageURL: $selectedImageURL, selectedPlace: $selectedPlace)
+                    PlaceCardExpandView(place: place, isChooseThisLocationBtnVisible: isChooseThisLocationBtnVisible, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel, selectedImageURL: $selectedImageURL, selectedPlace: $selectedPlace, isDetail: isDetail, onReport: onReport)
                 } else {
-                    PlaceCardNormalView(place: place, mode: mode, isReported: isReportVisible, isTagVisible: isTagVisible, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel)
+                    PlaceCardNormalView(place: place, mode: mode, isReported: isReportVisible, isTagVisible: isTagVisible, isDetail: isDetail, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel)
                 }
             }
             .contentShape(Rectangle())

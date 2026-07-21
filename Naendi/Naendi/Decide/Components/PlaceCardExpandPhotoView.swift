@@ -14,7 +14,29 @@ struct PlaceCardExpandPhotoView: View {
     let isCheckDisabled: Bool
     let place: Place
     let viewModel: DecideViewModel
+    let isDetail: Bool
+    let onReport: () -> Void
     @Binding var selectedImageURL: URL?
+    
+    init(
+        isComparing: Bool,
+        isSelected: Bool,
+        isCheckDisabled: Bool,
+        place: Place,
+        viewModel: DecideViewModel,
+        isDetail: Bool = false,
+        onReport: @escaping () -> Void = {},
+        selectedImageURL: Binding<URL?>
+    ) {
+        self.isComparing = isComparing
+        self.isSelected = isSelected
+        self.isCheckDisabled = isCheckDisabled
+        self.place = place
+        self.viewModel = viewModel
+        self.isDetail = isDetail
+        self.onReport = onReport
+        self._selectedImageURL = selectedImageURL
+    }
     
     private var imageGallery: [String] {
         var images: [String] = []
@@ -106,7 +128,9 @@ struct PlaceCardExpandPhotoView: View {
                 place: place,
                 viewModel: viewModel,
                 distancePillColor: Color("color_green"),
-                isTagVisible: false
+                isTagVisible: false,
+                isDetail: isDetail,
+                onReport: onReport
             )
         }
         .frame(height: 240)

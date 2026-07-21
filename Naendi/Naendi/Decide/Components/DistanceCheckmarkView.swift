@@ -15,6 +15,8 @@ struct DistanceCheckmarkView: View {
     let viewModel: DecideViewModel
     let distancePillColor: Color
     let isTagVisible: Bool
+    let isDetail: Bool
+    let onReport: () -> Void
     
     var body: some View {
         HStack(alignment: .center) {
@@ -37,7 +39,7 @@ struct DistanceCheckmarkView: View {
           
             Spacer()
             
-            // 2. Checkbox
+            // 2. Checkbox or report bubble
             if isComparing {
                 Button {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
@@ -59,11 +61,9 @@ struct DistanceCheckmarkView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(isCheckDisabled)
-            } else {
+            } else if isDetail {
                 Button {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        viewModel.toggleSelection(for: place)
-                    }
+                    onReport()
                 } label: {
                     Image(systemName: "exclamationmark.bubble")
                         .font(.system(size: 20, weight: .bold))
@@ -71,6 +71,22 @@ struct DistanceCheckmarkView: View {
                         .frame(width: 32, height: 32)
                 }
                 .buttonStyle(.plain)
+            } else {
+                HStack(spacing: -6) {
+                    Text("\(place.reportCount)")
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundColor(.white)
+                        .frame(width: 16, height: 16)
+                        .background(Color(red: 0.61, green: 0.80, blue: 0.22))
+                        .clipShape(Circle())
+                    
+                    Image(systemName: "exclamationmark.bubble.fill")
+                        .font(.system(size: 20))
+                        .foregroundColor(.white)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .clipShape(Capsule())
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
