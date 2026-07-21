@@ -33,7 +33,10 @@ struct DecideView: View {
 
                 case .results:
                     ResultView(viewModel: viewModel)
-                }
+                } 
+            }
+            .background {
+                GreenBlurBackground()
             }
             .task {
                 viewModel.startLocationUpdates()

@@ -241,7 +241,6 @@ struct EditPreferenceView: View {
             }
             .scrollIndicators(.hidden)
         }
-        .background(Color(uiColor: .systemBackground))
         .fullScreenCover(isPresented: $isSelectingLocation) {
             SelectLocationView(
                 selectedLocationName: $selectedLocationName,
@@ -258,6 +257,9 @@ struct EditPreferenceView: View {
             outputResultPicker
                 .presentationDetents([.height(300)])
                 .presentationDragIndicator(.visible)
+        }
+        .background {
+            GreenBlurBackground()
         }
     }
 

@@ -87,9 +87,9 @@ struct ResultView: View {
             .padding(.bottom, 16)
 
             ZStack {
-                if viewModel.isLoading {
-                    ProgressView("Finding recommendations…")
-                        .controlSize(.large)
+                if viewModel.isLoading && viewModel.places.isEmpty {
+                    ProgressView("Memuat rekomendasi...")
+                        .scaleEffect(1.1)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if let errorMessage = viewModel.errorMessage {
                     ContentUnavailableView {
@@ -122,6 +122,9 @@ struct ResultView: View {
                                 PlaceCardView(
                                     place: place,
                                     mode: .result,
+                                    isChooseThisLocationBtnVisible: true,
+                                    isTagVisible: false,
+                                    isReportVisible: false,
                                     viewModel: viewModel,
                                     isComparing: $isComparing,
                                     selectedImageURL: $selectedImageURL,
@@ -132,6 +135,12 @@ struct ResultView: View {
                         .padding(.vertical, 16)
                         .padding(.horizontal, 20)
                         .padding(.bottom, (isComparing && viewModel.isCompareLimitReached) ? 80 : 16)
+                    }
+                    .refreshable {
+                        await viewModel.loadRecommendations(
+                            from: AppServices.placeProvider(context: modelContext),
+                            criteria: viewModel.criteria
+                        )
                     }
                 }
             }
@@ -165,18 +174,18 @@ struct ResultView: View {
         }
         .fullScreenCover(isPresented: $isNavigatingToCompare) {
             if viewModel.selectedPlaces.count >= 2 {
-                NavigationStack {
+                NavigationStack {                   
                     CompareView(
                         placeA: viewModel.selectedPlaces[0],
                         placeB: viewModel.selectedPlaces[1],
                         viewModel: viewModel
                     )
-                        .navigationTitle("Compare")
-                        .navigationBarTitleDisplayMode(.inline)
+                    .navigationTitle("Compare")
+                    .navigationBarTitleDisplayMode(.inline)
                 }
             }
         }
-        .fullScreenCover(isPresented: $isShowingEditPreference) {
+        .fullScreenCover(isPresented: $isShowingEditPreference) {           
             EditPreferenceView(criteria: viewModel.criteria) { criteria in
                 Task {
                     await viewModel.applyPreferences(

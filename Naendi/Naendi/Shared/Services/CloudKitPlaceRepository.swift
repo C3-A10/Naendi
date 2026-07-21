@@ -10,7 +10,7 @@ import CloudKit
 
 final class CloudKitPlaceRepository: PlaceRepository {
     func getAllPlaces() async throws -> [Place] {
-        let container = CKContainer(identifier: "iCloud.icloud.naendi")
+        let container = CKContainer(identifier: "iCloud.naendi")
             let database = container.publicCloudDatabase
             let query = CKQuery(recordType: "Places", predicate: NSPredicate(value: true))
 
