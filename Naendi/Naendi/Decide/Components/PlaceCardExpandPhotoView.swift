@@ -49,7 +49,9 @@ struct PlaceCardExpandPhotoView: View {
                                     }
                                 }
                                 .frame(width: 290, height: 220)
+                                .clipped()
                                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                                .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous)) 
                                 .onTapGesture {
                                     selectedImageURL = url
                                 }
@@ -70,7 +72,9 @@ struct PlaceCardExpandPhotoView: View {
                                     }
                                     // 3. Set tinggi menjadi 104 agar total tinggi + spacing pas 220 (104 + 12 + 104)
                                     .frame(width: 160, height: 104)
+                                    .clipped()
                                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                                    .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                                     .onTapGesture {
                                         selectedImageURL = url
                                     }
@@ -86,7 +90,9 @@ struct PlaceCardExpandPhotoView: View {
                                         }
                                     }
                                     .frame(width: 160, height: 104)
+                                    .clipped()
                                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                                    .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                                     .onTapGesture {
                                         selectedImageURL = nextUrl
                                     }
