@@ -17,6 +17,7 @@ struct PlaceTagPillView: View {
             Image(style.iconName)
                 .resizable()
                 .frame(width: style == .pinLight ? 9 : 15, height: 15)
+                .accessibilityHidden(true)
             
             Text(title)
                 .font(.system(size: 14, weight: .semibold))
@@ -26,6 +27,7 @@ struct PlaceTagPillView: View {
         .padding(.vertical, 8)
         .background(style.backgroundColor)
         .clipShape(Capsule())
+        .accessibilityElement(children: .combine)
     }
 }
 

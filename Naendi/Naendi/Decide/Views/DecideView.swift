@@ -46,8 +46,12 @@ struct DecideView: View {
         }
     }
 
-    private func loadingIndicator(_ title: String = "Finding recommendations…") -> some View {
-        ProgressView(title)
+    private func loadingIndicator(
+        _ title: LocalizedStringResource = "Finding recommendations…"
+    ) -> some View {
+        ProgressView {
+            Text(title)
+        }
             .controlSize(.large)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
     }

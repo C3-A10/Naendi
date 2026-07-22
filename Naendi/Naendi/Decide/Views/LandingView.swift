@@ -39,6 +39,7 @@ struct LandingView: View {
                         }
                         .frame(width: UIScreen.main.bounds.width, height: 420)
                         .clipped()
+                        .accessibilityHidden(true)
                         
                         // Maskot di Kiri dan Kanan
                         HStack(spacing: 0) {
@@ -61,12 +62,14 @@ struct LandingView: View {
                         .frame(maxWidth: .infinity) // Memaksa HStack membentang selebar mungkin
                         .padding(.horizontal, 0) // Memastikan tidak ada jarak/margin bawaan dari sistem
                         .padding(.top, 100)
+                        .accessibilityHidden(true)
                         
                         Text("Discover somewhere new")
-                            .font(.system(size: 24, weight: .bold))
+                            .font(.title2.bold())
                             .foregroundColor(.white)
                             .shadow(color: .black.opacity(0.4), radius: 4, x: 0, y: 2)
                             .padding(.top, 64)
+                            .accessibilityAddTraits(.isHeader)
                         
                         // Gradient Transisi ke Putih (Agar menyatu dengan latar belakang aplikasi)
                         VStack {
@@ -77,6 +80,7 @@ struct LandingView: View {
                                 endPoint: .bottom
                             )
                             .frame(height: 140)
+                            .accessibilityHidden(true)
                         }
                     }
                     .frame(width: UIScreen.main.bounds.width, height: 420)

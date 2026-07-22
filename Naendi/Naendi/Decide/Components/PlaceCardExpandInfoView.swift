@@ -24,12 +24,17 @@ struct PlaceCardExpandInfoView: View {
         VStack(alignment: .leading, spacing: 8) {
             
             // Header nama - rating - jml rating - pil2 - tombol close
-            HStack(alignment: .center, spacing: 8) {
+            Button {
+                withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
+                    isExpanded = false
+                }
+            } label: {
+                HStack(alignment: .center, spacing: 8) {
                 VStack(alignment: .leading, spacing: 6) {
                     
                     // Nama tempat
                     Text(place.nama)
-                        .font(.system(size: 20, weight: .bold))
+                        .font(.headline)
                         .foregroundColor(.primary)
                     
                     // Rating - jml rating - range harga
@@ -39,6 +44,7 @@ struct PlaceCardExpandInfoView: View {
                         Image(systemName: "star.fill")
                             .foregroundColor(.yellow)
                             .font(.system(size: 14))
+                            .accessibilityHidden(true)
                         
                         // rating
                         Text("\(place.rating, specifier: "%.1f")")
@@ -74,14 +80,15 @@ struct PlaceCardExpandInfoView: View {
                     .font(.system(size: 16, weight: .bold))
                     .foregroundColor(.primary)
                     .padding(4)
-            }
-            .padding(.horizontal, 12)
-            .onTapGesture {
-                withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
-                    isExpanded = false
+                    .accessibilityHidden(true)
                 }
             }
+            .buttonStyle(.plain)
+            .padding(.horizontal, 12)
             .padding(.bottom, 8)
+            .accessibilityLabel(place.nama)
+            .accessibilityValue("Rating \(place.rating, specifier: "%.1f"), \(place.jumlahReview) reviews, \(place.accessibilityPriceRangeDescription)")
+            .accessibilityHint("Collapses place details.")
             
             Divider()
                 .padding(.vertical, 2)
@@ -100,8 +107,9 @@ struct PlaceCardExpandInfoView: View {
             
             VStack (alignment: .leading, spacing: 2) {
                 Text("AI Reviews Summary")
-                    .font(.system(size: 14, weight: .bold))
+                    .font(.headline)
                     .lineLimit(2)
+                    .accessibilityAddTraits(.isHeader)
                 
                 if !reviewItems.isEmpty {
                     ForEach(0..<reviewItems.count, id: \.self) { index in

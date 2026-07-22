@@ -66,20 +66,24 @@ struct PlaceCardExpandPhotoView: View {
                         // POLA 1: FULL IMAGE (Indeks 0, 3, 6, ...)
                         if index % 3 == 0 {
                             if let url = URL(string: urlString) {
-                                AsyncImage(url: url) { phase in
-                                    if let image = phase.image {
-                                        image.resizable().aspectRatio(contentMode: .fill)
-                                    } else {
-                                        Color.gray.opacity(0.3)
+                                Button {
+                                    selectedImageURL = url
+                                } label: {
+                                    AsyncImage(url: url) { phase in
+                                        if let image = phase.image {
+                                            image.resizable().aspectRatio(contentMode: .fill)
+                                        } else {
+                                            Color.gray.opacity(0.3)
+                                        }
                                     }
                                 }
+                                .buttonStyle(.plain)
                                 .frame(width: 290, height: 220)
                                 .clipped()
                                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                                 .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous)) 
-                                .onTapGesture {
-                                    selectedImageURL = url
-                                }
+                                .accessibilityLabel("Photo \(index + 1) of \(imageGallery.count) for \(place.nama)")
+                                .accessibilityHint("Opens the photo in full screen.")
                             }
                         }
                         // POLA 2: TUMPUK ATAS BAWAH (Mulai di Indeks 1, 4, 7, ...)
@@ -88,39 +92,47 @@ struct PlaceCardExpandPhotoView: View {
                             VStack(spacing: 12) {
                                 // Gambar Atas (Indeks saat ini)
                                 if let url = URL(string: urlString) {
-                                    AsyncImage(url: url) { phase in
-                                        if let image = phase.image {
-                                            image.resizable().aspectRatio(contentMode: .fill)
-                                        } else {
-                                            Color.gray.opacity(0.3)
+                                    Button {
+                                        selectedImageURL = url
+                                    } label: {
+                                        AsyncImage(url: url) { phase in
+                                            if let image = phase.image {
+                                                image.resizable().aspectRatio(contentMode: .fill)
+                                            } else {
+                                                Color.gray.opacity(0.3)
+                                            }
                                         }
                                     }
+                                    .buttonStyle(.plain)
                                     // 3. Set tinggi menjadi 104 agar total tinggi + spacing pas 220 (104 + 12 + 104)
                                     .frame(width: 160, height: 104)
                                     .clipped()
                                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                                     .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                                    .onTapGesture {
-                                        selectedImageURL = url
-                                    }
+                                    .accessibilityLabel("Photo \(index + 1) of \(imageGallery.count) for \(place.nama)")
+                                    .accessibilityHint("Opens the photo in full screen.")
                                 }
                                 
                                 // Gambar Bawah (Ambil indeks + 1 jika ada)
                                 if index + 1 < imageGallery.count, let nextUrl = URL(string: imageGallery[index + 1]) {
-                                    AsyncImage(url: nextUrl) { phase in
-                                        if let image = phase.image {
-                                            image.resizable().aspectRatio(contentMode: .fill)
-                                        } else {
-                                            Color.gray.opacity(0.3)
+                                    Button {
+                                        selectedImageURL = nextUrl
+                                    } label: {
+                                        AsyncImage(url: nextUrl) { phase in
+                                            if let image = phase.image {
+                                                image.resizable().aspectRatio(contentMode: .fill)
+                                            } else {
+                                                Color.gray.opacity(0.3)
+                                            }
                                         }
                                     }
+                                    .buttonStyle(.plain)
                                     .frame(width: 160, height: 104)
                                     .clipped()
                                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                                     .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                                    .onTapGesture {
-                                        selectedImageURL = nextUrl
-                                    }
+                                    .accessibilityLabel("Photo \(index + 2) of \(imageGallery.count) for \(place.nama)")
+                                    .accessibilityHint("Opens the photo in full screen.")
                                 }
                             }
                         }

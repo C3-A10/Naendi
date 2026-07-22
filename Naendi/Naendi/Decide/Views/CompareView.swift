@@ -79,6 +79,8 @@ struct CompareView: View {
                     Image(systemName: "xmark")
                         .font(.headline)
                 }
+                .accessibilityLabel("Close comparison")
+                .accessibilityInputLabels(["Close", "Close comparison"])
             }
         }
         

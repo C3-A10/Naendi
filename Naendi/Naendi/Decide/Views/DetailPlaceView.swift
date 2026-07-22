@@ -64,7 +64,7 @@ struct DetailPlaceView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                    Text("Compare")
+                    Text(place.nama)
                         .font(.headline)
                         .foregroundStyle(.black)
                 }
@@ -73,6 +73,8 @@ struct DetailPlaceView: View {
                     Image(systemName: "xmark")
                         .font(.headline)
                 }
+                .accessibilityLabel("Close place details")
+                .accessibilityInputLabels(["Close", "Close place details"])
             }
         }
         .background {

@@ -64,14 +64,6 @@ struct PlaceCardView: View {
                     PlaceCardNormalView(place: place, mode: mode, isReported: isReported, isTagVisible: isTagVisible, isDetail: isDetail, onReport: onReport, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel)
                 }
             }
-            .contentShape(Rectangle())
-            .onTapGesture {
-                if isComparing {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        viewModel.toggleSelection(for: place)
-                    }
-                } 
-            }
         }
     }
 }

@@ -25,6 +25,7 @@ struct ResultView: View {
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .foregroundColor(.black)
+                        .accessibilityAddTraits(.isHeader)
                     if isComparing {
                         Text("Select any 2 places to compare")
                             .font(.system(size: 14, weight: .medium))
@@ -51,6 +52,7 @@ struct ResultView: View {
                                 .background(Color(white: 0.15))
                                 .clipShape(Capsule())
                         }
+                        .accessibilityLabel("Cancel comparison")
                         .transition(.scale.combined(with: .opacity))
                     } else {
                         Button {
@@ -65,6 +67,10 @@ struct ResultView: View {
                                 .background(Color(white: 0.15))
                                 .clipShape(Circle())
                         }
+                        .frame(minWidth: 44, minHeight: 44)
+                        .accessibilityLabel("Compare places")
+                        .accessibilityHint("Select two places to compare.")
+                        .accessibilityInputLabels(["Compare", "Compare places"])
                         .transition(.scale.combined(with: .opacity))
 
                         Button {
@@ -79,6 +85,10 @@ struct ResultView: View {
                                 .contentShape(Circle())
                         }
                         .buttonStyle(.plain)
+                        .frame(minWidth: 44, minHeight: 44)
+                        .accessibilityLabel("Edit preferences")
+                        .accessibilityHint("Changes the recommendations shown in results.")
+                        .accessibilityInputLabels(["Edit preferences", "Edit"])
                         .transition(.scale.combined(with: .opacity))
                     }
                 }

@@ -29,6 +29,8 @@ struct DistanceCheckmarkView: View {
                 .padding(.vertical, 8)
                 .background(distancePillColor)
                 .clipShape(Capsule())
+                .accessibilityLabel("Distance")
+                .accessibilityValue(viewModel.calculateDistance(to: place))
             
             if isTagVisible {
                 let isNearby = Bool.random() // Peluang 50:50 antara Nearby atau Top
@@ -65,6 +67,10 @@ struct DistanceCheckmarkView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(isCheckDisabled)
+                .frame(minWidth: 44, minHeight: 44)
+                .accessibilityLabel("Select \(place.nama) for comparison")
+                .accessibilityValue(isSelected ? "Selected" : "Not selected")
+                .accessibilityAddTraits(isSelected ? .isSelected : [])
             } else if isDetail {
                 Button {
                     onReport()
@@ -75,6 +81,9 @@ struct DistanceCheckmarkView: View {
                         .frame(width: 32, height: 32)
                 }
                 .buttonStyle(.plain)
+                .frame(minWidth: 44, minHeight: 44)
+                .accessibilityLabel(isReported ? "Place reported" : "Report \(place.nama)")
+                .accessibilityHint(isReported ? "" : "Reports inaccurate information about this place.")
             } else {
                 ReportBubbleView(reportCount: viewModel.reportCount(for: place))
                     .padding(.horizontal, 12)

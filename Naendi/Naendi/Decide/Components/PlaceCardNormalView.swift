@@ -67,6 +67,7 @@ struct PlaceCardNormalView: View {
                         }
                     }
                     .clipped()
+                    .accessibilityHidden(true)
                 
                 DistanceCheckmarkView(
                     isComparing: isComparing,
@@ -89,16 +90,16 @@ struct PlaceCardNormalView: View {
                 } label: {
                     HStack {
                         VStack(alignment: .leading, spacing: 6) {
-                            Text(place.nama).font(.system(size: 22, weight: .bold)).foregroundColor(.primary).lineLimit(1)
+                            Text(place.nama).font(.title3.bold()).foregroundColor(.primary).lineLimit(2)
                             HStack(spacing: 6) {
-                                Image(systemName: "star.fill").foregroundColor(.yellow).font(.system(size: 15))
-                                Text("\(place.rating, specifier: "%.1f")").font(.system(size: 15, weight: .semibold)).foregroundColor(.primary)
+                                Image(systemName: "star.fill").foregroundColor(.yellow).font(.subheadline).accessibilityHidden(true)
+                                Text("\(place.rating, specifier: "%.1f")").font(.subheadline.weight(.semibold)).foregroundColor(.primary)
                                 Text("•").foregroundColor(.secondary)
-                                Text("(\(place.jumlahReview))").font(.system(size: 14)).foregroundColor(.secondary)
+                                Text("(\(place.jumlahReview))").font(.subheadline).foregroundColor(.secondary)
                             }
                         }
                         Spacer()
-                        Image(systemName: "chevron.down").font(.system(size: 18, weight: .bold)).foregroundColor(.primary)
+                        Image(systemName: "chevron.down").font(.headline).foregroundColor(.primary).accessibilityHidden(true)
                     }
                     .padding(16)
                     .background(Color(.secondarySystemGroupedBackground))
@@ -107,6 +108,9 @@ struct PlaceCardNormalView: View {
                     .padding(12)
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel(place.nama)
+                .accessibilityValue("Rating \(place.rating, specifier: "%.1f"), \(place.jumlahReview) reviews")
+                .accessibilityHint("Shows more details about this place.")
             }
             .frame(maxWidth: .infinity)
             .frame(height: 240)
@@ -141,6 +145,7 @@ struct PlaceCardNormalView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
                             .padding(.horizontal, 12)
                             .padding(.bottom, 25)
+                            .accessibilityHidden(true)
                         
                         DistanceCheckmarkView(
                             isComparing: false,
@@ -179,21 +184,24 @@ struct PlaceCardNormalView: View {
                             } label: {
                                 HStack {
                                     VStack(alignment: .leading, spacing: 6) {
-                                        Text(place.nama).font(.system(size: 22, weight: .bold)).foregroundColor(.primary).lineLimit(1)
+                                        Text(place.nama).font(.title3.bold()).foregroundColor(.primary).lineLimit(2)
                                         HStack(spacing: 6) {
-                                            Image(systemName: "star.fill").foregroundColor(.yellow).font(.system(size: 15))
-                                            Text("\(place.rating, specifier: "%.1f")").font(.system(size: 15, weight: .semibold)).foregroundColor(.primary)
+                                            Image(systemName: "star.fill").foregroundColor(.yellow).font(.subheadline).accessibilityHidden(true)
+                                            Text("\(place.rating, specifier: "%.1f")").font(.subheadline.weight(.semibold)).foregroundColor(.primary)
                                             Text("•").foregroundColor(.secondary)
-                                            Text("(\(place.jumlahReview))").font(.system(size: 14)).foregroundColor(.secondary)
+                                            Text("(\(place.jumlahReview))").font(.subheadline).foregroundColor(.secondary)
                                         }
                                     }
                                     Spacer()
-                                    Image(systemName: "chevron.down").font(.system(size: 18, weight: .bold)).foregroundColor(.primary)
+                                    Image(systemName: "chevron.down").font(.headline).foregroundColor(.primary).accessibilityHidden(true)
                                 }
                                 .padding(12)
                                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                             }
                             .buttonStyle(.plain)
+                            .accessibilityLabel(place.nama)
+                            .accessibilityValue("Rating \(place.rating, specifier: "%.1f"), \(place.jumlahReview) reviews")
+                            .accessibilityHint("Shows more details about this place.")
                         }
                         .padding(12)
                         .frame(maxWidth: .infinity)

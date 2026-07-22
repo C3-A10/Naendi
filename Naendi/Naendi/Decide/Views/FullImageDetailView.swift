@@ -55,12 +55,26 @@ struct FullImageDetailView: View {
                                 }
                             }
                         }
+                        .accessibilityLabel("Place photo")
+                        .accessibilityValue("Zoom \(Int(scale * 100)) percent")
+                        .accessibilityHint("Swipe up or down to zoom.")
+                        .accessibilityAdjustableAction { direction in
+                            switch direction {
+                            case .increment:
+                                scale = min(scale + 0.5, 4.0)
+                            case .decrement:
+                                scale = max(scale - 0.5, 1.0)
+                            @unknown default:
+                                break
+                            }
+                        }
                     
                 case .failure(_):
                     VStack(spacing: 12) {
                         Image(systemName: "photo")
                             .font(.system(size: 40))
                             .foregroundColor(.gray)
+                            .accessibilityHidden(true)
                         Text("Failed to load image")
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
@@ -85,6 +99,9 @@ struct FullImageDetailView: View {
                     Image(systemName: "chevron.backward")
                         .foregroundColor(.white) // Pastikan dikunci warna putih
                 }
+                .frame(minWidth: 44, minHeight: 44)
+                .accessibilityLabel("Back")
+                .accessibilityInputLabels(["Back"])
             }
         }
     }

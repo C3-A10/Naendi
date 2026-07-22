@@ -14,7 +14,7 @@ struct TagView: View {
     
     var body: some View {
         Text(LocalizedStringKey(text))
-            .font(.system(size: 10, weight: .bold))
+            .font(.caption2.bold())
             .padding(.horizontal, 6)
             .padding(.vertical, 4)
             .background(backgroundColor)

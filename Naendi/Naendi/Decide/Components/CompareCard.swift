@@ -15,7 +15,8 @@ struct CompareCard: View {
     
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        Button(action: onTap) {
+            VStack(alignment: .leading, spacing: 0) {
                 
                 // MARK: Image & Badge
                 ZStack(alignment: .topTrailing) {
@@ -44,6 +45,7 @@ struct CompareCard: View {
                                 EmptyView()
                             }
                         }
+                        .accessibilityHidden(true)
                         
                     } else {
                         placeholderView
@@ -130,16 +132,28 @@ struct CompareCard: View {
                     )
             )
             .shadow(color: Color.black.opacity(0.08), radius: 10, x: 0, y: 6)
-            .animation(.easeInOut(duration: 0.2), value: isSelected)
-            .onTapGesture { onTap() }
-        }
+                .animation(.easeInOut(duration: 0.2), value: isSelected)
+            }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(item.nama)
+        .accessibilityValue(compareAccessibilityValue)
+        .accessibilityHint("Selects this place for comparison.")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    private var compareAccessibilityValue: String {
+        let status = isSelected ? String(localized: "Selected") : String(localized: "Not selected")
+        return String(localized: "\(status), rating \(item.rating, specifier: "%.1f"), \(item.accessibilityPriceRangeDescription), \(item.alamat)")
     }
         
-        private var placeholderView: some View {
-            Color.gray.opacity(0.3)
-                .frame(height: 130)
-                .overlay(ProgressView())
-        }
+    private var placeholderView: some View {
+        Color.gray.opacity(0.3)
+            .frame(height: 130)
+            .overlay(ProgressView())
+            .accessibilityHidden(true)
+    }
+}
 
 // MARK: - Sub Component Detail Row
 struct DetailRowView: View {
@@ -158,6 +172,7 @@ struct DetailRowView: View {
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
         }
+        .accessibilityElement(children: .combine)
         .padding(.bottom, 6)
     }
 }
