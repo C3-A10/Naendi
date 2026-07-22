@@ -9,6 +9,12 @@ import Foundation
 import Observation
 import CoreLocation
 
+/// Why a place earns a spot on the landing showcase, so its card can label itself.
+enum LandingTag: Equatable {
+    case nearby
+    case top(type: String)
+}
+
 @Observable
 class DecideViewModel {
 
@@ -18,8 +24,12 @@ class DecideViewModel {
 
     /// The filtered, sorted results shown on the results screen.
     var places: [Place] = []
-    /// The showcase carousel on the landing page, ranked by review count.
+    /// The showcase carousel on the landing page: nearby picks, then top
+    /// restaurants, then top cafes.
     var landingPagePlaces: [Place] = []
+    /// Which group each landing card belongs to, keyed by place id, so a card
+    /// can render the matching "Nearby" / "Top …" pill.
+    private var landingTags: [String: LandingTag] = [:]
     var isLoading: Bool = false
     var errorMessage: String?
     var persistenceErrorMessage: String?
@@ -76,19 +86,57 @@ class DecideViewModel {
         selectedPlaces.removeAll()
     }
 
-    /// Fills the landing page showcase with the most-reviewed places. This is a
-    /// teaser, not a search — preferences deliberately don't apply.
-    func loadLandingPlaces(from provider: PlaceProviding, limit: Int = 10) async {
+    /// The tag for a landing card, or `nil` if the place isn't part of the
+    /// showcase. Drives the "Nearby" / "Top …" pill.
+    func landingTag(for place: Place) -> LandingTag? { landingTags[place.id] }
+
+    /// Fills the landing showcase from three groups — nearby, top restaurants,
+    /// top cafes — in that order, deduped. This is a teaser, not a search:
+    /// preferences deliberately don't apply.
+    func loadLandingPlaces(from provider: PlaceProviding, perGroup: Int = 4) async {
         isLoading = true
         errorMessage = nil
         do {
             let all = try await provider.places()
-            landingPagePlaces = Array(
-                all.sorted { $0.jumlahReview > $1.jumlahReview }.prefix(limit)
-            )
+
+            // Closest first — only when we have a point to measure from.
+            // ponytail: location may not be ready on first load, so the Nearby
+            // group is simply omitted until a fix arrives and the view reloads.
+            let byDistance: [Place]
+            if let origin {
+                let from = origin.clLocation
+                byDistance = all.sorted {
+                    from.distance(from: $0.coordinate.clLocation)
+                        < from.distance(from: $1.coordinate.clLocation)
+                }
+            } else {
+                byDistance = []
+            }
+
+            func topReviewed(ofType type: String) -> [Place] {
+                all.filter { $0.typeTempat == type }
+                    .sorted { $0.jumlahReview > $1.jumlahReview }
+            }
+
+            var tags: [String: LandingTag] = [:]
+            var ordered: [Place] = []
+            func add(_ group: [Place], _ tag: LandingTag) {
+                for place in group.prefix(perGroup) where tags[place.id] == nil {
+                    tags[place.id] = tag
+                    ordered.append(place)
+                }
+            }
+
+            add(byDistance, .nearby)
+            add(topReviewed(ofType: "Restaurant"), .top(type: "Restaurant"))
+            add(topReviewed(ofType: "Cafe"), .top(type: "Cafe"))
+
+            landingPagePlaces = ordered
+            landingTags = tags
         } catch {
             errorMessage = error.localizedDescription
             landingPagePlaces = []
+            landingTags = [:]
         }
         isLoading = false
     }
