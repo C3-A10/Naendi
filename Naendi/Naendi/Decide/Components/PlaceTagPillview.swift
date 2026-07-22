@@ -19,7 +19,7 @@ struct PlaceTagPillView: View {
                 .frame(width: style == .pinLight ? 9 : 15, height: 15)
             
             Text(title)
-                .font(.caption)
+                .font(.caption2)
                 .fontWeight(.semibold)
                 .foregroundColor(style.contentColor)
         }
