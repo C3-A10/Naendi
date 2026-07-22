@@ -38,10 +38,14 @@ struct DetailPlaceView: View {
             Spacer()
         }
         .frame(alignment: .center)
-        .navigationTitle(place.nama)
         .navigationBarTitleDisplayMode(.inline)
         .padding(.horizontal, 16)
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                    Text("Compare")
+                        .font(.headline)
+                        .foregroundStyle(.black)
+                }
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: { dismiss() }) {
                     Image(systemName: "xmark")

@@ -507,6 +507,7 @@ struct EditPreferenceView: View {
                 .multilineTextAlignment(.center)
                 .accessibilityAddTraits(.isHeader)
                 .accessibilitySortPriority(2)
+                .foregroundColor(.black)
         }
         .padding(.horizontal, 24)
         .padding(.top, 12)
