@@ -138,7 +138,11 @@ struct DecideViewModelTests {
         )
 
         #expect(viewModel.places.isEmpty)
-        #expect(viewModel.errorMessage?.contains("Location is unavailable") == true)
+        // Compare against the localized string, not an English literal, so the
+        // test passes regardless of the simulator's locale.
+        #expect(viewModel.errorMessage == String(
+            localized: "Location is unavailable. Search for a location or allow location access to apply the selected radius."
+        ))
         #expect(viewModel.phase == .results)
     }
 
