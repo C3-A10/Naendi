@@ -144,6 +144,21 @@ struct DecideViewModelTests {
             localized: "Location is unavailable. Search for a location or allow location access to apply the selected radius."
         ))
         #expect(viewModel.phase == .results)
+        // Flags the search for an automatic retry once a fix arrives.
+        #expect(viewModel.awaitingOrigin)
+    }
+
+    @Test("a search with an origin clears the awaiting-origin retry flag")
+    func successfulSearchClearsAwaitingOrigin() async {
+        let viewModel = makeViewModel(location: CLLocation(latitude: 0, longitude: 0))
+        viewModel.criteria = PreferenceCriteria(coordinate: Coordinate(latitude: 0, longitude: 0))
+
+        await viewModel.loadRecommendations(
+            from: FakePlaceProvider(stubbed: [.stub()]),
+            criteria: viewModel.criteria
+        )
+
+        #expect(viewModel.awaitingOrigin == false)
     }
 
     @Test("the requested output count caps the results")
@@ -206,11 +221,18 @@ struct DecideViewModelTests {
         let stored = PreferenceCriteria(radiusKm: 7, type: "Bakery")
         let viewModel = makeViewModel()
 
-        viewModel.restoreCriteria(from: FakePreferenceStore(stored: stored))
+        let hadPreferences = viewModel.restoreCriteria(from: FakePreferenceStore(stored: stored))
 
+        #expect(hadPreferences)
         #expect(viewModel.criteria == stored)
         #expect(viewModel.phase == .landing)
         #expect(viewModel.places.isEmpty)
+    }
+
+    @Test("restoring reports no saved preferences the first time around")
+    func restoreReportsNoStoredPreferences() {
+        let viewModel = makeViewModel()
+        #expect(viewModel.restoreCriteria(from: FakePreferenceStore(stored: nil)) == false)
     }
 
     @Test("restoring from an empty store leaves the defaults in place")

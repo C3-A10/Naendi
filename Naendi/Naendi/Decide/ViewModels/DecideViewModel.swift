@@ -15,6 +15,7 @@ enum LandingTag: Equatable {
     case top(type: String)
 }
 
+@MainActor
 @Observable
 class DecideViewModel {
 
@@ -39,8 +40,8 @@ class DecideViewModel {
     var phase: DecidePhase = .landing
     var criteria: PreferenceCriteria = .default
 
-    /// Fixed until preferences are re-applied, so "Surprise Me" doesn't reshuffle
-    /// as the user scrolls or expands a card.
+    private(set) var awaitingOrigin = false
+
     private var shuffleSeed = UInt64.random(in: .min ... .max)
 
     init(
@@ -53,14 +54,10 @@ class DecideViewModel {
 
     var userLocation: CLLocation? { locationProvider.currentLocation }
 
-    /// Where distances and the radius filter are measured from: the location the
-    /// user searched for, falling back to the device's own position.
     var origin: Coordinate? {
         criteria.coordinate ?? locationProvider.currentLocation.map { Coordinate($0.coordinate) }
     }
 
-    /// Triggers the location permission prompt, so call it from a view's `.task`
-    /// rather than at construction time.
     func startLocationUpdates() {
         locationProvider.start()
     }
@@ -86,22 +83,14 @@ class DecideViewModel {
         selectedPlaces.removeAll()
     }
 
-    /// The tag for a landing card, or `nil` if the place isn't part of the
-    /// showcase. Drives the "Nearby" / "Top …" pill.
     func landingTag(for place: Place) -> LandingTag? { landingTags[place.id] }
 
-    /// Fills the landing showcase from three groups — nearby, top restaurants,
-    /// top cafes — in that order, deduped. This is a teaser, not a search:
-    /// preferences deliberately don't apply.
-    func loadLandingPlaces(from provider: PlaceProviding, perGroup: Int = 4) async {
+    func loadLandingPlaces(from provider: PlaceProviding, perGroup: Int = 1) async {
         isLoading = true
         errorMessage = nil
         do {
             let all = try await provider.places()
 
-            // Closest first — only when we have a point to measure from.
-            // ponytail: location may not be ready on first load, so the Nearby
-            // group is simply omitted until a fix arrives and the view reloads.
             let byDistance: [Place]
             if let origin {
                 let from = origin.clLocation
@@ -121,9 +110,12 @@ class DecideViewModel {
             var tags: [String: LandingTag] = [:]
             var ordered: [Place] = []
             func add(_ group: [Place], _ tag: LandingTag) {
-                for place in group.prefix(perGroup) where tags[place.id] == nil {
+                var taken = 0
+                for place in group where tags[place.id] == nil {
                     tags[place.id] = tag
                     ordered.append(place)
+                    taken += 1
+                    if taken == perGroup { break }
                 }
             }
 
@@ -157,12 +149,14 @@ class DecideViewModel {
         guard let origin else {
             places = []
             isLoading = false
+            awaitingOrigin = true
             errorMessage = String(
                 localized: "Location is unavailable. Search for a location or allow location access to apply the selected radius."
             )
             phase = .results
             return
         }
+        awaitingOrigin = false
 
         do {
             let all = try await provider.places()
@@ -184,9 +178,7 @@ class DecideViewModel {
         phase = .results
     }
 
-    /// Persists the user's edited preferences and immediately searches with them.
-    /// A failed write is not fatal — the search still runs, the choice just
-    /// won't survive a relaunch.
+   
     func applyPreferences(
         _ criteria: PreferenceCriteria,
         store: PreferenceStoring,
@@ -203,17 +195,22 @@ class DecideViewModel {
         await loadRecommendations(from: provider, criteria: criteria)
     }
 
-    /// Restores previously saved preferences, if any, without running a search.
-    func restoreCriteria(from store: PreferenceStoring) {
+    
+    @discardableResult
+    func restoreCriteria(from store: PreferenceStoring) -> Bool {
         do {
             if let stored = try store.loadCriteria() {
                 criteria = stored
+                persistenceErrorMessage = nil
+                return true
             }
             persistenceErrorMessage = nil
+            return false
         } catch {
             persistenceErrorMessage = String(
                 localized: "Your saved preferences could not be restored. Default preferences will be used."
             )
+            return false
         }
     }
 
