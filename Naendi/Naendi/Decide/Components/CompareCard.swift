@@ -142,6 +142,7 @@ struct CompareCard: View {
                         radius: 10
                     )
             )
+            .shadow(color: Color.black.opacity(0.08), radius: 10, x: 0, y: 6)
             .animation(.easeInOut(duration: 0.2), value: isSelected)
             .onTapGesture { onTap() }
         }
