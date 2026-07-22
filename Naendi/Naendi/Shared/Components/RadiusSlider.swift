@@ -62,19 +62,12 @@ struct RadiusSlider: View {
             )
         }
         .frame(height: 48)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Maximum search radius")
-        .accessibilityValue(accessibilityValue)
-        .accessibilityHint("Swipe up or down with one finger to adjust the radius.")
-        .accessibilityAdjustableAction { direction in
-            switch direction {
-            case .increment:
-                value = min(value + step, range.upperBound)
-            case .decrement:
-                value = max(value - step, range.lowerBound)
-            @unknown default:
-                break
+        .accessibilityRepresentation {
+            Slider(value: $value, in: range, step: step) {
+                Text("Maximum search radius")
             }
+            .accessibilityValue(accessibilityValue)
+            .accessibilityHint("Swipe up or down with one finger to adjust the radius.")
         }
     }
 
@@ -83,8 +76,7 @@ struct RadiusSlider: View {
     }
 
     private var accessibilityValue: String {
-        let unit = value == 1 ? "kilometer" : "kilometers"
-        return "\(formattedValue) \(unit)"
+        String(localized: "\(formattedValue) kilometers")
     }
 
     private func formatted(_ number: Double) -> String {

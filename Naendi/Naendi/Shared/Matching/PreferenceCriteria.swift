@@ -40,9 +40,9 @@ enum HalalPreference: String, CaseIterable {
 
     var title: String {
         switch self {
-        case .halal: "Halal"
-        case .nonHalal: "Non-halal"
-        case .any: "Any"
+        case .halal: String(localized: "Halal")
+        case .nonHalal: String(localized: "Non-halal")
+        case .any: String(localized: "Any")
         }
     }
 }
@@ -53,8 +53,8 @@ enum SortOption: String, CaseIterable {
 
     var title: String {
         switch self {
-        case .surprise: "Surprise Me"
-        case .distance: "Distance"
+        case .surprise: String(localized: "Surprise Me")
+        case .distance: String(localized: "Distance")
         }
     }
 }

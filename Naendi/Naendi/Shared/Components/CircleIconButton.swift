@@ -2,9 +2,9 @@ import SwiftUI
 
 struct CircleIconButton: View {
     let systemName: String
-    let accessibilityLabel: String
-    let accessibilityHint: String?
-    let accessibilityInputLabels: [String]
+    let accessibilityLabel: LocalizedStringResource
+    let accessibilityHint: LocalizedStringResource?
+    let accessibilityInputLabels: [LocalizedStringResource]
     let foregroundColor: Color
     let backgroundColor: Color
     let size: CGFloat
@@ -15,9 +15,9 @@ struct CircleIconButton: View {
 
     init(
         systemName: String,
-        accessibilityLabel: String,
-        accessibilityHint: String? = nil,
-        accessibilityInputLabels: [String]? = nil,
+        accessibilityLabel: LocalizedStringResource,
+        accessibilityHint: LocalizedStringResource? = nil,
+        accessibilityInputLabels: [LocalizedStringResource]? = nil,
         foregroundColor: Color = .primary,
         backgroundColor: Color = .white,
         size: CGFloat = 44,
@@ -59,8 +59,10 @@ struct CircleIconButton: View {
         .animation(.smooth(duration: 0.18), value: isPressed)
         .simultaneousGesture(pressGesture)
         .accessibilityLabel(Text(accessibilityLabel))
-        .accessibilityHint(Text(accessibilityHint ?? ""))
-        .accessibilityInputLabels(accessibilityInputLabels.map(Text.init))
+        .modifier(OptionalAccessibilityHint(hint: accessibilityHint))
+        .accessibilityInputLabels(
+            accessibilityInputLabels.map(Text.init)
+        )
     }
 
     private var pressGesture: some Gesture {
@@ -68,6 +70,19 @@ struct CircleIconButton: View {
             .updating($isPressed) { _, state, _ in
                 state = true
             }
+    }
+}
+
+private struct OptionalAccessibilityHint: ViewModifier {
+    let hint: LocalizedStringResource?
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if let hint {
+            content.accessibilityHint(Text(hint))
+        } else {
+            content
+        }
     }
 }
 

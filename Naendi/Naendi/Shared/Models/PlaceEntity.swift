@@ -24,7 +24,7 @@ final class PlaceEntity {
     var halalEvidence: String
     var reviewPositif: String
     var reviewNegatif: String
-    var imgUrl: String?
+    var imgUrls: String?
     var reportCount: Int
 
     init(
@@ -43,7 +43,7 @@ final class PlaceEntity {
         halalEvidence: String,
         reviewPositif: String,
         reviewNegatif: String,
-        imgUrl: String?,
+        imgUrls: String?,
         reportCount: Int
     ) {
         self.id = id
@@ -61,7 +61,7 @@ final class PlaceEntity {
         self.halalEvidence = halalEvidence
         self.reviewPositif = reviewPositif
         self.reviewNegatif = reviewNegatif
-        self.imgUrl = imgUrl
+        self.imgUrls = imgUrls
         self.reportCount = reportCount
     }
 }
@@ -84,7 +84,7 @@ extension PlaceEntity {
             halalEvidence: halalEvidence,
             reviewPositif: reviewPositif,
             reviewNegatif: reviewNegatif,
-            imgUrl: imgUrl,
+            imgUrls: imgUrls,
             reportCount: reportCount
         )
     }
@@ -106,7 +106,7 @@ extension PlaceEntity {
             halalEvidence: place.halalEvidence,
             reviewPositif: place.reviewPositif,
             reviewNegatif: place.reviewNegatif,
-            imgUrl: place.imgUrl,
+            imgUrls: place.imgUrls,
             reportCount: place.reportCount
         )
     }
