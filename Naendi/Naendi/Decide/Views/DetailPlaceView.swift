@@ -60,7 +60,6 @@ struct DetailPlaceView: View {
                 .padding(.horizontal, 16)
             }
         }
-        .navigationTitle(place.nama)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {

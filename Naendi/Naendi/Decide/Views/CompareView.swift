@@ -16,7 +16,7 @@ struct CompareView: View {
     @State private var selectedPlace: Place?
     @State private var isShowingDetail = false
     
-    init(placeA: Place, placeB: Place, viewModel: DecideViewModel = DecideViewModel()) {
+    init(placeA: Place, placeB: Place, viewModel: DecideViewModel) {
         self.placeA = placeA
         self.placeB = placeB
         self.viewModel = viewModel

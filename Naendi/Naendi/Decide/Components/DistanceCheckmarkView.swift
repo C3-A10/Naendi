@@ -32,14 +32,16 @@ struct DistanceCheckmarkView: View {
                 .accessibilityLabel("Distance")
                 .accessibilityValue(viewModel.calculateDistance(to: place))
             
-            if isTagVisible {
-                let isNearby = Bool.random() // Peluang 50:50 antara Nearby atau Top
-                if isNearby {
+            if isTagVisible, let tag = viewModel.landingTag(for: place) {
+                switch tag {
+                case .nearby:
                     PlaceTagPillView(title: "Nearby", style: .pinLight)
-                    
-                } else {
-                    let randomTopStyle: PlaceTagStyle = Bool.random() ? .topDark : .topLight
-                    PlaceTagPillView(title: "Top \(place.typeTempat)", style: randomTopStyle)
+                case .top(let type):
+                    // Deterministic style so the pill doesn't flicker on redraw.
+                    PlaceTagPillView(
+                        title: "Top \(type)",
+                        style: place.jumlahReview.isMultiple(of: 2) ? .topDark : .topLight
+                    )
                 }
             }
           
@@ -94,11 +96,6 @@ struct DistanceCheckmarkView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .padding(16)
     }
-}
-
-enum DistanceTagType {
-    case top
-    case nearby
 }
 
 #Preview {

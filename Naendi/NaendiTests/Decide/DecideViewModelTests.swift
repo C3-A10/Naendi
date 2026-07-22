@@ -19,39 +19,52 @@ struct DecideViewModelTests {
 
     // MARK: - Landing showcase
 
-    @Test("the landing carousel keeps the 10 most-reviewed places, descending")
-    func loadsTop10ByReviewCount() async {
-        let places = (1...15).map { Place.stub(id: "\($0)", nama: "Place \($0)", jumlahReview: $0) }
-        let provider = FakePlaceProvider(stubbed: places.shuffled())
-        let viewModel = makeViewModel()
+    @Test("the landing showcase leads with nearby, then top restaurants, then top cafes")
+    func loadsGroupedShowcase() async {
+        let places = [
+            Place.stub(id: "near-cafe", latitude: 0.001, longitude: 0, typeTempat: "Cafe", jumlahReview: 10),
+            Place.stub(id: "top-resto", latitude: 8, longitude: 0, typeTempat: "Restaurant", jumlahReview: 900),
+            Place.stub(id: "top-cafe", latitude: 9, longitude: 0, typeTempat: "Cafe", jumlahReview: 500),
+        ]
+        let viewModel = makeViewModel(location: CLLocation(latitude: 0, longitude: 0))
 
-        await viewModel.loadLandingPlaces(from: provider)
+        await viewModel.loadLandingPlaces(from: FakePlaceProvider(stubbed: places), perGroup: 1)
 
-        #expect(viewModel.landingPagePlaces.count == 10)
-        #expect(viewModel.landingPagePlaces.map(\.jumlahReview) == [15, 14, 13, 12, 11, 10, 9, 8, 7, 6])
+        // near-cafe is closest → Nearby; then the top restaurant, then the top cafe.
+        #expect(viewModel.landingPagePlaces.map(\.id) == ["near-cafe", "top-resto", "top-cafe"])
+        #expect(viewModel.landingTag(for: places[0]) == .nearby)
+        #expect(viewModel.landingTag(for: places[1]) == .top(type: "Restaurant"))
+        #expect(viewModel.landingTag(for: places[2]) == .top(type: "Cafe"))
         #expect(viewModel.isLoading == false)
     }
 
-    @Test("the landing carousel returns everything when fewer than the limit exist")
-    func returnsAllWhenBelowLimit() async {
-        let places = (1...3).map { Place.stub(id: "\($0)", jumlahReview: $0) }
-        let viewModel = makeViewModel()
+    @Test("a place appears once, tagged by its highest-priority group")
+    func groupsAreDeduped() async {
+        // The nearest place is also the top restaurant; Nearby wins and it isn't repeated.
+        let places = [
+            Place.stub(id: "resto", latitude: 0, longitude: 0, typeTempat: "Restaurant", jumlahReview: 900),
+            Place.stub(id: "cafe", latitude: 5, longitude: 0, typeTempat: "Cafe", jumlahReview: 500),
+        ]
+        let viewModel = makeViewModel(location: CLLocation(latitude: 0, longitude: 0))
 
-        await viewModel.loadLandingPlaces(from: FakePlaceProvider(stubbed: places))
+        await viewModel.loadLandingPlaces(from: FakePlaceProvider(stubbed: places), perGroup: 1)
 
-        #expect(viewModel.landingPagePlaces.count == 3)
-        #expect(viewModel.landingPagePlaces.first?.jumlahReview == 3)
+        #expect(viewModel.landingPagePlaces.map(\.id) == ["resto", "cafe"])
+        #expect(viewModel.landingTag(for: places[0]) == .nearby)
     }
 
-    @Test("the landing carousel ignores preferences")
-    func landingIgnoresPreferences() async {
-        let places = [Place.stub(id: "1", typeTempat: "PKL", jumlahReview: 5)]
-        let viewModel = makeViewModel()
-        viewModel.criteria = PreferenceCriteria(type: "Cafe")
+    @Test("without a location the Nearby group is skipped, top groups still show")
+    func skipsNearbyWithoutLocation() async {
+        let places = [
+            Place.stub(id: "resto", typeTempat: "Restaurant", jumlahReview: 900),
+            Place.stub(id: "cafe", typeTempat: "Cafe", jumlahReview: 500),
+        ]
+        let viewModel = makeViewModel(location: nil)
 
-        await viewModel.loadLandingPlaces(from: FakePlaceProvider(stubbed: places))
+        await viewModel.loadLandingPlaces(from: FakePlaceProvider(stubbed: places), perGroup: 1)
 
-        #expect(viewModel.landingPagePlaces.count == 1)
+        #expect(viewModel.landingPagePlaces.map(\.id) == ["resto", "cafe"])
+        #expect(viewModel.landingTag(for: places[0]) == .top(type: "Restaurant"))
     }
 
     // MARK: - Recommendations
@@ -125,8 +138,27 @@ struct DecideViewModelTests {
         )
 
         #expect(viewModel.places.isEmpty)
-        #expect(viewModel.errorMessage?.contains("Location is unavailable") == true)
+        // Compare against the localized string, not an English literal, so the
+        // test passes regardless of the simulator's locale.
+        #expect(viewModel.errorMessage == String(
+            localized: "Location is unavailable. Search for a location or allow location access to apply the selected radius."
+        ))
         #expect(viewModel.phase == .results)
+        // Flags the search for an automatic retry once a fix arrives.
+        #expect(viewModel.awaitingOrigin)
+    }
+
+    @Test("a search with an origin clears the awaiting-origin retry flag")
+    func successfulSearchClearsAwaitingOrigin() async {
+        let viewModel = makeViewModel(location: CLLocation(latitude: 0, longitude: 0))
+        viewModel.criteria = PreferenceCriteria(coordinate: Coordinate(latitude: 0, longitude: 0))
+
+        await viewModel.loadRecommendations(
+            from: FakePlaceProvider(stubbed: [.stub()]),
+            criteria: viewModel.criteria
+        )
+
+        #expect(viewModel.awaitingOrigin == false)
     }
 
     @Test("the requested output count caps the results")
@@ -189,11 +221,18 @@ struct DecideViewModelTests {
         let stored = PreferenceCriteria(radiusKm: 7, type: "Bakery")
         let viewModel = makeViewModel()
 
-        viewModel.restoreCriteria(from: FakePreferenceStore(stored: stored))
+        let hadPreferences = viewModel.restoreCriteria(from: FakePreferenceStore(stored: stored))
 
+        #expect(hadPreferences)
         #expect(viewModel.criteria == stored)
         #expect(viewModel.phase == .landing)
         #expect(viewModel.places.isEmpty)
+    }
+
+    @Test("restoring reports no saved preferences the first time around")
+    func restoreReportsNoStoredPreferences() {
+        let viewModel = makeViewModel()
+        #expect(viewModel.restoreCriteria(from: FakePreferenceStore(stored: nil)) == false)
     }
 
     @Test("restoring from an empty store leaves the defaults in place")

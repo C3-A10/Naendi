@@ -40,8 +40,32 @@ struct DecideView: View {
             }
             .task {
                 viewModel.startLocationUpdates()
-                viewModel.restoreCriteria(from: SwiftDataPreferenceStore(context: modelContext))
-                await viewModel.loadLandingPlaces(from: placeProvider)
+                // Landing is a one-time onboarding teaser: once the user has ever
+                // saved preferences, go straight to results on every launch.
+                let hasPreferences = viewModel.restoreCriteria(
+                    from: SwiftDataPreferenceStore(context: modelContext)
+                )
+                if hasPreferences {
+                    await viewModel.loadRecommendations(
+                        from: placeProvider,
+                        criteria: viewModel.criteria
+                    )
+                } else {
+                    await viewModel.loadLandingPlaces(from: placeProvider)
+                }
+            }
+            .onChange(of: viewModel.origin) { oldValue, newValue in
+                guard oldValue == nil, newValue != nil else { return }
+                Task {
+                    if viewModel.phase == .landing {
+                        await viewModel.loadLandingPlaces(from: placeProvider)
+                    } else if viewModel.awaitingOrigin {
+                        await viewModel.loadRecommendations(
+                            from: placeProvider,
+                            criteria: viewModel.criteria
+                        )
+                    }
+                }
             }
         }
     }

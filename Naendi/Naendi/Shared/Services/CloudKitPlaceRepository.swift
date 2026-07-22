@@ -9,8 +9,7 @@ import Foundation
 import CloudKit
 
 final class CloudKitPlaceRepository: PlaceRepository {
-    // Single source of truth for the container — reads and report writes must
-    // agree, and this value has already drifted once.
+
     private let containerID = "iCloud.naendi"
     private var container: CKContainer { CKContainer(identifier: containerID) }
 
@@ -37,14 +36,6 @@ final class CloudKitPlaceRepository: PlaceRepository {
             return places
     }
     
-    /// Records the current user's report for a place by creating a `Report`
-    /// record (public DB, so no write access to the shared `Places` record is
-    /// needed). Idempotent: the record name is derived from place + user, so a
-    /// user can report a given place at most once. Returns true if this created a
-    /// new report, false if the user had already reported it.
-    /// ponytail: assumes `placeID` is a CloudKit-safe recordName (Google place_id
-    /// is). If a fallback place name with spaces/symbols ever reaches here, the
-    /// save will throw — hash the id then.
     @discardableResult
     func report(placeID: String) async throws -> Bool {
         let database = container.publicCloudDatabase
@@ -62,10 +53,6 @@ final class CloudKitPlaceRepository: PlaceRepository {
         }
     }
 
-    /// Total report counts per place, keyed by `place_id`. Reads every `Report`
-    /// record and tallies client-side.
-    /// ponytail: full scan + client-side count. Fine while reports are few; move
-    /// to per-place count queries or a server-side aggregate if the type grows large.
     func reportCounts() async throws -> [String: Int] {
         let database = container.publicCloudDatabase
         let query = CKQuery(recordType: "Report", predicate: NSPredicate(value: true))
