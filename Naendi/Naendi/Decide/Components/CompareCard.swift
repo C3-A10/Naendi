@@ -60,6 +60,7 @@ struct CompareCard: View {
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
                         .padding(.top, 10)
+                        .foregroundColor(.black)
                     
                     BrickLayout(spacing: 6) {
                         
@@ -148,7 +149,7 @@ struct DetailRowView: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
                 .font(.system(size: 14, weight: .bold))
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
             
             Text(value)
                 .font(.system(size: 12, weight: .regular))

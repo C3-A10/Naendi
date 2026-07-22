@@ -151,8 +151,14 @@ class DecideViewModel {
     }
 
     func restoreCriteria(from store: PreferenceStoring) {
-        guard let stored = try? store.loadCriteria() else { return }
-        criteria = stored
+        do {
+            if let stored = try store.loadCriteria() {
+                criteria = stored
+            }
+            persistenceErrorMessage = nil
+        } catch {
+            persistenceErrorMessage = "Your saved preferences could not be restored. Default preferences will be used."
+        }
     }
 
     // fungsi untuk routing di apple map

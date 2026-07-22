@@ -41,9 +41,7 @@ struct EditPreferenceView: View {
     @State private var selectedLocationName: String
     @State private var selectedCoordinate: CLLocationCoordinate2D
     @State private var radius: Double
-    @State private var selectedBudgetOption: BudgetOption
-    @State private var minimumBudget: String
-    @State private var maximumBudget: String
+    @State private var budgetViewModel: EditPreferenceViewModel
     @State private var selectedType: String
     @State private var selectedVibe: String
     @State private var selectedHalalOption: HalalPreference
@@ -65,9 +63,13 @@ struct EditPreferenceView: View {
             initialValue: criteria.coordinate?.clCoordinate ?? Self.defaultCoordinate
         )
         _radius = State(initialValue: criteria.radiusKm)
-        _selectedBudgetOption = State(initialValue: criteria.budget)
-        _minimumBudget = State(initialValue: Self.budgetText(criteria.customMinBudget))
-        _maximumBudget = State(initialValue: Self.budgetText(criteria.customMaxBudget))
+        _budgetViewModel = State(
+            initialValue: EditPreferenceViewModel(
+                selectedBudgetOption: criteria.budget,
+                minimumBudget: Self.budgetText(criteria.customMinBudget),
+                maximumBudget: Self.budgetText(criteria.customMaxBudget)
+            )
+        )
         _selectedType = State(initialValue: criteria.type ?? Self.anyOption)
         _selectedVibe = State(initialValue: criteria.vibe ?? Self.anyOption)
         _selectedHalalOption = State(initialValue: criteria.halal)
@@ -110,13 +112,16 @@ struct EditPreferenceView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("Location")
+                    .accessibilityValue(selectedLocationName)
+                    .accessibilityHint("Double-tap to choose a location and search radius.")
 
-                    BudgetRow(selection: $selectedBudgetOption)
+                    BudgetRow(selection: $budgetViewModel.selectedBudgetOption)
 
-                    if selectedBudgetOption == .custom {
+                    if budgetViewModel.isCustomBudgetRowVisible {
                         CustomBudgetRow(
-                            minimumBudget: $minimumBudget,
-                            maximumBudget: $maximumBudget
+                            minimumBudget: $budgetViewModel.minimumBudget,
+                            maximumBudget: $budgetViewModel.maximumBudget
                         )
                         .transition(.move(edge: .top).combined(with: .opacity))
                     }
@@ -232,7 +237,7 @@ struct EditPreferenceView: View {
                 .padding(.horizontal, 32)
                 .padding(.top, 8)
                 .padding(.bottom, 40)
-                .animation(.snappy(duration: 0.24), value: selectedBudgetOption)
+                .animation(.snappy(duration: 0.24), value: budgetViewModel.selectedBudgetOption)
             }
             .scrollIndicators(.hidden)
         }
@@ -271,9 +276,9 @@ struct EditPreferenceView: View {
             locationName: hasSelectedLocation ? selectedLocationName : nil,
             coordinate: hasSelectedLocation ? Coordinate(selectedCoordinate) : nil,
             radiusKm: radius,
-            budget: selectedBudgetOption,
-            customMinBudget: Self.budgetValue(minimumBudget),
-            customMaxBudget: Self.budgetValue(maximumBudget),
+            budget: budgetViewModel.selectedBudgetOption,
+            customMinBudget: Self.budgetValue(budgetViewModel.minimumBudget),
+            customMaxBudget: Self.budgetValue(budgetViewModel.maximumBudget),
             type: selectedType == Self.anyOption ? nil : selectedType,
             vibe: selectedVibe == Self.anyOption ? nil : selectedVibe,
             startMinutes: Self.minutes(from: preferredStartTime),
@@ -405,7 +410,7 @@ struct EditPreferenceView: View {
                         in: Capsule()
                     )
             }
-            .font(.system(size: 17))
+            .font(.body)
             .contentShape(Rectangle())
             .padding(.horizontal, 20)
             .padding(.vertical, 10)
@@ -443,22 +448,32 @@ struct EditPreferenceView: View {
             HStack {
                 CircleIconButton(
                     systemName: "chevron.left",
-                    accessibilityLabel: "Back"
+                    accessibilityLabel: "Back",
+                    accessibilityInputLabels: ["Back"],
+                    backgroundColor: Color(.systemBackground)
                 ) { dismiss() }
+                .accessibilitySortPriority(3)
 
                 Spacer()
 
                 CircleIconButton(
                     systemName: "checkmark",
-                    accessibilityLabel: "Save"
+                    accessibilityLabel: "Save preferences",
+                    accessibilityInputLabels: ["Save", "Save preferences"],
+                    backgroundColor: Color(.systemBackground)
                 ) {
                     onSave(editedCriteria)
                     dismiss()
                 }
+                .accessibilityHint("Applies the selected preferences and returns to results.")
+                .accessibilitySortPriority(1)
             }
 
             Text("Edit Preference")
-                .font(.system(size: 24, weight: .bold))
+                .font(.title2.bold())
+                .multilineTextAlignment(.center)
+                .accessibilityAddTraits(.isHeader)
+                .accessibilitySortPriority(2)
         }
         .padding(.horizontal, 24)
         .padding(.top, 12)

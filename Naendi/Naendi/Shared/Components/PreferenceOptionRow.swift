@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct PreferenceOptionRow: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     let title: String
     let value: String
     let showsDisclosure: Bool
@@ -16,25 +18,29 @@ struct PreferenceOptionRow: View {
     }
 
     var body: some View {
-        HStack(spacing: 8) {
-            Text(title)
-                .font(.system(size: 18))
-                .foregroundStyle(.primary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.85)
+        Group {
+            if dynamicTypeSize.isAccessibilitySize {
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(spacing: 8) {
+                        titleView
+                        Spacer(minLength: 8)
+                        disclosureIndicator
+                    }
 
-            Spacer(minLength: 8)
-
-            valueView
-
-            if showsDisclosure {
-                Image(systemName: "chevron.up.chevron.down")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(.secondary.opacity(0.55))
+                    valueView
+                }
+            } else {
+                HStack(spacing: 8) {
+                    titleView
+                    Spacer(minLength: 8)
+                    valueView
+                    disclosureIndicator
+                }
             }
         }
         .padding(.horizontal, 20)
-        .frame(height: 60)
+        .padding(.vertical, 14)
+        .frame(minHeight: 60)
         .background(Color(uiColor: .secondarySystemGroupedBackground))
         .clipShape(Capsule())
         .overlay {
@@ -44,25 +50,41 @@ struct PreferenceOptionRow: View {
         .shadow(color: .black.opacity(0.07), radius: 16, y: 8)
     }
 
+    private var titleView: some View {
+        Text(title)
+            .font(.body)
+            .foregroundStyle(.primary)
+            .multilineTextAlignment(.leading)
+    }
+
+    @ViewBuilder
+    private var disclosureIndicator: some View {
+        if showsDisclosure {
+            Image(systemName: "chevron.up.chevron.down")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary.opacity(0.55))
+                .accessibilityHidden(true)
+        }
+    }
+
     @ViewBuilder
     private var valueView: some View {
         if title == "Preferred Time" {
             Text(value)
-                .font(.system(size: 15, weight: .medium))
+                .font(.subheadline.weight(.medium))
                 .foregroundStyle(.secondary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.85)
+                .multilineTextAlignment(.leading)
                 .padding(.horizontal, 10)
-                .frame(height: 32)
+                .padding(.vertical, 6)
+                .frame(minHeight: 32)
                 .background(Color(uiColor: .systemBackground).opacity(0.9))
                 .clipShape(Capsule())
                 .layoutPriority(1)
         } else {
             Text(value)
-                .font(.system(size: 18))
+                .font(.body)
                 .foregroundStyle(.secondary)
-                .lineLimit(1)
-                .truncationMode(.tail)
+                .multilineTextAlignment(.leading)
         }
     }
 
