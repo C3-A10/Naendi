@@ -70,12 +70,11 @@ struct LocationMapView: View {
     }
 
     private var centerPin: some View {
-        Image(systemName: "mappin.circle.fill")
-            .font(.system(size: 38, weight: .bold))
-            .symbolRenderingMode(.palette)
-            .foregroundStyle(.white, Color.red)
-            .shadow(color: .black.opacity(0.22), radius: 4, y: 2)
-            .offset(y: -19)
+        Image("naendi_location_pin")
+            .resizable()
+            .scaledToFit()
+            .frame(width: 88, height: 114)
+            .offset(y: -25)
             .accessibilityElement()
             .accessibilityLabel("Selected location")
             .accessibilityValue(selectedLocationName)
