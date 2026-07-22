@@ -68,10 +68,11 @@ struct CompareCard: View {
                         HStack(spacing: 3) {
                             Image(systemName: "star.fill")
                                 .foregroundColor(Color(red: 0.95, green: 0.76, blue: 0.29))
-                                .font(.system(size: 13))
+                                .font(.body)
                             
                             Text(String(format: "%.1f", item.rating))
-                                .font(.system(size: 12, weight: .semibold))
+                                .font(.body)
+                                .fontWeight(.semibold)
                                 .foregroundColor(.gray)
                         }
                         
