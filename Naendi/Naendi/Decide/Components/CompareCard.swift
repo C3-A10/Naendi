@@ -56,7 +56,8 @@ struct CompareCard: View {
                 VStack(alignment: .leading, spacing: 8) {
                     
                     Text(item.nama)
-                        .font(.system(size: 16, weight: .bold))
+                        .font(.headline)
+                        .fontWeight(.bold)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
                         .padding(.top, 10)
@@ -98,9 +99,9 @@ struct CompareCard: View {
                     VStack(alignment: .leading, spacing: 2) {
                         if let locationName = viewModel.criteria.locationName,
                            viewModel.criteria.coordinate != nil {
-                            Text("\(viewModel.calculateDistance(to: item)) dari \(locationName),")
+                            Text("\(viewModel.calculateDistance(to: item)) dari \(locationName),").font(.caption)
                         };
-                            Text("\(viewModel.calculateDistanceFromMe(to: item)) dari lokasi Anda saat ini.")
+                            Text("\(viewModel.calculateDistanceFromMe(to: item)) dari lokasi Anda saat ini.").font(.caption)
                     }
                     .font(.system(size: 12))
                     .foregroundColor(.gray)
@@ -149,11 +150,12 @@ struct DetailRowView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(LocalizedStringKey(title))
-                .font(.system(size: 14, weight: .bold))
+                .font(.subheadline)
+                .fontWeight(.bold)
                 .foregroundColor(.primary)
             
             Text(value)
-                .font(.system(size: 12, weight: .regular))
+                .font(.caption)
                 .foregroundColor(.gray)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
