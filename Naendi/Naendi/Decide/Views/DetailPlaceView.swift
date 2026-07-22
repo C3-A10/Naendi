@@ -61,6 +61,11 @@ struct DetailPlaceView: View {
         .navigationTitle(place.nama)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                    Text("Compare")
+                        .font(.headline)
+                        .foregroundStyle(.black)
+                }
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: { dismiss() }) {
                     Image(systemName: "xmark")

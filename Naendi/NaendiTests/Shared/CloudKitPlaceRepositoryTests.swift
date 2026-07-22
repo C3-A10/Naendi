@@ -55,7 +55,7 @@ struct CloudKitPlaceRepositoryTests {
         record["halal_evidence"] = "MUI certificate"
         record["review_positif"] = "Rasa autentik dan porsi besar"
         record["review_negatif"] = "Antre panjang saat jam makan siang"
-        record["thumbnail"] = "thumb.jpg"
+        record["images"] = "thumb.jpg"
 
         let place = repository.makePlace(from: record)
 
@@ -74,7 +74,7 @@ struct CloudKitPlaceRepositoryTests {
         #expect(place?.halalEvidence == "MUI certificate")
         #expect(place?.reviewPositif == "Rasa autentik dan porsi besar")
         #expect(place?.reviewNegatif == "Antre panjang saat jam makan siang")
-        #expect(place?.imgUrl == "thumb.jpg")
+        #expect(place?.imgUrls == "thumb.jpg")
     }
 
     @Test("absent optional columns fall back to sensible defaults")
@@ -123,6 +123,6 @@ struct CloudKitPlaceRepositoryTests {
         record["images"] = "gallery1.jpg"
         record["location"] = CLLocation(latitude: -7.2575, longitude: 112.7521)
 
-        #expect(repository.makePlace(from: record)?.imgUrl == "gallery1.jpg")
+        #expect(repository.makePlace(from: record)?.imgUrls == "gallery1.jpg")
     }
 }

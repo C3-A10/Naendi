@@ -13,7 +13,7 @@ struct TagView: View {
     let textColor: Color
     
     var body: some View {
-        Text(text)
+        Text(LocalizedStringKey(text))
             .font(.system(size: 10, weight: .bold))
             .padding(.horizontal, 6)
             .padding(.vertical, 4)

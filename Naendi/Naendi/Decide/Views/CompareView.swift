@@ -66,9 +66,14 @@ struct CompareView: View {
         .background {
             GreenBlurBackground()
         }
-        .navigationTitle("Compare")
+        
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                    Text("Compare")
+                        .font(.headline)
+                        .foregroundStyle(.black)
+                }
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: { dismiss() }) {
                     Image(systemName: "xmark")

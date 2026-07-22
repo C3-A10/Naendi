@@ -43,7 +43,7 @@ struct LocationMapView: View {
             .onMapCameraChange(frequency: .continuous) { context in
                 selectedCoordinate = context.camera.centerCoordinate
                 if cameraPosition.positionedByUser {
-                    selectedLocationName = "Pinned Location"
+                    selectedLocationName = String(localized: "Pinned Location")
                 }
             }
             .onMapCameraChange(frequency: .onEnd) { context in
@@ -133,7 +133,7 @@ struct LocationMapView: View {
         )
 
         guard let request = MKReverseGeocodingRequest(location: location) else {
-            selectedLocationName = "Pinned Location"
+            selectedLocationName = String(localized: "Pinned Location")
             return
         }
 
@@ -142,18 +142,18 @@ struct LocationMapView: View {
             try Task.checkCancellation()
 
             guard let mapItem = mapItems.first else {
-                selectedLocationName = "Pinned Location"
+                selectedLocationName = String(localized: "Pinned Location")
                 return
             }
 
             selectedLocationName = mapItem.name
                 ?? mapItem.address?.shortAddress
                 ?? mapItem.address?.fullAddress
-                ?? "Pinned Location"
+                ?? String(localized: "Pinned Location")
         } catch is CancellationError {
             return
         } catch {
-            selectedLocationName = "Pinned Location"
+            selectedLocationName = String(localized: "Pinned Location")
         }
     }
 }

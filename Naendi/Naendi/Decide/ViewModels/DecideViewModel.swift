@@ -112,7 +112,9 @@ class DecideViewModel {
         guard let origin else {
             places = []
             isLoading = false
-            errorMessage = "Location is unavailable. Search for a location or allow location access to apply the selected radius."
+            errorMessage = String(
+                localized: "Location is unavailable. Search for a location or allow location access to apply the selected radius."
+            )
             phase = .results
             return
         }
@@ -145,7 +147,9 @@ class DecideViewModel {
             try store.saveCriteria(criteria)
             persistenceErrorMessage = nil
         } catch {
-            persistenceErrorMessage = "Your preferences were applied for this session but could not be saved."
+            persistenceErrorMessage = String(
+                localized: "Your preferences were applied for this session but could not be saved."
+            )
         }
         await loadRecommendations(from: provider, criteria: criteria)
     }
@@ -157,7 +161,9 @@ class DecideViewModel {
             }
             persistenceErrorMessage = nil
         } catch {
-            persistenceErrorMessage = "Your saved preferences could not be restored. Default preferences will be used."
+            persistenceErrorMessage = String(
+                localized: "Your saved preferences could not be restored. Default preferences will be used."
+            )
         }
     }
 

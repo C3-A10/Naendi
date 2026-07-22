@@ -80,7 +80,7 @@ struct CustomBudgetRow: View {
         text: Binding<String>,
         field: Field
     ) -> some View {
-        TextField(placeholder, text: formattedText(text))
+        TextField(LocalizedStringKey(placeholder), text: formattedText(text))
             .font(.body)
             .foregroundStyle(.secondary)
             .multilineTextAlignment(.center)
@@ -93,17 +93,18 @@ struct CustomBudgetRow: View {
             .background(Color(uiColor: .systemBackground).opacity(0.9))
             .clipShape(Capsule())
             .contentShape(Capsule())
-            .accessibilityLabel(accessibilityLabel)
+            .accessibilityLabel(Text(LocalizedStringKey(accessibilityLabel)))
             .accessibilityValue(accessibilityAmount(from: text.wrappedValue))
     }
 
     private func accessibilityAmount(from text: String) -> String {
         let digits = text.filter(\.isNumber)
         guard let amount = Int(digits), !digits.isEmpty else {
-            return "Not entered"
+            return String(localized: "Not entered")
         }
 
-        return "\(Self.spellOutFormatter.string(from: NSNumber(value: amount)) ?? String(amount)) rupiah"
+        let spokenAmount = Self.spellOutFormatter.string(from: NSNumber(value: amount)) ?? String(amount)
+        return String(localized: "\(spokenAmount) rupiah")
     }
 
     private func formattedText(_ text: Binding<String>) -> Binding<String> {
@@ -127,7 +128,7 @@ struct CustomBudgetRow: View {
     private static let spellOutFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .spellOut
-        formatter.locale = Locale(identifier: "en")
+        formatter.locale = .current
         return formatter
     }()
 

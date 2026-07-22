@@ -24,10 +24,11 @@ struct ResultView: View {
                     Text(isComparing ? "Compare" : "Results")
                         .font(.largeTitle)
                         .fontWeight(.bold)
+                        .foregroundColor(.black)
                     if isComparing {
                         Text("Select any 2 places to compare")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.gray)
                             .transition(.opacity.combined(with: .move(edge: .top)))
                     }
                 }
