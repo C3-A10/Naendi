@@ -89,16 +89,19 @@ struct PlaceCardNormalView: View {
                 } label: {
                     HStack {
                         VStack(alignment: .leading, spacing: 6) {
-                            Text(place.nama).font(.system(size: 22, weight: .bold)).foregroundColor(.primary).lineLimit(1)
+                            Text(place.nama)
+                                .font(.title3)
+                                .fontWeight(.bold)
+                                .foregroundColor(.primary).lineLimit(1)
                             HStack(spacing: 6) {
-                                Image(systemName: "star.fill").foregroundColor(.yellow).font(.system(size: 15))
-                                Text("\(place.rating, specifier: "%.1f")").font(.system(size: 15, weight: .semibold)).foregroundColor(.primary)
-                                Text("•").foregroundColor(.secondary)
-                                Text("(\(place.jumlahReview))").font(.system(size: 14)).foregroundColor(.secondary)
+                                Image(systemName: "star.fill").foregroundColor(.yellow).font(.body)
+                                Text("\(place.rating, specifier: "%.1f")").font(.body).fontWeight(.semibold).foregroundColor(.primary)
+                                Text("•").foregroundColor(.secondary).font(.body)
+                                Text("(\(place.jumlahReview))").font(.caption).foregroundColor(.secondary)
                             }
                         }
                         Spacer()
-                        Image(systemName: "chevron.down").font(.system(size: 18, weight: .bold)).foregroundColor(.primary)
+                        Image(systemName: "chevron.down").font(.title3).fontWeight(.bold) .foregroundColor(.primary)
                     }
                     .padding(16)
                     .background(Color(.secondarySystemGroupedBackground))
@@ -179,12 +182,13 @@ struct PlaceCardNormalView: View {
                             } label: {
                                 HStack {
                                     VStack(alignment: .leading, spacing: 6) {
-                                        Text(place.nama).font(.system(size: 22, weight: .bold)).foregroundColor(.primary).lineLimit(1)
+                                        Text(place.nama).font(.title3)
+                                            .fontWeight(.bold).foregroundColor(.primary).lineLimit(1)
                                         HStack(spacing: 6) {
-                                            Image(systemName: "star.fill").foregroundColor(.yellow).font(.system(size: 15))
-                                            Text("\(place.rating, specifier: "%.1f")").font(.system(size: 15, weight: .semibold)).foregroundColor(.primary)
-                                            Text("•").foregroundColor(.secondary)
-                                            Text("(\(place.jumlahReview))").font(.system(size: 14)).foregroundColor(.secondary)
+                                            Image(systemName: "star.fill").foregroundColor(.yellow).font(.body)
+                                            Text("\(place.rating, specifier: "%.1f")").font(.body).fontWeight(.semibold).foregroundColor(.primary)
+                                            Text("•").foregroundColor(.secondary).font(.body)
+                                            Text("(\(place.jumlahReview))").font(.caption).fontWeight(.semibold).foregroundColor(.secondary)
                                         }
                                     }
                                     Spacer()
