@@ -9,14 +9,14 @@ import SwiftUI
 
 struct PlaceTagPillView: View {
     let title: String
-    let style: PlaceTagStyle
+    var style: PlaceTagStyle
     
     var body: some View {
         HStack(spacing: 4) {
 
             Image(style.iconName)
                 .resizable()
-                .frame(width: 14, height: 14)
+                .frame(width: style == .pinLight ? 9 : 15, height: 15)
             
             Text(title)
                 .font(.system(size: 14, weight: .semibold))
