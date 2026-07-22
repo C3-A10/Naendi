@@ -10,6 +10,13 @@ import Observation
 import CoreLocation
 import CloudKit
 
+/// Why a place earns a spot on the landing showcase, so its card can label itself.
+enum LandingTag: Equatable {
+    case nearby
+    case top(type: String)
+}
+
+@MainActor
 @Observable
 class DecideViewModel {
 
@@ -19,8 +26,12 @@ class DecideViewModel {
 
     /// The filtered, sorted results shown on the results screen.
     var places: [Place] = []
-    /// The showcase carousel on the landing page, ranked by review count.
+    /// The showcase carousel on the landing page: nearby picks, then top
+    /// restaurants, then top cafes.
     var landingPagePlaces: [Place] = []
+    /// Which group each landing card belongs to, keyed by place id, so a card
+    /// can render the matching "Nearby" / "Top …" pill.
+    private var landingTags: [String: LandingTag] = [:]
     var isLoading: Bool = false
     var errorMessage: String?
     var persistenceErrorMessage: String?
@@ -34,8 +45,8 @@ class DecideViewModel {
     var phase: DecidePhase = .landing
     var criteria: PreferenceCriteria = .default
 
-    /// Fixed until preferences are re-applied, so "Surprise Me" doesn't reshuffle
-    /// as the user scrolls or expands a card.
+    private(set) var awaitingOrigin = false
+
     private var shuffleSeed = UInt64.random(in: .min ... .max)
 
     init(
@@ -48,14 +59,10 @@ class DecideViewModel {
 
     var userLocation: CLLocation? { locationProvider.currentLocation }
 
-    /// Where distances and the radius filter are measured from: the location the
-    /// user searched for, falling back to the device's own position.
     var origin: Coordinate? {
         criteria.coordinate ?? locationProvider.currentLocation.map { Coordinate($0.coordinate) }
     }
 
-    /// Triggers the location permission prompt, so call it from a view's `.task`
-    /// rather than at construction time.
     func startLocationUpdates() {
         locationProvider.start()
     }
@@ -81,17 +88,52 @@ class DecideViewModel {
         selectedPlaces.removeAll()
     }
 
-    func loadLandingPlaces(from provider: PlaceProviding, limit: Int = 10) async {
+    func landingTag(for place: Place) -> LandingTag? { landingTags[place.id] }
+
+    func loadLandingPlaces(from provider: PlaceProviding, perGroup: Int = 1) async {
         isLoading = true
         errorMessage = nil
         do {
             let all = try await provider.places()
-            landingPagePlaces = Array(
-                all.sorted { $0.jumlahReview > $1.jumlahReview }.prefix(limit)
-            )
+
+            let byDistance: [Place]
+            if let origin {
+                let from = origin.clLocation
+                byDistance = all.sorted {
+                    from.distance(from: $0.coordinate.clLocation)
+                        < from.distance(from: $1.coordinate.clLocation)
+                }
+            } else {
+                byDistance = []
+            }
+
+            func topReviewed(ofType type: String) -> [Place] {
+                all.filter { $0.typeTempat == type }
+                    .sorted { $0.jumlahReview > $1.jumlahReview }
+            }
+
+            var tags: [String: LandingTag] = [:]
+            var ordered: [Place] = []
+            func add(_ group: [Place], _ tag: LandingTag) {
+                var taken = 0
+                for place in group where tags[place.id] == nil {
+                    tags[place.id] = tag
+                    ordered.append(place)
+                    taken += 1
+                    if taken == perGroup { break }
+                }
+            }
+
+            add(byDistance, .nearby)
+            add(topReviewed(ofType: "Restaurant"), .top(type: "Restaurant"))
+            add(topReviewed(ofType: "Cafe"), .top(type: "Cafe"))
+
+            landingPagePlaces = ordered
+            landingTags = tags
         } catch {
             errorMessage = error.localizedDescription
             landingPagePlaces = []
+            landingTags = [:]
         }
         await loadReportCounts()
         isLoading = false
@@ -112,12 +154,14 @@ class DecideViewModel {
         guard let origin else {
             places = []
             isLoading = false
+            awaitingOrigin = true
             errorMessage = String(
                 localized: "Location is unavailable. Search for a location or allow location access to apply the selected radius."
             )
             phase = .results
             return
         }
+        awaitingOrigin = false
 
         do {
             let all = try await provider.places()
@@ -154,16 +198,21 @@ class DecideViewModel {
         await loadRecommendations(from: provider, criteria: criteria)
     }
 
-    func restoreCriteria(from store: PreferenceStoring) {
+    @discardableResult
+    func restoreCriteria(from store: PreferenceStoring) -> Bool {
         do {
             if let stored = try store.loadCriteria() {
                 criteria = stored
+                persistenceErrorMessage = nil
+                return true
             }
             persistenceErrorMessage = nil
+            return false
         } catch {
             persistenceErrorMessage = String(
                 localized: "Your saved preferences could not be restored. Default preferences will be used."
             )
+            return false
         }
     }
 

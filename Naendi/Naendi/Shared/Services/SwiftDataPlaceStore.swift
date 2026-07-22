@@ -15,9 +15,7 @@ final class SwiftDataPlaceStore: PlaceStore {
     }
     
     func save(_ places: [Place]) throws {
-        // A seed replaces the whole dataset: wipe any prior (possibly partial,
-        // from an interrupted fetch) rows before inserting the fresh full set,
-        // so re-seeding never duplicates.
+       
         try context.delete(model: PlaceEntity.self)
         for place in places {
             context.insert(PlaceEntity(from: place))
