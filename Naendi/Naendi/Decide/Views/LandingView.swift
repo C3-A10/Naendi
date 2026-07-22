@@ -40,6 +40,28 @@ struct LandingView: View {
                         .frame(width: UIScreen.main.bounds.width, height: 420)
                         .clipped()
                         
+                        // Maskot di Kiri dan Kanan
+                        HStack(spacing: 0) {
+                            Image("asset_bicycle")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 180, height: 180)
+                                .offset(x: -50)
+                                .offset(y: 30)
+                            
+                            Spacer()
+                                
+                            Image("asset_rabbit")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 150, height: 250)
+                                .offset(x: 50)
+                                .offset(y: -40)
+                        }
+                        .frame(maxWidth: .infinity) // Memaksa HStack membentang selebar mungkin
+                        .padding(.horizontal, 0) // Memastikan tidak ada jarak/margin bawaan dari sistem
+                        .padding(.top, 100)
+                        
                         Text("Discover somewhere new")
                             .font(.system(size: 24, weight: .bold))
                             .foregroundColor(.white)
