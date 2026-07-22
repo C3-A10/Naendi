@@ -5,53 +5,25 @@ import SwiftUI
 /// Back can discard cleanly; only Save hands the result back to the caller,
 /// which is what persists it and re-runs the search.
 struct EditPreferenceView: View {
-    /// Shown in the Type and Vibe menus for "don't filter on this".
-    private static let anyOption = "Any"
-    private static let locationPlaceholder = String(localized: "Search Location")
-    /// Surabaya city centre — the app's whole dataset is here.
-    private static let defaultCoordinate = CLLocationCoordinate2D(
-        latitude: -7.2575,
-        longitude: 112.7521
-    )
+    @Environment(\.dismiss) var dismiss
 
-    private static let timeFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        return formatter
-    }()
+    let onSave: (PreferenceCriteria) -> Void
 
-    private static let budgetFormatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.groupingSeparator = "."
-        formatter.maximumFractionDigits = 0
-        return formatter
-    }()
-
-    private enum PreferredTimeField {
-        case start
-        case end
-    }
-
-    @Environment(\.dismiss) private var dismiss
-
-    private let onSave: (PreferenceCriteria) -> Void
-
-    @State private var isSelectingLocation = false
-    @State private var selectedLocationName: String
-    @State private var selectedCoordinate: CLLocationCoordinate2D
-    @State private var radius: Double
-    @State private var budgetViewModel: EditPreferenceViewModel
-    @State private var selectedType: String
-    @State private var selectedVibe: String
-    @State private var selectedHalalOption: HalalPreference
-    @State private var isSelectingOutputResult = false
-    @State private var outputResult: Int
-    @State private var selectedSortOption: SortOption
-    @State private var isSelectingPreferredTime = false
-    @State private var activePreferredTimeField: PreferredTimeField = .start
-    @State private var preferredStartTime: Date
-    @State private var preferredEndTime: Date
+    @State var isSelectingLocation = false
+    @State var selectedLocationName: String
+    @State var selectedCoordinate: CLLocationCoordinate2D
+    @State var radius: Double
+    @State var budgetViewModel: EditPreferenceViewModel
+    @State var selectedType: String
+    @State var selectedVibe: String
+    @State var selectedHalalOption: HalalPreference
+    @State var isSelectingOutputResult = false
+    @State var outputResult: Int
+    @State var selectedSortOption: SortOption
+    @State var isSelectingPreferredTime = false
+    @State var activePreferredTimeField: PreferredTimeField = .start
+    @State var preferredStartTime: Date
+    @State var preferredEndTime: Date
 
     init(
         criteria: PreferenceCriteria = .default,
@@ -78,23 +50,6 @@ struct EditPreferenceView: View {
         _preferredStartTime = State(initialValue: Self.date(fromMinutes: criteria.startMinutes))
         _preferredEndTime = State(initialValue: Self.date(fromMinutes: criteria.endMinutes))
     }
-
-    private let typeOptions = [
-        EditPreferenceView.anyOption,
-        "Restaurant",
-        "Cafe",
-        "Warkop",
-        "PKL",
-        "Drinks",
-        "Bakery"
-    ]
-
-    private let vibeOptions = [
-        EditPreferenceView.anyOption,
-        "Calm",
-        "Balanced",
-        "Lively"
-    ]
 
     var body: some View {
         VStack(spacing: 0) {
@@ -269,250 +224,6 @@ struct EditPreferenceView: View {
         }
     }
 
-    // MARK: - Criteria conversion
-
-    /// The placeholder is still showing when the user never picked a location,
-    /// in which case matching falls back to their GPS position.
-    private var hasSelectedLocation: Bool {
-        selectedLocationName != Self.locationPlaceholder
-    }
-
-    private var editedCriteria: PreferenceCriteria {
-        PreferenceCriteria(
-            locationName: hasSelectedLocation ? selectedLocationName : nil,
-            coordinate: hasSelectedLocation ? Coordinate(selectedCoordinate) : nil,
-            radiusKm: radius,
-            budget: budgetViewModel.selectedBudgetOption,
-            customMinBudget: Self.budgetValue(budgetViewModel.minimumBudget),
-            customMaxBudget: Self.budgetValue(budgetViewModel.maximumBudget),
-            type: selectedType == Self.anyOption ? nil : selectedType,
-            vibe: selectedVibe == Self.anyOption ? nil : selectedVibe,
-            startMinutes: Self.minutes(from: preferredStartTime),
-            endMinutes: Self.minutes(from: preferredEndTime),
-            halal: selectedHalalOption,
-            outputResult: outputResult,
-            sortBy: selectedSortOption
-        )
-    }
-
-    private static func date(fromMinutes minutes: Int) -> Date {
-        Calendar.current.date(
-            bySettingHour: minutes / 60,
-            minute: minutes % 60,
-            second: 0,
-            of: Date()
-        ) ?? Date()
-    }
-
-    private static func minutes(from date: Date) -> Int {
-        let components = Calendar.current.dateComponents([.hour, .minute], from: date)
-        return (components.hour ?? 0) * 60 + (components.minute ?? 0)
-    }
-
-    private static func budgetText(_ value: Double?) -> String {
-        guard let value, value > 0 else { return "" }
-        return budgetFormatter.string(from: NSNumber(value: Int(value))) ?? ""
-    }
-
-    private func localizedPreferenceValue(_ value: String) -> String {
-        switch value {
-        case "Any":
-            String(localized: "Any")
-        case "Restaurant":
-            String(localized: "Restaurant")
-        case "Cafe":
-            String(localized: "Cafe")
-        case "Warkop":
-            String(localized: "Warkop")
-        case "PKL":
-            String(localized: "PKL")
-        case "Drinks":
-            String(localized: "Drinks")
-        case "Bakery":
-            String(localized: "Bakery")
-        case "Calm":
-            String(localized: "Calm")
-        case "Balanced":
-            String(localized: "Balanced")
-        case "Lively":
-            String(localized: "Lively")
-        default:
-            value
-        }
-    }
-
-    /// Mirrors CustomBudgetRow's grouped formatting by ignoring separators.
-    private static func budgetValue(_ text: String) -> Double? {
-        let digits = text.filter(\.isNumber)
-        guard !digits.isEmpty, let value = Int(digits) else { return nil }
-        return Double(value)
-    }
-
-    // MARK: - Subviews
-
-    private var preferredTimeRange: String {
-        let start = Self.timeFormatter.string(from: preferredStartTime)
-        let end = Self.timeFormatter.string(from: preferredEndTime)
-        return "\(start)  –  \(end)"
-    }
-
-    private var preferredTimePicker: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                preferredTimeRow(
-                    title: "Starts",
-                    time: preferredStartTime,
-                    field: .start
-                )
-
-                Divider()
-                    .padding(.leading, 20)
-
-                preferredTimeRow(
-                    title: "Ends",
-                    time: preferredEndTime,
-                    field: .end
-                )
-
-                Divider()
-
-                Group {
-                    if activePreferredTimeField == .start {
-                        DatePicker(
-                            "Start Time",
-                            selection: $preferredStartTime,
-                            displayedComponents: .hourAndMinute
-                        )
-                    } else {
-                        DatePicker(
-                            "End Time",
-                            selection: $preferredEndTime,
-                            in: preferredStartTime...,
-                            displayedComponents: .hourAndMinute
-                        )
-                    }
-                }
-                .datePickerStyle(.wheel)
-                .labelsHidden()
-                .frame(maxWidth: .infinity)
-                .clipped()
-
-                Spacer(minLength: 0)
-            }
-            .navigationTitle("Preferred Time")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") {
-                        isSelectingPreferredTime = false
-                    }
-                }
-            }
-            .onChange(of: preferredStartTime) { _, newStartTime in
-                if preferredEndTime < newStartTime {
-                    preferredEndTime = newStartTime
-                }
-            }
-        }
-    }
-
-    private func preferredTimeRow(
-        title: String,
-        time: Date,
-        field: PreferredTimeField
-    ) -> some View {
-        Button {
-            withAnimation(.easeInOut(duration: 0.2)) {
-                activePreferredTimeField = field
-            }
-        } label: {
-            HStack {
-                Text(LocalizedStringKey(title))
-                    .foregroundStyle(.primary)
-
-                Spacer()
-
-                Text(time.formatted(date: .omitted, time: .shortened))
-                    .foregroundStyle(activePreferredTimeField == field ? .red : .primary)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 7)
-                    .background(
-                        activePreferredTimeField == field
-                            ? Color.red.opacity(0.12)
-                            : Color(uiColor: .secondarySystemFill),
-                        in: Capsule()
-                    )
-            }
-            .font(.body)
-            .contentShape(Rectangle())
-            .padding(.horizontal, 20)
-            .padding(.vertical, 10)
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(title)
-        .accessibilityValue(time.formatted(date: .omitted, time: .shortened))
-        .accessibilityAddTraits(activePreferredTimeField == field ? .isSelected : [])
-    }
-
-    private var outputResultPicker: some View {
-        NavigationStack {
-            Picker("Output Result", selection: $outputResult) {
-                ForEach(3...10, id: \.self) { result in
-                    Text("\(result)")
-                        .tag(result)
-                }
-            }
-            .pickerStyle(.wheel)
-            .accessibilityLabel("Number of results")
-            .navigationTitle("Output Result")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") {
-                        isSelectingOutputResult = false
-                    }
-                }
-            }
-        }
-    }
-
-    private var navigationHeader: some View {
-        VStack(spacing: 14) {
-            HStack {
-                CircleIconButton(
-                    systemName: "chevron.left",
-                    accessibilityLabel: "Back",
-                    accessibilityInputLabels: ["Back"],
-                    backgroundColor: Color(.systemBackground)
-                ) { dismiss() }
-                .accessibilitySortPriority(3)
-
-                Spacer()
-
-                CircleIconButton(
-                    systemName: "checkmark",
-                    accessibilityLabel: "Save preferences",
-                    accessibilityInputLabels: ["Save", "Save preferences"],
-                    backgroundColor: Color(.systemBackground)
-                ) {
-                    onSave(editedCriteria)
-                    dismiss()
-                }
-                .accessibilityHint("Applies the selected preferences and returns to results.")
-                .accessibilitySortPriority(1)
-            }
-
-            Text("Edit Preference")
-                .font(.title2.bold())
-                .multilineTextAlignment(.center)
-                .accessibilityAddTraits(.isHeader)
-                .accessibilitySortPriority(2)
-                .foregroundColor(.black)
-        }
-        .padding(.horizontal, 24)
-        .padding(.top, 12)
-        .padding(.bottom, 14)
-    }
 }
 
 #Preview {

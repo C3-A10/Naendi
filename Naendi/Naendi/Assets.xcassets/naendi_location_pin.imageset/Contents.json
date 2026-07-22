@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "naendi_location_pin@3x.png",
-      "idiom" : "universal",
-      "scale" : "3x"
-    },
-    {
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
       "scale" : "2x"
+    },
+    {
+      "filename" : "pin loc.png",
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
   "info" : {
