@@ -10,6 +10,7 @@ import SwiftData
 
 struct ResultView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State var viewModel: DecideViewModel
     @State private var isComparing = false
     @State private var selectedImageURL: URL?
@@ -19,7 +20,11 @@ struct ResultView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(alignment: .center) {
+            let headerLayout = dynamicTypeSize.isAccessibilitySize
+                ? AnyLayout(VStackLayout(alignment: .leading, spacing: 12))
+                : AnyLayout(HStackLayout(alignment: .center, spacing: 12))
+
+            headerLayout {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(isComparing ? "Compare" : "Results")
                         .font(.largeTitle)
@@ -28,13 +33,12 @@ struct ResultView: View {
                         .accessibilityAddTraits(.isHeader)
                     if isComparing {
                         Text("Select any 2 places to compare")
-                            .font(.system(size: 14, weight: .medium))
+                            .font(.subheadline.weight(.medium))
                             .foregroundColor(.gray)
                             .transition(.opacity.combined(with: .move(edge: .top)))
                     }
                 }
-
-                Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 HStack(spacing: 12) {
                     if isComparing {
@@ -45,9 +49,9 @@ struct ResultView: View {
                             }
                         } label: {
                             Text("Cancel")
-                                .font(.system(size: 15, weight: .semibold))
+                                .font(.subheadline.weight(.semibold))
                                 .foregroundColor(.white)
-                                .frame(height: 36)
+                                .frame(minHeight: 44)
                                 .padding(.horizontal, 16)
                                 .background(Color(white: 0.15))
                                 .clipShape(Capsule())
@@ -92,6 +96,7 @@ struct ResultView: View {
                         .transition(.scale.combined(with: .opacity))
                     }
                 }
+                .frame(maxWidth: dynamicTypeSize.isAccessibilitySize ? .infinity : nil, alignment: .trailing)
             }
             .padding(.horizontal, 20)
             .padding(.top, 10)

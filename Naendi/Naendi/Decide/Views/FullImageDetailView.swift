@@ -76,7 +76,7 @@ struct FullImageDetailView: View {
                             .foregroundColor(.gray)
                             .accessibilityHidden(true)
                         Text("Failed to load image")
-                            .font(.system(size: 14))
+                            .font(.subheadline)
                             .foregroundColor(.gray)
                     }
                     

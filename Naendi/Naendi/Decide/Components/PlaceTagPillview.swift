@@ -20,7 +20,7 @@ struct PlaceTagPillView: View {
                 .accessibilityHidden(true)
             
             Text(title)
-                .font(.system(size: 14, weight: .semibold))
+                .font(.subheadline.weight(.semibold))
                 .foregroundColor(style.contentColor)
         }
         .padding(.horizontal, 14)

@@ -23,7 +23,7 @@ struct DistanceCheckmarkView: View {
         HStack(alignment: .center, spacing: 6) {
             // 1. Badge Jarak
             Text(viewModel.calculateDistance(to: place))
-                .font(.system(size: 14, weight: .semibold))
+                .font(.subheadline.weight(.semibold))
                 .foregroundColor(.black)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
@@ -60,7 +60,7 @@ struct DistanceCheckmarkView: View {
                         
                         if isSelected {
                             Image(systemName: "checkmark")
-                                .font(.system(size: 14, weight: .bold))
+                                .font(.subheadline.bold())
                                 .foregroundColor(.black)
                         }
                     }
@@ -76,7 +76,7 @@ struct DistanceCheckmarkView: View {
                     onReport()
                 } label: {
                     Image(systemName: isReported ? "exclamationmark.bubble.fill" : "exclamationmark.bubble")
-                        .font(.system(size: 20, weight: .bold))
+                        .font(.title3.bold())
                         .foregroundColor(isReported ? Color("color_green") : .white)
                         .frame(width: 32, height: 32)
                 }

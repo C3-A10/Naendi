@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct PlaceCardExpandInfoView: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     let place: Place
     let isChooseThisLocationBtnVisible: Bool
     @Binding var isExpanded: Bool
@@ -38,31 +39,27 @@ struct PlaceCardExpandInfoView: View {
                         .foregroundColor(.primary)
                     
                     // Rating - jml rating - range harga
-                    HStack(spacing: 6) {
-                        
-                        // icon bintang
-                        Image(systemName: "star.fill")
-                            .foregroundColor(.yellow)
-                            .font(.system(size: 14))
-                            .accessibilityHidden(true)
-                        
-                        // rating
-                        Text("\(place.rating, specifier: "%.1f")")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.primary)
-                        
-                        Text("•").foregroundColor(.secondary)
-                        
-                        // jml review
-                        Text("(\(place.jumlahReview))").font(.system(size: 13)).foregroundColor(.secondary)
-                        Text("•").foregroundColor(.secondary)
-                        
-                        // range harga
-                        Text(place.rangeHarga).font(.system(size: 13, weight: .regular)).foregroundColor(.secondary).lineLimit(1)
+                    Group {
+                        if dynamicTypeSize.isAccessibilitySize {
+                            VStack(alignment: .leading, spacing: 4) {
+                                ratingView
+                                Text("\(place.jumlahReview) reviews")
+                                Text(place.rangeHarga)
+                            }
+                        } else {
+                            HStack(spacing: 6) {
+                                ratingView
+                                Text("•").foregroundColor(.secondary)
+                                Text("(\(place.jumlahReview))").foregroundColor(.secondary)
+                                Text("•").foregroundColor(.secondary)
+                                Text(place.rangeHarga).foregroundColor(.secondary).lineLimit(2)
+                            }
+                        }
                     }
+                    .font(.subheadline)
                     
                     // Badges Type - Vibe - Halal
-                    HStack(spacing: 6) {
+                    BrickLayout(spacing: 6) {
                         TagView(text: place.typeTempat, backgroundColor: Color.orange.opacity(0.15), textColor: Color(red: 0.90, green: 0.45, blue: 0.10))
                         
                         TagView(text: place.vibe, backgroundColor: Color.blue.opacity(0.15), textColor: Color(red: 0.10, green: 0.45, blue: 0.90))
@@ -116,11 +113,11 @@ struct PlaceCardExpandInfoView: View {
                         let item = reviewItems[index]
                         VStack(alignment: .leading, spacing: 6) {
                             Text(item.title)
-                                .font(.system(size: 12, weight: .bold))
+                                .font(.caption.bold())
                                 .foregroundColor(item.isPositive ? .green : .red)
                             
                             Text(item.text)
-                                .font(.system(size: 12, weight: .regular))
+                                .font(.caption)
                                 .foregroundColor(.secondary)
                                 .lineSpacing(2)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -141,6 +138,18 @@ struct PlaceCardExpandInfoView: View {
         }
         .padding(.horizontal, 12)
         .padding(.bottom, 12)
+    }
+
+    private var ratingView: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "star.fill")
+                .foregroundColor(.yellow)
+                .accessibilityHidden(true)
+
+            Text("\(place.rating, specifier: "%.1f")")
+                .fontWeight(.semibold)
+                .foregroundColor(.primary)
+        }
     }
 }
 

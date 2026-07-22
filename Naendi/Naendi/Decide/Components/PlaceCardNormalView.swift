@@ -9,6 +9,7 @@ import SwiftUI
 
 
 struct PlaceCardNormalView: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     let place: Place
     var mode: PlaceCardMode
     let isReported: Bool
@@ -43,13 +44,16 @@ struct PlaceCardNormalView: View {
     
     var isSelected: Bool { viewModel.isSelected(place) }
     var isCheckDisabled: Bool { viewModel.isCompareLimitReached && !isSelected }
+    private var resultCardHeight: CGFloat { dynamicTypeSize.isAccessibilitySize ? 320 : 240 }
+    private var landingCardHeight: CGFloat { dynamicTypeSize.isAccessibilitySize ? 380 : 278 }
+    private var landingInfoHeight: CGFloat { dynamicTypeSize.isAccessibilitySize ? 190 : 130 }
 
     var body: some View {
         if mode == .result {
             ZStack(alignment: .bottom) {
                 Rectangle()
                     .fill(Color.gray.opacity(0.1))
-                    .frame(height: 240)
+                    .frame(height: resultCardHeight)
                     .overlay {
                         if let urlString = place.imgUrl, let url = URL(string: urlString) {
                             AsyncImage(url: url) { phase in
@@ -90,7 +94,10 @@ struct PlaceCardNormalView: View {
                 } label: {
                     HStack {
                         VStack(alignment: .leading, spacing: 6) {
-                            Text(place.nama).font(.title3.bold()).foregroundColor(.primary).lineLimit(2)
+                            Text(place.nama)
+                                .font(.title3.bold())
+                                .foregroundColor(.primary)
+                                .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
                             HStack(spacing: 6) {
                                 Image(systemName: "star.fill").foregroundColor(.yellow).font(.subheadline).accessibilityHidden(true)
                                 Text("\(place.rating, specifier: "%.1f")").font(.subheadline.weight(.semibold)).foregroundColor(.primary)
@@ -113,7 +120,7 @@ struct PlaceCardNormalView: View {
                 .accessibilityHint("Shows more details about this place.")
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 240)
+            .frame(height: resultCardHeight)
             .background(Color(.secondarySystemGroupedBackground))
             .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
             .shadow(color: Color.black.opacity(0.12), radius: 12, x: 0, y: 6)
@@ -184,7 +191,10 @@ struct PlaceCardNormalView: View {
                             } label: {
                                 HStack {
                                     VStack(alignment: .leading, spacing: 6) {
-                                        Text(place.nama).font(.title3.bold()).foregroundColor(.primary).lineLimit(2)
+                                        Text(place.nama)
+                                            .font(.title3.bold())
+                                            .foregroundColor(.primary)
+                                            .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
                                         HStack(spacing: 6) {
                                             Image(systemName: "star.fill").foregroundColor(.yellow).font(.subheadline).accessibilityHidden(true)
                                             Text("\(place.rating, specifier: "%.1f")").font(.subheadline.weight(.semibold)).foregroundColor(.primary)
@@ -205,7 +215,7 @@ struct PlaceCardNormalView: View {
                         }
                         .padding(12)
                         .frame(maxWidth: .infinity)
-                        .frame(height: 130)
+                        .frame(minHeight: landingInfoHeight)
                         .background(
                             FolderTabShape(
                                 tabWidth: 190,
@@ -222,7 +232,7 @@ struct PlaceCardNormalView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .frame(height: 278)
+                .frame(minHeight: landingCardHeight)
                 .background(Color(.secondarySystemGroupedBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                 .shadow(color: Color.black.opacity(0.3), radius: 12, x: 0, y: 6)
