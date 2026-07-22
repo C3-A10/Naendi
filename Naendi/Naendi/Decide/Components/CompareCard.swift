@@ -73,7 +73,7 @@ struct CompareCard: View {
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
                         .padding(.top, 10)
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                     
                     BrickLayout(spacing: 6) {
                         
@@ -129,7 +129,7 @@ struct CompareCard: View {
                 .padding(.bottom, 16)
             }
             .frame(maxHeight: .infinity, alignment: .top)
-            .background(Color(red: 0.95, green: 0.95, blue: 0.95))
+            .background(Color(.secondarySystemGroupedBackground))
             .clipShape(RoundedRectangle(cornerRadius: 24))
             .overlay(
                 RoundedRectangle(cornerRadius: 24)
