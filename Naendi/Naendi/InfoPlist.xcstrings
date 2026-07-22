@@ -1,0 +1,22 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "NSLocationWhenInUseUsageDescription" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Naendi uses your location to calculate distances and find nearby places."
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Naendi menggunakan lokasi Anda untuk menghitung jarak dan menemukan tempat di sekitar Anda."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

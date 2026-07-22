@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct CustomActionButton: View {
-    let text: String
+    let text: LocalizedStringResource
     let backgroundColor: Color
     let textColor: Color
     let isDisabled: Bool
     let action: () -> Void
     
     init(
-        text: String,
+        text: LocalizedStringResource,
         backgroundColor: Color,
         textColor: Color,
         isDisabled: Bool = false,

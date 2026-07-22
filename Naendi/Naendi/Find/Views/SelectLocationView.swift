@@ -185,9 +185,9 @@ struct SelectLocationView: View {
     private var searchAlertTitle: String {
         switch searchState {
         case .emptyResult:
-            "Location Not Found"
+            String(localized: "Location Not Found")
         case .failure:
-            "Unable to Search"
+            String(localized: "Unable to Search")
         case .idle, .searching, .success:
             ""
         }
@@ -196,7 +196,7 @@ struct SelectLocationView: View {
     private var searchAlertMessage: String {
         switch searchState {
         case .emptyResult:
-            "Try a different city, place, or address."
+            String(localized: "Try a different city, place, or address.")
         case .failure(let message):
             message
         case .idle, .searching, .success:

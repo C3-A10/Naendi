@@ -160,7 +160,7 @@ struct DetailRowView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(title)
+            Text(LocalizedStringKey(title))
                 .font(.system(size: 14, weight: .bold))
                 .foregroundColor(.primary)
             
