@@ -50,7 +50,7 @@ struct CompareCard: View {
                     }
                     
                     ReportBubbleView(reportCount: viewModel.reportCount(for: item))
-                        .padding(.top, 10)
+                        .padding(12)
                 }
                 
                 VStack(alignment: .leading, spacing: 8) {
