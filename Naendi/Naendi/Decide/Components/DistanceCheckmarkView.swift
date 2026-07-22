@@ -15,6 +15,9 @@ struct DistanceCheckmarkView: View {
     let viewModel: DecideViewModel
     let distancePillColor: Color
     let isTagVisible: Bool
+    let isDetail: Bool
+    let isReported: Bool
+    let onReport: () -> Void
     
     var body: some View {
         HStack(alignment: .center, spacing: 6) {
@@ -40,7 +43,7 @@ struct DistanceCheckmarkView: View {
           
             Spacer()
             
-            // 2. Checkbox
+            // 2. Checkbox or report bubble
             if isComparing {
                 Button {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
@@ -62,18 +65,21 @@ struct DistanceCheckmarkView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(isCheckDisabled)
-            } else {
+            } else if isDetail {
                 Button {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        viewModel.toggleSelection(for: place)
-                    }
+                    onReport()
                 } label: {
-                    Image(systemName: "exclamationmark.bubble")
+                    Image(systemName: isReported ? "exclamationmark.bubble.fill" : "exclamationmark.bubble")
                         .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.white)
+                        .foregroundColor(isReported ? Color("color_green") : .white)
                         .frame(width: 32, height: 32)
                 }
                 .buttonStyle(.plain)
+            } else {
+                ReportBubbleView(reportCount: viewModel.reportCount(for: place))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .clipShape(Capsule())
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -87,5 +93,51 @@ enum DistanceTagType {
 }
 
 #Preview {
-    DistanceCheckmarkView(isComparing: false, isSelected: false, isCheckDisabled: false, place: Place.dummyData[0], viewModel: DecideViewModel(), distancePillColor: .green, isTagVisible: true)
+    VStack(spacing: 20) {
+        DistanceCheckmarkView(
+            isComparing: false,
+            isSelected: false,
+            isCheckDisabled: false,
+            place: Place.dummyData[0],
+            viewModel: DecideViewModel(),
+            distancePillColor: .green,
+            isTagVisible: true,
+            isDetail: false,
+            isReported: false,
+            onReport: {}
+        )
+        .background(Color.gray.opacity(0.2))
+        .cornerRadius(12)
+        
+        DistanceCheckmarkView(
+            isComparing: true,
+            isSelected: true,
+            isCheckDisabled: false,
+            place: Place.dummyData[0],
+            viewModel: DecideViewModel(),
+            distancePillColor: .green,
+            isTagVisible: true,
+            isDetail: false,
+            isReported: false,
+            onReport: {}
+        )
+        .background(Color.gray.opacity(0.2))
+        .cornerRadius(12)
+
+        DistanceCheckmarkView(
+            isComparing: false,
+            isSelected: false,
+            isCheckDisabled: false,
+            place: Place.dummyData[0],
+            viewModel: DecideViewModel(),
+            distancePillColor: .green,
+            isTagVisible: true,
+            isDetail: true,
+            isReported: true,
+            onReport: {}
+        )
+        .background(Color.gray.opacity(0.2))
+        .cornerRadius(12)
+    }
+    .padding()
 }

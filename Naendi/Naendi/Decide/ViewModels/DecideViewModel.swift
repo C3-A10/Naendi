@@ -8,6 +8,7 @@
 import Foundation
 import Observation
 import CoreLocation
+import CloudKit
 
 @Observable
 class DecideViewModel {
@@ -23,6 +24,10 @@ class DecideViewModel {
     var isLoading: Bool = false
     var errorMessage: String?
     var persistenceErrorMessage: String?
+    var reportMessage: String?
+    /// Live report counts per place id, sourced from the `Report` records rather
+    /// than the stale `jumlah_report` field on `Place`.
+    var reportCounts: [String: Int] = [:]
     var selectedPlaces: [Place] = []
     var isCompareLimitReached: Bool { selectedPlaces.count >= 2 }
 
@@ -76,8 +81,6 @@ class DecideViewModel {
         selectedPlaces.removeAll()
     }
 
-    /// Fills the landing page showcase with the most-reviewed places. This is a
-    /// teaser, not a search — preferences deliberately don't apply.
     func loadLandingPlaces(from provider: PlaceProviding, limit: Int = 10) async {
         isLoading = true
         errorMessage = nil
@@ -90,10 +93,10 @@ class DecideViewModel {
             errorMessage = error.localizedDescription
             landingPagePlaces = []
         }
+        await loadReportCounts()
         isLoading = false
     }
 
-    /// Applies the user's preferences and moves to the results screen.
     func loadRecommendations(
         from provider: PlaceProviding,
         criteria: PreferenceCriteria,
@@ -130,15 +133,11 @@ class DecideViewModel {
             places = []
         }
 
+        await loadReportCounts()
         isLoading = false
-        // Unconditional: matching nothing is a valid outcome that belongs on the
-        // results screen, not a reason to fall back to the landing page.
         phase = .results
     }
 
-    /// Persists the user's edited preferences and immediately searches with them.
-    /// A failed write is not fatal — the search still runs, the choice just
-    /// won't survive a relaunch.
     func applyPreferences(
         _ criteria: PreferenceCriteria,
         store: PreferenceStoring,
@@ -155,7 +154,6 @@ class DecideViewModel {
         await loadRecommendations(from: provider, criteria: criteria)
     }
 
-    /// Restores previously saved preferences, if any, without running a search.
     func restoreCriteria(from store: PreferenceStoring) {
         do {
             if let stored = try store.loadCriteria() {
@@ -172,6 +170,40 @@ class DecideViewModel {
     // fungsi untuk routing di apple map
     func openRoute(to place: Place) {
         mapKitService.openAppleMapsRoute(to: place)
+    }
+
+    // fungsi untuk menambah report count di cloudkit
+    func reportPlace(
+        _ place: Place,
+        using repository: CloudKitPlaceRepository = CloudKitPlaceRepository()
+    ) async -> Bool {
+        do {
+            let isNew = try await repository.report(placeID: place.id)
+            reportMessage = isNew
+                ? "Laporan terkirim. Terima kasih!"
+                : "Kamu sudah pernah melaporkan tempat ini."
+            if isNew {
+                reportCounts[place.id, default: place.reportCount] += 1
+            }
+            return isNew
+        } catch let error as CKError where error.code == .notAuthenticated {
+            reportMessage = "Masuk ke iCloud dulu untuk bisa melaporkan tempat."
+        } catch {
+            reportMessage = "Gagal mengirim laporan. Coba lagi nanti."
+        }
+        return false
+    }
+
+    // ambil reportcount terbaru 
+    func reportCount(for place: Place) -> Int {
+        reportCounts[place.id] ?? place.reportCount
+    }
+
+    // fungsi untuk load ulang reportcounts di cloudkit
+    func loadReportCounts(using repository: CloudKitPlaceRepository = CloudKitPlaceRepository()) async {
+        if let counts = try? await repository.reportCounts() {
+            reportCounts = counts
+        }
     }
 
     // fungsi untuk hitung jarak di cardview
@@ -208,5 +240,11 @@ class DecideViewModel {
             let distanceInKm = distanceInMeters / 1000
             return String(format: "%.1f km", distanceInKm)
         }
+    }
+
+    // Returns true when GPS is available and the user is within 250 m of the place.
+    func isWithinReportRadius(of place: Place) -> Bool {
+        guard let userLocation else { return false }
+        return userLocation.distance(from: place.coordinate.clLocation) <= 250
     }
 }
