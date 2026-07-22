@@ -398,7 +398,7 @@
 				DEVELOPMENT_TEAM = L82Q8X2NF4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Kami butuh lokasi anda untuk hitung jarak ke lokasi tempat.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Naendi uses your location to calculate distances and find nearby places.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -434,7 +434,7 @@
 				DEVELOPMENT_TEAM = L82Q8X2NF4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Kami butuh lokasi anda untuk hitung jarak ke lokasi tempat.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Naendi uses your location to calculate distances and find nearby places.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
