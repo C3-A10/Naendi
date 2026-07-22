@@ -18,6 +18,7 @@ struct PlaceCardExpandView: View {
     @Binding var selectedImageURL: URL?
     @Binding var selectedPlace: Place?
     let isDetail: Bool
+    let isReported: Bool
     let onReport: () -> Void
     
     init(
@@ -29,6 +30,7 @@ struct PlaceCardExpandView: View {
         selectedImageURL: Binding<URL?>,
         selectedPlace: Binding<Place?>,
         isDetail: Bool = false,
+        isReported: Bool = false,
         onReport: @escaping () -> Void = {}
     ) {
         self.place = place
@@ -39,6 +41,7 @@ struct PlaceCardExpandView: View {
         self._selectedImageURL = selectedImageURL
         self._selectedPlace = selectedPlace
         self.isDetail = isDetail
+        self.isReported = isReported
         self.onReport = onReport
     }
     
@@ -57,6 +60,7 @@ struct PlaceCardExpandView: View {
                 place: place,
                 viewModel: viewModel,
                 isDetail: isDetail,
+                isReported: isReported,
                 onReport: onReport,
                 selectedImageURL: $selectedImageURL
             )

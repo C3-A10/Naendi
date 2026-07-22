@@ -18,6 +18,7 @@ struct PlaceCardView: View {
     let isTagVisible: Bool
     let isReportVisible: Bool
     let isDetail: Bool
+    let isReported: Bool
     let onReport: () -> Void
     @State private var isExpanded: Bool = false
     @State var viewModel: DecideViewModel
@@ -33,6 +34,7 @@ struct PlaceCardView: View {
         isTagVisible: Bool,
         isReportVisible: Bool,
         isDetail: Bool = false,
+        isReported: Bool = false,
         onReport: @escaping () -> Void = {},
         viewModel: DecideViewModel,
         isComparing: Binding<Bool>,
@@ -45,6 +47,7 @@ struct PlaceCardView: View {
         self.isTagVisible = isTagVisible
         self.isReportVisible = isReportVisible
         self.isDetail = isDetail
+        self.isReported = isReported
         self.onReport = onReport
         self._viewModel = State(initialValue: viewModel)
         self._isComparing = isComparing
@@ -56,9 +59,9 @@ struct PlaceCardView: View {
         ZStack {
             VStack(spacing: 0) {
                 if isExpanded {
-                    PlaceCardExpandView(place: place, isChooseThisLocationBtnVisible: isChooseThisLocationBtnVisible, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel, selectedImageURL: $selectedImageURL, selectedPlace: $selectedPlace, isDetail: isDetail, onReport: onReport)
+                    PlaceCardExpandView(place: place, isChooseThisLocationBtnVisible: isChooseThisLocationBtnVisible, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel, selectedImageURL: $selectedImageURL, selectedPlace: $selectedPlace, isDetail: isDetail, isReported: isReported, onReport: onReport)
                 } else {
-                    PlaceCardNormalView(place: place, mode: mode, isReported: isReportVisible, isTagVisible: isTagVisible, isDetail: isDetail, onReport: onReport, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel)
+                    PlaceCardNormalView(place: place, mode: mode, isReported: isReported, isTagVisible: isTagVisible, isDetail: isDetail, onReport: onReport, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel)
                 }
             }
             .contentShape(Rectangle())

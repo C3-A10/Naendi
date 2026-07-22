@@ -19,6 +19,7 @@ struct DetailPlaceView: View {
     // Report flow state
     @State private var showGPSAlert: Bool = false
     @State private var showReportConfirm: Bool = false
+    @State private var isReported: Bool = false
 
     var body: some View {
         GeometryReader { geo in
@@ -34,6 +35,7 @@ struct DetailPlaceView: View {
                         isTagVisible: false,
                         isReportVisible: true,
                         isDetail: true,
+                        isReported: isReported,
                         onReport: handleReportTapped,
                         viewModel: viewModel,
                         isComparing: $isComparing,
@@ -86,7 +88,12 @@ struct DetailPlaceView: View {
         .alert("Laporkan Tempat Ini?", isPresented: $showReportConfirm) {
             Button("Batal", role: .cancel) { }
             Button("Laporkan", role: .destructive) {
-                Task { await viewModel.reportPlace(place) }
+                Task {
+                    let didReport = await viewModel.reportPlace(place)
+                    if didReport {
+                        isReported = true
+                    }
+                }
             }
         } message: {
             Text("Apakah anda yakin ingin melaporkan \(place.nama)? Data ini tidak dapat diubah lagi.")

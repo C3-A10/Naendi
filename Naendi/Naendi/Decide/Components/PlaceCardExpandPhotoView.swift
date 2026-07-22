@@ -15,6 +15,7 @@ struct PlaceCardExpandPhotoView: View {
     let place: Place
     let viewModel: DecideViewModel
     let isDetail: Bool
+    let isReported: Bool
     let onReport: () -> Void
     @Binding var selectedImageURL: URL?
     
@@ -25,6 +26,7 @@ struct PlaceCardExpandPhotoView: View {
         place: Place,
         viewModel: DecideViewModel,
         isDetail: Bool = false,
+        isReported: Bool = false,
         onReport: @escaping () -> Void = {},
         selectedImageURL: Binding<URL?>
     ) {
@@ -34,6 +36,7 @@ struct PlaceCardExpandPhotoView: View {
         self.place = place
         self.viewModel = viewModel
         self.isDetail = isDetail
+        self.isReported = isReported
         self.onReport = onReport
         self._selectedImageURL = selectedImageURL
     }
@@ -139,6 +142,7 @@ struct PlaceCardExpandPhotoView: View {
                 distancePillColor: Color("color_green"),
                 isTagVisible: false,
                 isDetail: isDetail,
+                isReported: isReported,
                 onReport: onReport
             )
         }

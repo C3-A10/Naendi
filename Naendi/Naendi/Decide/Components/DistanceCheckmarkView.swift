@@ -16,6 +16,7 @@ struct DistanceCheckmarkView: View {
     let distancePillColor: Color
     let isTagVisible: Bool
     let isDetail: Bool
+    let isReported: Bool
     let onReport: () -> Void
     
     var body: some View {
@@ -68,9 +69,9 @@ struct DistanceCheckmarkView: View {
                 Button {
                     onReport()
                 } label: {
-                    Image(systemName: "exclamationmark.bubble")
+                    Image(systemName: isReported ? "exclamationmark.bubble.fill" : "exclamationmark.bubble")
                         .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.white)
+                        .foregroundColor(isReported ? Color("color_green") : .white)
                         .frame(width: 32, height: 32)
                 }
                 .buttonStyle(.plain)
@@ -92,5 +93,51 @@ enum DistanceTagType {
 }
 
 #Preview {
-    DistanceCheckmarkView(isComparing: false, isSelected: false, isCheckDisabled: false, place: Place.dummyData[0], viewModel: DecideViewModel(), distancePillColor: .green, isTagVisible: true)
+    VStack(spacing: 20) {
+        DistanceCheckmarkView(
+            isComparing: false,
+            isSelected: false,
+            isCheckDisabled: false,
+            place: Place.dummyData[0],
+            viewModel: DecideViewModel(),
+            distancePillColor: .green,
+            isTagVisible: true,
+            isDetail: false,
+            isReported: false,
+            onReport: {}
+        )
+        .background(Color.gray.opacity(0.2))
+        .cornerRadius(12)
+        
+        DistanceCheckmarkView(
+            isComparing: true,
+            isSelected: true,
+            isCheckDisabled: false,
+            place: Place.dummyData[0],
+            viewModel: DecideViewModel(),
+            distancePillColor: .green,
+            isTagVisible: true,
+            isDetail: false,
+            isReported: false,
+            onReport: {}
+        )
+        .background(Color.gray.opacity(0.2))
+        .cornerRadius(12)
+
+        DistanceCheckmarkView(
+            isComparing: false,
+            isSelected: false,
+            isCheckDisabled: false,
+            place: Place.dummyData[0],
+            viewModel: DecideViewModel(),
+            distancePillColor: .green,
+            isTagVisible: true,
+            isDetail: true,
+            isReported: true,
+            onReport: {}
+        )
+        .background(Color.gray.opacity(0.2))
+        .cornerRadius(12)
+    }
+    .padding()
 }

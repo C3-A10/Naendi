@@ -172,14 +172,11 @@ class DecideViewModel {
         mapKitService.openAppleMapsRoute(to: place)
     }
 
-    /// Reports a place by recording it in CloudKit. Callers are expected to have
-    /// already confirmed proximity via `isWithinReportRadius(of:)`. The outcome
-    /// (success / already reported / failure) surfaces via `reportMessage`; it
-    /// never throws to the view.
+    // fungsi untuk menambah report count di cloudkit
     func reportPlace(
         _ place: Place,
         using repository: CloudKitPlaceRepository = CloudKitPlaceRepository()
-    ) async {
+    ) async -> Bool {
         do {
             let isNew = try await repository.report(placeID: place.id)
             reportMessage = isNew
@@ -188,21 +185,21 @@ class DecideViewModel {
             if isNew {
                 reportCounts[place.id, default: place.reportCount] += 1
             }
+            return isNew
         } catch let error as CKError where error.code == .notAuthenticated {
             reportMessage = "Masuk ke iCloud dulu untuk bisa melaporkan tempat."
         } catch {
             reportMessage = "Gagal mengirim laporan. Coba lagi nanti."
         }
+        return false
     }
 
-    /// The report count to display for a place: the live count from `Report`
-    /// records when loaded, otherwise the value baked into the place.
+    // ambil reportcount terbaru 
     func reportCount(for place: Place) -> Int {
         reportCounts[place.id] ?? place.reportCount
     }
 
-    /// Refreshes `reportCounts` from CloudKit. Best-effort: a failed query leaves
-    /// the previous counts in place rather than blanking the UI.
+    // fungsi untuk load ulang reportcounts di cloudkit
     func loadReportCounts(using repository: CloudKitPlaceRepository = CloudKitPlaceRepository()) async {
         if let counts = try? await repository.reportCounts() {
             reportCounts = counts
@@ -245,7 +242,7 @@ class DecideViewModel {
         }
     }
 
-    /// Returns true when GPS is available and the user is within 250 m of the place.
+    // Returns true when GPS is available and the user is within 250 m of the place.
     func isWithinReportRadius(of place: Place) -> Bool {
         guard let userLocation else { return false }
         return userLocation.distance(from: place.coordinate.clLocation) <= 250

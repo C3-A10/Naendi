@@ -77,6 +77,7 @@ struct PlaceCardNormalView: View {
                     distancePillColor: Color("color_green"),
                     isTagVisible: isTagVisible,
                     isDetail: isDetail,
+                    isReported: isReported,
                     onReport: onReport
                 )
                 
@@ -150,6 +151,7 @@ struct PlaceCardNormalView: View {
                             distancePillColor: .white,
                             isTagVisible: isTagVisible,
                             isDetail: isDetail,
+                            isReported: isReported,
                             onReport: onReport
                         )
                         .padding(.top, 4)
