@@ -52,7 +52,7 @@ struct CompareCard: View {
                     HStack(spacing: -6) {
                         Text("\(item.reportCount)")
                             .font(.system(size: 9, weight: .bold))
-                            .foregroundColor(.white)
+                            .foregroundColor(Color.black)
                             .frame(width: 16, height: 16)
                             .background(Color(red: 0.61, green: 0.80, blue: 0.22))
                             .clipShape(Circle())
@@ -73,6 +73,7 @@ struct CompareCard: View {
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
                         .padding(.top, 10)
+                        .foregroundColor(.black)
                     
                     BrickLayout(spacing: 6) {
                         
@@ -85,7 +86,6 @@ struct CompareCard: View {
                                 .font(.system(size: 12, weight: .semibold))
                                 .foregroundColor(.gray)
                         }
-                        //                    .padding(.trailing, 4)
                         
                         TagView(
                             text: item.vibe,
@@ -93,13 +93,13 @@ struct CompareCard: View {
                             textColor: Color(red: 0.22, green: 0.55, blue: 0.42)
                         )
                         
-                        if item.halal.lowercased() == "yes" {
+                        if item.halal.lowercased() == "halal" {
                             TagView(
                                 text: "Halal",
                                 backgroundColor: Color(red: 0.98, green: 0.84, blue: 0.53),
                                 textColor: Color(red: 0.72, green: 0.44, blue: 0.16)
                             )
-                        } else {
+                        } else if item.halal.lowercased() == "non-halal"{
                             TagView(
                                 text: "Non-Halal",
                                 backgroundColor: Color(red: 0.98, green: 0.85, blue: 0.85),
@@ -109,7 +109,11 @@ struct CompareCard: View {
                     }
                     
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("\(viewModel.calculateDistance(to: item)) from your current location.")
+                        if let locationName = viewModel.criteria.locationName,
+                           viewModel.criteria.coordinate != nil {
+                            Text("\(viewModel.calculateDistance(to: item)) dari \(locationName),")
+                        };
+                            Text("\(viewModel.calculateDistanceFromMe(to: item)) dari lokasi Anda saat ini.")
                     }
                     .font(.system(size: 12))
                     .foregroundColor(.gray)
@@ -139,6 +143,7 @@ struct CompareCard: View {
                     )
             )
             .animation(.easeInOut(duration: 0.2), value: isSelected)
+            .onTapGesture { onTap() }
         }
     }
         
@@ -157,7 +162,7 @@ struct DetailRowView: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(LocalizedStringKey(title))
                 .font(.system(size: 14, weight: .bold))
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
             
             Text(value)
                 .font(.system(size: 12, weight: .regular))

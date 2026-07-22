@@ -16,8 +16,8 @@ struct LandingView: View {
     @State private var selectedPlace: Place? = nil
     @State private var scrollOffset: CGFloat = 0
     @State private var isShowingEditPreference = false
-
-
+    
+    
     var body: some View {
         VStack(spacing: 0) {
             // MARK: - ZSTACK UTAMA: Memisahkan Latar Belakang (Hero) & Konten (Scroll)
@@ -50,7 +50,7 @@ struct LandingView: View {
                         VStack {
                             Spacer()
                             LinearGradient(
-                                colors: [Color.white.opacity(0.0), Color.white.opacity(0.8), Color.white],
+                                colors: [Color(.systemBackground).opacity(0.0), Color(.systemBackground).opacity(0.8), Color(.systemBackground)],
                                 startPoint: .top,
                                 endPoint: .bottom
                             )
@@ -76,7 +76,7 @@ struct LandingView: View {
                         }
                         .frame(height: 0)
                         
-                     
+                        
                         VStack {
                             Spacer()
                             
@@ -95,14 +95,9 @@ struct LandingView: View {
                         
                         LazyVStack(spacing: 20) {
                             ForEach(viewModel.landingPagePlaces) { place in
-                                PlaceCardView(
-                                    place: place,
-                                    mode: .landing,
-                                    viewModel: viewModel,
-                                    isComparing: $isComparing,
-                                    selectedImageURL: $selectedImageURL,
-                                    selectedPlace: $selectedPlace
-                                )
+                                
+                                PlaceCardView(place: place, mode: .landing, isChooseThisLocationBtnVisible: true, isTagVisible: true, isReportVisible: false, viewModel: viewModel, isComparing: $isComparing, selectedImageURL: $selectedImageURL, selectedPlace: $selectedPlace)
+                                
                             }
                         }
                         .padding(.vertical, 16)

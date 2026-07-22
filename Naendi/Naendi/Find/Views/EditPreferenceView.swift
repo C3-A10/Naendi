@@ -247,7 +247,6 @@ struct EditPreferenceView: View {
             }
             .scrollIndicators(.hidden)
         }
-        .background(Color(uiColor: .systemBackground))
         .fullScreenCover(isPresented: $isSelectingLocation) {
             SelectLocationView(
                 selectedLocationName: $selectedLocationName,
@@ -264,6 +263,9 @@ struct EditPreferenceView: View {
             outputResultPicker
                 .presentationDetents([.height(300)])
                 .presentationDragIndicator(.visible)
+        }
+        .background {
+            GreenBlurBackground()
         }
     }
 
@@ -480,7 +482,8 @@ struct EditPreferenceView: View {
                 CircleIconButton(
                     systemName: "chevron.left",
                     accessibilityLabel: "Back",
-                    accessibilityInputLabels: ["Back"]
+                    accessibilityInputLabels: ["Back"],
+                    backgroundColor: Color(.systemBackground)
                 ) { dismiss() }
                 .accessibilitySortPriority(3)
 
@@ -489,7 +492,8 @@ struct EditPreferenceView: View {
                 CircleIconButton(
                     systemName: "checkmark",
                     accessibilityLabel: "Save preferences",
-                    accessibilityInputLabels: ["Save", "Save preferences"]
+                    accessibilityInputLabels: ["Save", "Save preferences"],
+                    backgroundColor: Color(.systemBackground)
                 ) {
                     onSave(editedCriteria)
                     dismiss()

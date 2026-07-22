@@ -60,6 +60,7 @@ struct SelectLocationView: View {
                         CircleIconButton(
                             systemName: "arrow.up.left.and.arrow.down.right",
                             accessibilityLabel: "Expand map",
+                            backgroundColor: Color(.systemBackground),
                             size: 48
                         ) { isMapExpanded = true }
                     }
@@ -97,7 +98,11 @@ struct SelectLocationView: View {
 
     private var header: some View {
         HStack {
-            CircleIconButton(systemName: "chevron.left", accessibilityLabel: "Back") {
+            CircleIconButton(
+                systemName: "chevron.left",
+                accessibilityLabel: "Back",
+                backgroundColor: Color(.systemBackground)
+            ) {
                 dismiss()
             }
 
@@ -110,7 +115,11 @@ struct SelectLocationView: View {
 
             Spacer()
 
-            CircleIconButton(systemName: "checkmark", accessibilityLabel: "Confirm location") {
+            CircleIconButton(
+                systemName: "checkmark",
+                accessibilityLabel: "Confirm location",
+                backgroundColor: Color(.systemBackground)
+            ) {
                 confirmLocation()
             }
         }
@@ -124,7 +133,7 @@ struct SelectLocationView: View {
             Text("Custom local radius (km)")
                 .font(.body)
 
-            RadiusSlider(value: $radius, range: 0.5...10, step: 0.5)
+            RadiusSlider(value: $radius, range: 0.25...10, step: 0.25)
         }
     }
 
@@ -223,6 +232,7 @@ private struct ExpandedLocationMapView: View {
             CircleIconButton(
                 systemName: "arrow.down.right.and.arrow.up.left",
                 accessibilityLabel: "Collapse map",
+                backgroundColor: Color(.systemBackground),
                 size: 48
             ) { dismiss() }
             .padding(.top, 12)

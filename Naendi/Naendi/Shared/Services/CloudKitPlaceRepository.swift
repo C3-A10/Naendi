@@ -10,7 +10,7 @@ import CloudKit
 
 final class CloudKitPlaceRepository: PlaceRepository {
     func getAllPlaces() async throws -> [Place] {
-        let container = CKContainer(identifier: "iCloud.icloud.naendi")
+        let container = CKContainer(identifier: "iCloud.naendi")
             let database = container.publicCloudDatabase
             let query = CKQuery(recordType: "Places", predicate: NSPredicate(value: true))
 
@@ -76,7 +76,7 @@ final class CloudKitPlaceRepository: PlaceRepository {
             halalEvidence: (record["halal_evidence"] as? String) ?? "",
             reviewPositif: (record["review_positif"] as? String) ?? "",
             reviewNegatif: (record["review_negatif"] as? String) ?? "",
-            imgUrl: (record["thumbnail"] as? String) ?? (record["images"] as? String),
+            imgUrls: (record["images"] as? String) ?? (record["images"] as? String),
             reportCount: 0
         )
     }

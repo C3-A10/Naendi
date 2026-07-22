@@ -9,7 +9,9 @@ import SwiftUI
 
 struct PlaceCardExpandInfoView: View {
     let place: Place
+    let isChooseThisLocationBtnVisible: Bool
     @Binding var isExpanded: Bool
+    @Binding var selectedPlace: Place?
     
     private var reviewItems: [(title: String, text: String, isPositive: Bool)] {
         var items: [(String, String, Bool)] = []
@@ -28,7 +30,7 @@ struct PlaceCardExpandInfoView: View {
                     // Nama tempat
                     Text(place.nama)
                         .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                     
                     // Rating - jml rating - range harga
                     HStack(spacing: 6) {
@@ -41,7 +43,7 @@ struct PlaceCardExpandInfoView: View {
                         // rating
                         Text("\(place.rating, specifier: "%.1f")")
                             .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
                         
                         Text("•").foregroundColor(.secondary)
                         
@@ -56,18 +58,21 @@ struct PlaceCardExpandInfoView: View {
                     // Badges Type - Vibe - Halal
                     HStack(spacing: 6) {
                         TagView(text: place.typeTempat, backgroundColor: Color.orange.opacity(0.15), textColor: Color(red: 0.90, green: 0.45, blue: 0.10))
-
+                        
                         TagView(text: place.vibe, backgroundColor: Color.blue.opacity(0.15), textColor: Color(red: 0.10, green: 0.45, blue: 0.90))
                         
                         if place.isHalalConfirmed {
                             TagView(text: "Halal", backgroundColor: Color.green.opacity(0.15), textColor: Color(red: 0.15, green: 0.65, blue: 0.30))
+                        } else if place.halal.lowercased() == "non-halal" {
+                            TagView(text: "Non-Halal", backgroundColor: Color(red: 0.98, green: 0.85, blue: 0.85),
+                                    textColor: Color(red: 0.75, green: 0.22, blue: 0.22))
                         }
                     }
                 }
                 Spacer()
                 Image(systemName: "chevron.up")
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.black)
+                    .foregroundColor(.primary)
                     .padding(4)
             }
             .padding(.horizontal, 12)
@@ -77,17 +82,18 @@ struct PlaceCardExpandInfoView: View {
                 }
             }
             .padding(.bottom, 8)
-
+            
             Divider()
                 .padding(.vertical, 2)
             
-            DetailRowView(title: "Location", value: place.alamat)            .padding(.horizontal, 12)
+            DetailRowView(title: "Location", value: place.alamat)
+                .padding(.horizontal, 12)
             
             Divider()
                 .padding(.vertical, 2)
             
             DetailRowView(title: "Operational Hours", value: "\(place.jamHariIniFormatted) WIB")
-            .padding(.horizontal, 12)
+                .padding(.horizontal, 12)
             
             Divider()
                 .padding(.vertical, 2)
@@ -116,6 +122,14 @@ struct PlaceCardExpandInfoView: View {
                 }
             }
             .padding(.horizontal, 12)
+            
+            if isChooseThisLocationBtnVisible {
+                Divider()
+                    .padding(.vertical, 2)
+                CustomActionButton(text: "Choose this location", backgroundColor: Color("color_green"), textColor: .black) {
+                    selectedPlace = place
+                }
+            }
         }
         .padding(.horizontal, 12)
         .padding(.bottom, 12)
@@ -123,6 +137,10 @@ struct PlaceCardExpandInfoView: View {
 }
 
 #Preview {
-    PlaceCardExpandInfoView( place: Place.dummyData[0],
-                             isExpanded: .constant(false) )
+    PlaceCardExpandInfoView(
+        place: Place.dummyData[0],
+        isChooseThisLocationBtnVisible: true,
+        isExpanded: .constant(false),
+        selectedPlace: .constant(nil)
+    )
 }
