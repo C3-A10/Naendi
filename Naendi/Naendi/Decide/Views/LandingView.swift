@@ -114,8 +114,7 @@ struct LandingView: View {
                             ) {
                                 isShowingEditPreference = true
                             }
-                            .frame(maxWidth: 320)
-                            .padding(.horizontal, 24)
+                            .frame(width: 250)
                             .padding(.bottom, 20)
                         }
                         .frame(height: 340)

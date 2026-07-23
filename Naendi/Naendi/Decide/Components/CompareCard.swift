@@ -8,7 +8,6 @@ import SwiftUI
 
 // MARK: - Compare Card
 struct CompareCard: View {
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     let item: Place
     let isSelected: Bool
     let onTap: () -> Void
@@ -59,8 +58,8 @@ struct CompareCard: View {
                 VStack(alignment: .leading, spacing: 8) {
                     
                     Text(item.nama)
-                        .font(.headline)
-                        .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
+                        .font(.system(size: 16, weight: .bold))
+                        .lineLimit(2)
                         .multilineTextAlignment(.leading)
                         .padding(.top, 10)
                         .foregroundColor(.primary)
@@ -70,10 +69,10 @@ struct CompareCard: View {
                         HStack(spacing: 3) {
                             Image(systemName: "star.fill")
                                 .foregroundColor(Color(red: 0.95, green: 0.76, blue: 0.29))
-                                .font(.caption)
+                                .font(.system(size: 13))
                             
                             Text(String(format: "%.1f", item.rating))
-                                .font(.caption.weight(.semibold))
+                                .font(.system(size: 12, weight: .semibold))
                                 .foregroundColor(.gray)
                         }
                         
@@ -105,7 +104,7 @@ struct CompareCard: View {
                         };
                             Text("\(viewModel.calculateDistanceFromMe(to: item)) dari lokasi Anda saat ini.")
                     }
-                    .font(.caption)
+                    .font(.system(size: 12))
                     .foregroundColor(.gray)
                     
                     Divider()
@@ -164,11 +163,11 @@ struct DetailRowView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(LocalizedStringKey(title))
-                .font(.subheadline.bold())
+                .font(.system(size: 14, weight: .bold))
                 .foregroundColor(.primary)
             
             Text(value)
-                .font(.caption)
+                .font(.system(size: 12, weight: .regular))
                 .foregroundColor(.gray)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)

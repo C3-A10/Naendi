@@ -26,14 +26,12 @@ struct CompareView: View {
         ZStack {
             VStack(spacing: 0) {
                 // Compare Table
-                ScrollView {
-                    CompareTable(
-                        placeA: placeA,
-                        placeB: placeB,
-                        viewModel: viewModel,
-                        selectedPlace: $selectedPlace
-                    )
-                }
+                CompareTable(
+                    placeA: placeA,
+                    placeB: placeB,
+                    viewModel: viewModel,
+                    selectedPlace: $selectedPlace
+                )
                 
                 // Button
                 CustomActionButton(

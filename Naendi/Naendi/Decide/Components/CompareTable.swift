@@ -9,7 +9,6 @@ import SwiftUI
 
 // MARK: - Compare Table
 struct CompareTable: View {
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     let placeA: Place
     let placeB: Place
     let viewModel: DecideViewModel
@@ -17,11 +16,7 @@ struct CompareTable: View {
     @Binding var selectedPlace: Place?
     
     var body: some View {
-        let cardLayout = dynamicTypeSize.isAccessibilitySize
-            ? AnyLayout(VStackLayout(spacing: 16))
-            : AnyLayout(HStackLayout(alignment: .top, spacing: 10))
-
-        cardLayout {
+        HStack(alignment: .top, spacing: 10) {
             VStack(spacing: 10) {
                 selectionButton(for: placeA)
                 CompareCard(
@@ -52,6 +47,7 @@ struct CompareTable: View {
         }
         .padding(.horizontal, 16)
         .padding(.top, 12)
+        .fixedSize(horizontal: false, vertical: true)
     }
 
     private func selectionButton(for place: Place) -> some View {
