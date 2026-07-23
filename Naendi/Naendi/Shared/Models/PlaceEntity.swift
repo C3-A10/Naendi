@@ -9,7 +9,7 @@ import SwiftData
 
 @Model
 final class PlaceEntity {
-    var id: String
+    @Attribute(.unique) var id: String
     var nama: String
     var alamat: String
     var latitude: Double

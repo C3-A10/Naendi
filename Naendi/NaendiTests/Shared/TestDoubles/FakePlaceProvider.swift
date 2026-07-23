@@ -18,7 +18,7 @@ struct FakePlaceProvider: PlaceProviding {
         self.error = error
     }
 
-    func places() async throws -> [Place] {
+    func places(onRefreshed: (([Place]) -> Void)?) async throws -> [Place] {
         if let error { throw error }
         return stubbed
     }
