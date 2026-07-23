@@ -15,8 +15,6 @@ final class SwiftDataPlaceStore: PlaceStore {
     }
     
     func save(_ places: [Place]) throws {
-       
-        try context.delete(model: PlaceEntity.self)
         for place in places {
             context.insert(PlaceEntity(from: place))
         }
