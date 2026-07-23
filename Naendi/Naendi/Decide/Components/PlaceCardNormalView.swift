@@ -10,11 +10,36 @@ import SwiftUI
 
 struct PlaceCardNormalView: View {
     let place: Place
-    var mode: PlaceCardMode = .landing
-    let isReported: Bool=false
+    var mode: PlaceCardMode
+    let isReported: Bool
+    let isTagVisible: Bool
+    let isDetail: Bool
+    let onReport: () -> Void
     @Binding var isExpanded: Bool
     @Binding var isComparing: Bool
     @State var viewModel: DecideViewModel
+    
+    init(
+        place: Place,
+        mode: PlaceCardMode = .landing,
+        isReported: Bool,
+        isTagVisible: Bool,
+        isDetail: Bool = false,
+        onReport: @escaping () -> Void = {},
+        isExpanded: Binding<Bool>,
+        isComparing: Binding<Bool>,
+        viewModel: DecideViewModel
+    ) {
+        self.place = place
+        self.mode = mode
+        self.isReported = isReported
+        self.isTagVisible = isTagVisible
+        self.isDetail = isDetail
+        self.onReport = onReport
+        self._isExpanded = isExpanded
+        self._isComparing = isComparing
+        self._viewModel = State(initialValue: viewModel)
+    }
     
     var isSelected: Bool { viewModel.isSelected(place) }
     var isCheckDisabled: Bool { viewModel.isCompareLimitReached && !isSelected }
@@ -49,7 +74,11 @@ struct PlaceCardNormalView: View {
                     isCheckDisabled: isCheckDisabled,
                     place: place,
                     viewModel: viewModel,
-                    distancePillColor: Color("color_green")
+                    distancePillColor: Color("color_green"),
+                    isTagVisible: isTagVisible,
+                    isDetail: isDetail,
+                    isReported: isReported,
+                    onReport: onReport
                 )
                 
                 // Tombol Expand
@@ -60,19 +89,19 @@ struct PlaceCardNormalView: View {
                 } label: {
                     HStack {
                         VStack(alignment: .leading, spacing: 6) {
-                            Text(place.nama).font(.system(size: 22, weight: .bold)).foregroundColor(.black).lineLimit(1)
+                            Text(place.nama).font(.system(size: 22, weight: .bold)).foregroundColor(.primary).lineLimit(1)
                             HStack(spacing: 6) {
                                 Image(systemName: "star.fill").foregroundColor(.yellow).font(.system(size: 15))
-                                Text("\(place.rating, specifier: "%.1f")").font(.system(size: 15, weight: .semibold)).foregroundColor(.black)
+                                Text("\(place.rating, specifier: "%.1f")").font(.system(size: 15, weight: .semibold)).foregroundColor(.primary)
                                 Text("•").foregroundColor(.secondary)
                                 Text("(\(place.jumlahReview))").font(.system(size: 14)).foregroundColor(.secondary)
                             }
                         }
                         Spacer()
-                        Image(systemName: "chevron.down").font(.system(size: 18, weight: .bold)).foregroundColor(.black)
+                        Image(systemName: "chevron.down").font(.system(size: 18, weight: .bold)).foregroundColor(.primary)
                     }
                     .padding(16)
-                    .background(Color.white)
+                    .background(Color(.secondarySystemGroupedBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                     .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
                     .padding(12)
@@ -81,26 +110,16 @@ struct PlaceCardNormalView: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 240)
-            .background(Color.white)
+            .background(Color(.secondarySystemGroupedBackground))
             .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
             .shadow(color: Color.black.opacity(0.12), radius: 12, x: 0, y: 6)
             
         } else if mode == .landing {
-            ZStack {
+            ZStack (alignment: .bottom) {
                 VStack(spacing: 0) {
-                    // MARK: - 1. HEADER TEKS ("People's Favourite")
-                    Text("People's Favourite")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.black)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.top, 18)
-                        .padding(.bottom, 12)
-                    
                     // MARK: - 2. KARTU DALAM (GAMBAR & FOLDER PUTIH)
                     ZStack(alignment: .bottom) {
-                        
-                        // A. GAMBAR KAFE (Dilock mutlak dengan teknik Overlay)
-                        Rectangle()
+                            Rectangle()
                             .fill(Color.gray.opacity(0.1))
                             .frame(height: 240)
                             .overlay {
@@ -129,19 +148,25 @@ struct PlaceCardNormalView: View {
                             isCheckDisabled: true,
                             place: place,
                             viewModel: viewModel,
-                            distancePillColor: .white
+                            distancePillColor: .white,
+                            isTagVisible: isTagVisible,
+                            isDetail: isDetail,
+                            isReported: isReported,
+                            onReport: onReport
                         )
-                        .padding(.top, -8)
+                        .padding(.top, 4)
                         .padding(.horizontal, 2)
 
                         
-                        // B. FOLDER TAB PUTIH (MELEBAR FULL SAMPAI UJUNG HIJAU)
                         VStack(alignment: .leading, spacing: 16) {
-                            
-                            // Baris 1: Area Badges
                             HStack(spacing: 4) {
-                                TagView(text: place.typeTempat, backgroundColor: Color(red: 0.78, green: 0.98, blue: 0.35), textColor: Color(red: 0.15, green: 0.35, blue: 0.05))
-                                TagView(text: place.vibe, backgroundColor: Color(red: 0.75, green: 0.92, blue: 0.85), textColor: Color(red: 0.05, green: 0.30, blue: 0.25))
+                                TagView(text: place.typeTempat, backgroundColor: Color.orange.opacity(0.15), textColor: Color(red: 0.90, green: 0.45, blue: 0.10))
+
+                                TagView(text: place.vibe, backgroundColor: Color.blue.opacity(0.15), textColor: Color(red: 0.10, green: 0.45, blue: 0.90))
+                                
+                                if place.isHalalConfirmed {
+                                    TagView(text: "Halal", backgroundColor: Color.green.opacity(0.15), textColor: Color(red: 0.15, green: 0.65, blue: 0.30))
+                                }
                                 Spacer()
                             }
                             .frame(height: 10)
@@ -154,16 +179,16 @@ struct PlaceCardNormalView: View {
                             } label: {
                                 HStack {
                                     VStack(alignment: .leading, spacing: 6) {
-                                        Text(place.nama).font(.system(size: 22, weight: .bold)).foregroundColor(.black).lineLimit(1)
+                                        Text(place.nama).font(.system(size: 22, weight: .bold)).foregroundColor(.primary).lineLimit(1)
                                         HStack(spacing: 6) {
                                             Image(systemName: "star.fill").foregroundColor(.yellow).font(.system(size: 15))
-                                            Text("\(place.rating, specifier: "%.1f")").font(.system(size: 15, weight: .semibold)).foregroundColor(.black)
+                                            Text("\(place.rating, specifier: "%.1f")").font(.system(size: 15, weight: .semibold)).foregroundColor(.primary)
                                             Text("•").foregroundColor(.secondary)
                                             Text("(\(place.jumlahReview))").font(.system(size: 14)).foregroundColor(.secondary)
                                         }
                                     }
                                     Spacer()
-                                    Image(systemName: "chevron.down").font(.system(size: 18, weight: .bold)).foregroundColor(.black)
+                                    Image(systemName: "chevron.down").font(.system(size: 18, weight: .bold)).foregroundColor(.primary)
                                 }
                                 .padding(12)
                                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
@@ -171,26 +196,28 @@ struct PlaceCardNormalView: View {
                             .buttonStyle(.plain)
                         }
                         .padding(12)
-                        .frame(maxWidth: .infinity) // Kunci folder putih selalu full width
+                        .frame(maxWidth: .infinity)
                         .frame(height: 130)
                         .background(
                             FolderTabShape(
-                                tabWidth: 150,
-                                slopeWidth: 25,
+                                tabWidth: 190,
+                                slopeWidth: 40,
                                 leftTabHeight: 135,
                                 rightTabHeight: 101,
                                 leftCornerRadius: 20,
                                 rightCornerRadius: 20
                             )
-                            .fill(Color.white)
+                            .fill(Color(.secondarySystemGroupedBackground))
+                            .shadow(color: Color.black.opacity(0.2), radius: 12, x: 0, y: 6)
+
                         )
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .frame(height: 310)
-                .background(Color("color_green"))
+                .frame(height: 278)
+                .background(Color(.secondarySystemGroupedBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                .shadow(color: Color.black.opacity(0.12), radius: 12, x: 0, y: 6)
+                .shadow(color: Color.black.opacity(0.3), radius: 12, x: 0, y: 6)
             }
             .contentShape(Rectangle())
         }
@@ -201,13 +228,7 @@ struct PlaceCardNormalView: View {
     ZStack {
         Color(UIColor.systemGray6).ignoresSafeArea()
         
-        PlaceCardNormalView(
-            place: Place.dummyData[0],
-            mode: .landing,
-            isExpanded: .constant(false),
-            isComparing: .constant(true),
-            viewModel: DecideViewModel()
-        )
+//        PlaceCardNormalView(place: <#T##Place#>, isReported: <#T##Bool#>, isTagVisible: <#T##Bool#>, isExpanded: <#T##Binding<Bool>#>, isComparing: <#T##Binding<Bool>#>, viewModel: <#T##DecideViewModel#>)
         .padding()
     }
 }

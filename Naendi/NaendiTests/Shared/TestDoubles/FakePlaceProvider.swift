@@ -5,7 +5,21 @@
 
 @testable import Naendi
 
+enum FakePlaceProviderError: Error {
+    case boom
+}
+
 struct FakePlaceProvider: PlaceProviding {
     let stubbed: [Place]
-    func places() async throws -> [Place] { stubbed }
+    let error: Error?
+
+    init(stubbed: [Place] = [], error: Error? = nil) {
+        self.stubbed = stubbed
+        self.error = error
+    }
+
+    func places(onRefreshed: (([Place]) -> Void)?) async throws -> [Place] {
+        if let error { throw error }
+        return stubbed
+    }
 }

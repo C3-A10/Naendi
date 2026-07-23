@@ -33,22 +33,25 @@ struct RadiusSlider: View {
                     .frame(width: knobSize, height: knobSize)
                     .offset(x: knobX)
 
-                Text("0,5")
-                    .font(.system(size: 12))
+                Text(formatted(range.lowerBound))
+                    .font(.caption)
                     .foregroundStyle(.secondary)
                     .offset(y: 28)
+                    .accessibilityHidden(true)
 
                 Text(formattedValue)
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.caption.weight(.semibold))
                     .foregroundStyle(.primary)
                     .frame(width: 36)
                     .offset(x: labelX - 18, y: 28)
+                    .accessibilityHidden(true)
 
-                Text("10")
-                    .font(.system(size: 12))
+                Text(formatted(range.upperBound))
+                    .font(.caption)
                     .foregroundStyle(.secondary)
                     .frame(width: 22, alignment: .trailing)
                     .offset(x: trackWidth - 22, y: 28)
+                    .accessibilityHidden(true)
             }
             .contentShape(Rectangle())
             .gesture(
@@ -59,11 +62,25 @@ struct RadiusSlider: View {
             )
         }
         .frame(height: 48)
+        .accessibilityRepresentation {
+            Slider(value: $value, in: range, step: step) {
+                Text("Maximum search radius")
+            }
+            .accessibilityValue(accessibilityValue)
+            .accessibilityHint("Swipe up or down with one finger to adjust the radius.")
+        }
     }
 
     private var formattedValue: String {
-        let fractionLength = value.truncatingRemainder(dividingBy: 1) == 0 ? 0 : 1
-        return value.formatted(.number.precision(.fractionLength(fractionLength)))
+        formatted(value)
+    }
+
+    private var accessibilityValue: String {
+        String(localized: "\(formattedValue) kilometers")
+    }
+
+    private func formatted(_ number: Double) -> String {
+        return number.formatted(.number.precision(.fractionLength(0...2)))
     }
 
     private func updateValue(at xPosition: CGFloat, width: CGFloat, knobSize: CGFloat) {
@@ -78,6 +95,6 @@ struct RadiusSlider: View {
 #Preview {
     @Previewable @State var radius = 1.0
 
-    RadiusSlider(value: $radius, range: 0.5...10, step: 0.5)
+    RadiusSlider(value: $radius, range: 0.25...10, step: 0.25)
         .padding(.horizontal, 32)
 }

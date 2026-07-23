@@ -17,6 +17,7 @@ struct CloudKitPlaceRepositoryTests {
         record["place_id"] = "abc"
         record["nama"] = "Cafe A"
         record["halal"] = "halal"
+        record["location"] = CLLocation(latitude: -7.2575, longitude: 112.7521)
 
         let place = repository.makePlace(from: record)
 
@@ -54,7 +55,7 @@ struct CloudKitPlaceRepositoryTests {
         record["halal_evidence"] = "MUI certificate"
         record["review_positif"] = "Rasa autentik dan porsi besar"
         record["review_negatif"] = "Antre panjang saat jam makan siang"
-        record["thumbnail"] = "thumb.jpg"
+        record["images"] = "thumb.jpg"
 
         let place = repository.makePlace(from: record)
 
@@ -73,7 +74,7 @@ struct CloudKitPlaceRepositoryTests {
         #expect(place?.halalEvidence == "MUI certificate")
         #expect(place?.reviewPositif == "Rasa autentik dan porsi besar")
         #expect(place?.reviewNegatif == "Antre panjang saat jam makan siang")
-        #expect(place?.imgUrl == "thumb.jpg")
+        #expect(place?.imgUrls == "thumb.jpg")
     }
 
     @Test("absent optional columns fall back to sensible defaults")
@@ -81,6 +82,7 @@ struct CloudKitPlaceRepositoryTests {
         let repository = CloudKitPlaceRepository()
         let record = CKRecord(recordType: "Places")
         record["nama"] = "Bare Minimum"
+        record["location"] = CLLocation(latitude: -7.2575, longitude: 112.7521)
 
         let place = repository.makePlace(from: record)
 
@@ -88,8 +90,8 @@ struct CloudKitPlaceRepositoryTests {
         // place_id absent -> falls back to the record's own name so id is never empty
         #expect(place?.id.isEmpty == false)
         #expect(place?.alamat == "")
-        #expect(place?.latitude == 0)
-        #expect(place?.longitude == 0)
+        #expect(place?.latitude == -7.2575)
+        #expect(place?.longitude == 112.7521)
         #expect(place?.rangeHarga == "")
         #expect(place?.jamBuka == "")
         #expect(place?.typeTempat == "")
@@ -104,13 +106,23 @@ struct CloudKitPlaceRepositoryTests {
         #expect(place?.reportCount == 0)
     }
 
+    @Test("a record missing its required location maps to nil")
+    func missingLocationMapsToNil() {
+        let repository = CloudKitPlaceRepository()
+        let record = CKRecord(recordType: "Places")
+        record["nama"] = "No Location"
+
+        #expect(repository.makePlace(from: record) == nil)
+    }
+
     @Test("thumbnail is preferred for imgUrl, falling back to images")
     func imgUrlFallsBackToImages() {
         let repository = CloudKitPlaceRepository()
         let record = CKRecord(recordType: "Places")
         record["nama"] = "No Thumb"
         record["images"] = "gallery1.jpg"
+        record["location"] = CLLocation(latitude: -7.2575, longitude: 112.7521)
 
-        #expect(repository.makePlace(from: record)?.imgUrl == "gallery1.jpg")
+        #expect(repository.makePlace(from: record)?.imgUrls == "gallery1.jpg")
     }
 }

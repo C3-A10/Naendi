@@ -27,7 +27,7 @@ struct PlaceEntityTests {
             halalEvidence: "MUI certificate",
             reviewPositif: "Rasa autentik dan porsi besar",
             reviewNegatif: "Antre panjang saat jam makan siang",
-            imgUrl: "thumb.jpg",
+            imgUrls: "thumb.jpg",
             reportCount: 3
         )
 
@@ -38,7 +38,7 @@ struct PlaceEntityTests {
 
     @Test("a nil imgUrl survives the round-trip")
     func roundTripPreservesNilImgUrl() {
-        let original = Place.stub(id: "1", nama: "Bare Minimum", imgUrl: nil)
+        let original = Place.stub(id: "1", nama: "Bare Minimum", imgUrls: nil)
 
         let roundTripped = PlaceEntity(from: original).toPlace()
 

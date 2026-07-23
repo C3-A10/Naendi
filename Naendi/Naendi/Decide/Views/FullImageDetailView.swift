@@ -61,7 +61,7 @@ struct FullImageDetailView: View {
                         Image(systemName: "photo")
                             .font(.system(size: 40))
                             .foregroundColor(.gray)
-                        Text("Gagal memuat gambar")
+                        Text("Failed to load image")
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
                     }

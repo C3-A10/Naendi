@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ResultView: View {
+    @Environment(\.modelContext) private var modelContext
     @State var viewModel: DecideViewModel
     @State private var isComparing = false
     @State private var selectedImageURL: URL?
@@ -22,10 +24,11 @@ struct ResultView: View {
                     Text(isComparing ? "Compare" : "Results")
                         .font(.largeTitle)
                         .fontWeight(.bold)
+                        .foregroundColor(.black)
                     if isComparing {
                         Text("Select any 2 places to compare")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.gray)
                             .transition(.opacity.combined(with: .move(edge: .top)))
                     }
                 }
@@ -85,20 +88,32 @@ struct ResultView: View {
             .padding(.bottom, 16)
 
             ZStack {
-                if viewModel.isLoading {
+                if viewModel.isLoading && viewModel.places.isEmpty {
                     ProgressView("Memuat rekomendasi...")
                         .scaleEffect(1.1)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if let errorMessage = viewModel.errorMessage {
+                    ContentUnavailableView {
+                        Label("Unable to Load Recommendations", systemImage: "exclamationmark.triangle")
+                    } description: {
+                        Text(errorMessage)
+                    } actions: {
+                        Button("Try Again", systemImage: "arrow.clockwise") {
+                            reloadRecommendations()
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if viewModel.places.isEmpty {
-                    VStack(spacing: 16) {
-                        Text("No results found")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                        Text("Edit Your Preference First To get results")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 40)
+                    ContentUnavailableView {
+                        Label("No Results Found", systemImage: "magnifyingglass")
+                    } description: {
+                        Text("Try adjusting your preferences or increasing the search radius.")
+                    } actions: {
+                        Button("Edit Preferences", systemImage: "slider.horizontal.3") {
+                            isShowingEditPreference = true
+                        }
+                        .buttonStyle(.borderedProminent)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -108,6 +123,9 @@ struct ResultView: View {
                                 PlaceCardView(
                                     place: place,
                                     mode: .result,
+                                    isChooseThisLocationBtnVisible: true,
+                                    isTagVisible: false,
+                                    isReportVisible: false,
                                     viewModel: viewModel,
                                     isComparing: $isComparing,
                                     selectedImageURL: $selectedImageURL,
@@ -118,6 +136,12 @@ struct ResultView: View {
                         .padding(.vertical, 16)
                         .padding(.horizontal, 20)
                         .padding(.bottom, (isComparing && viewModel.isCompareLimitReached) ? 80 : 16)
+                    }
+                    .refreshable {
+                        await viewModel.loadRecommendations(
+                            from: AppServices.placeProvider(context: modelContext),
+                            criteria: viewModel.criteria
+                        )
                     }
                 }
             }
@@ -151,15 +175,53 @@ struct ResultView: View {
         }
         .fullScreenCover(isPresented: $isNavigatingToCompare) {
             if viewModel.selectedPlaces.count >= 2 {
-                NavigationStack {
-                    CompareView(placeA: viewModel.selectedPlaces[0], placeB: viewModel.selectedPlaces[1])
-                        .navigationTitle("Compare")
-                        .navigationBarTitleDisplayMode(.inline)
+                NavigationStack {                   
+                    CompareView(
+                        placeA: viewModel.selectedPlaces[0],
+                        placeB: viewModel.selectedPlaces[1],
+                        viewModel: viewModel
+                    )
+                    .navigationTitle("Compare")
+                    .navigationBarTitleDisplayMode(.inline)
                 }
             }
         }
-        .fullScreenCover(isPresented: $isShowingEditPreference) {
-            EditPreferenceView()
+        .fullScreenCover(isPresented: $isShowingEditPreference) {           
+            EditPreferenceView(criteria: viewModel.criteria) { criteria in
+                Task {
+                    await viewModel.applyPreferences(
+                        criteria,
+                        store: AppServices.preferenceStore(context: modelContext),
+                        provider: AppServices.placeProvider(context: modelContext)
+                    )
+                }
+            }
+        }
+        .alert(
+            "Preferences not saved",
+            isPresented: Binding(
+                get: { viewModel.persistenceErrorMessage != nil },
+                set: { isPresented in
+                    if !isPresented {
+                        viewModel.persistenceErrorMessage = nil
+                    }
+                }
+            )
+        ) {
+            Button("OK", role: .cancel) {
+                viewModel.persistenceErrorMessage = nil
+            }
+        } message: {
+            Text(viewModel.persistenceErrorMessage ?? "")
+        }
+    }
+
+    private func reloadRecommendations() {
+        Task {
+            await viewModel.loadRecommendations(
+                from: AppServices.placeProvider(context: modelContext),
+                criteria: viewModel.criteria
+            )
         }
     }
 }

@@ -14,18 +14,46 @@ struct PlaceCardExpandPhotoView: View {
     let isCheckDisabled: Bool
     let place: Place
     let viewModel: DecideViewModel
+    let isDetail: Bool
+    let isReported: Bool
+    let onReport: () -> Void
     @Binding var selectedImageURL: URL?
     
+    init(
+        isComparing: Bool,
+        isSelected: Bool,
+        isCheckDisabled: Bool,
+        place: Place,
+        viewModel: DecideViewModel,
+        isDetail: Bool = false,
+        isReported: Bool = false,
+        onReport: @escaping () -> Void = {},
+        selectedImageURL: Binding<URL?>
+    ) {
+        self.isComparing = isComparing
+        self.isSelected = isSelected
+        self.isCheckDisabled = isCheckDisabled
+        self.place = place
+        self.viewModel = viewModel
+        self.isDetail = isDetail
+        self.isReported = isReported
+        self.onReport = onReport
+        self._selectedImageURL = selectedImageURL
+    }
+    
     private var imageGallery: [String] {
-        var images: [String] = []
-        if let mainImg = place.imgUrl {
-            images.append(mainImg)
+        let urls = place.parsedImageUrls
+        
+        if !urls.isEmpty {
+            return urls
         }
-        images.append("https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop")
-        images.append("https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=800&auto=format&fit=crop")
-        images.append("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop")
-        images.append("https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop")
-        return images
+        
+        // (Opsional) Fallback: Jika tempat tersebut sama sekali tidak punya gambar di JSON
+        // Gunakan 1 atau 2 gambar default agar layout grid di UI tidak rusak/kosong
+        return [
+            "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=800&auto=format&fit=crop"
+        ]
     }
     
     var body: some View {
@@ -46,7 +74,9 @@ struct PlaceCardExpandPhotoView: View {
                                     }
                                 }
                                 .frame(width: 290, height: 220)
+                                .clipped()
                                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                                .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous)) 
                                 .onTapGesture {
                                     selectedImageURL = url
                                 }
@@ -67,7 +97,9 @@ struct PlaceCardExpandPhotoView: View {
                                     }
                                     // 3. Set tinggi menjadi 104 agar total tinggi + spacing pas 220 (104 + 12 + 104)
                                     .frame(width: 160, height: 104)
+                                    .clipped()
                                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                                    .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                                     .onTapGesture {
                                         selectedImageURL = url
                                     }
@@ -83,7 +115,9 @@ struct PlaceCardExpandPhotoView: View {
                                         }
                                     }
                                     .frame(width: 160, height: 104)
+                                    .clipped()
                                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                                    .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                                     .onTapGesture {
                                         selectedImageURL = nextUrl
                                     }
@@ -104,7 +138,11 @@ struct PlaceCardExpandPhotoView: View {
                 isCheckDisabled: isCheckDisabled,
                 place: place,
                 viewModel: viewModel,
-                distancePillColor: Color("color_green")
+                distancePillColor: Color("color_green"),
+                isTagVisible: false,
+                isDetail: isDetail,
+                isReported: isReported,
+                onReport: onReport
             )
         }
         .frame(height: 240)

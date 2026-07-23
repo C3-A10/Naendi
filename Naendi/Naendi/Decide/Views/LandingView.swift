@@ -6,16 +6,18 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct LandingView: View {
+    @Environment(\.modelContext) private var modelContext
     @State var viewModel: DecideViewModel
     @State private var isComparing: Bool = false
     @State private var selectedImageURL: URL? = nil
     @State private var selectedPlace: Place? = nil
     @State private var scrollOffset: CGFloat = 0
     @State private var isShowingEditPreference = false
-
-
+    
+    
     var body: some View {
         VStack(spacing: 0) {
             // MARK: - ZSTACK UTAMA: Memisahkan Latar Belakang (Hero) & Konten (Scroll)
@@ -38,6 +40,28 @@ struct LandingView: View {
                         .frame(width: UIScreen.main.bounds.width, height: 420)
                         .clipped()
                         
+                        // Maskot di Kiri dan Kanan
+                        HStack(spacing: 0) {
+                            Image("asset_bicycle")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 180, height: 180)
+                                .offset(x: -50)
+                                .offset(y: 30)
+                            
+                            Spacer()
+                                
+                            Image("asset_rabbit")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 150, height: 250)
+                                .offset(x: 50)
+                                .offset(y: -40)
+                        }
+                        .frame(maxWidth: .infinity) // Memaksa HStack membentang selebar mungkin
+                        .padding(.horizontal, 0) // Memastikan tidak ada jarak/margin bawaan dari sistem
+                        .padding(.top, 100)
+                        
                         Text("Discover somewhere new")
                             .font(.system(size: 24, weight: .bold))
                             .foregroundColor(.white)
@@ -48,7 +72,7 @@ struct LandingView: View {
                         VStack {
                             Spacer()
                             LinearGradient(
-                                colors: [Color.white.opacity(0.0), Color.white.opacity(0.8), Color.white],
+                                colors: [Color(.systemBackground).opacity(0.0), Color(.systemBackground).opacity(0.8), Color(.systemBackground)],
                                 startPoint: .top,
                                 endPoint: .bottom
                             )
@@ -74,7 +98,7 @@ struct LandingView: View {
                         }
                         .frame(height: 0)
                         
-                     
+                        
                         VStack {
                             Spacer()
                             
@@ -93,14 +117,9 @@ struct LandingView: View {
                         
                         LazyVStack(spacing: 20) {
                             ForEach(viewModel.landingPagePlaces) { place in
-                                PlaceCardView(
-                                    place: place,
-                                    mode: .landing,
-                                    viewModel: viewModel,
-                                    isComparing: $isComparing,
-                                    selectedImageURL: $selectedImageURL,
-                                    selectedPlace: $selectedPlace
-                                )
+                                
+                                PlaceCardView(place: place, mode: .landing, isChooseThisLocationBtnVisible: true, isTagVisible: true, isReportVisible: false, viewModel: viewModel, isComparing: $isComparing, selectedImageURL: $selectedImageURL, selectedPlace: $selectedPlace)
+                                
                             }
                         }
                         .padding(.vertical, 16)
@@ -130,7 +149,15 @@ struct LandingView: View {
             }
         }
         .fullScreenCover(isPresented: $isShowingEditPreference) {
-            EditPreferenceView()
+            EditPreferenceView(criteria: viewModel.criteria) { criteria in
+                Task {
+                    await viewModel.applyPreferences(
+                        criteria,
+                        store: AppServices.preferenceStore(context: modelContext),
+                        provider: AppServices.placeProvider(context: modelContext)
+                    )
+                }
+            }
         }
     }
     

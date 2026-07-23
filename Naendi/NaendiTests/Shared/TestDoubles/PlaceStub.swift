@@ -25,7 +25,7 @@ extension Place {
         halalEvidence: String = "",
         reviewPositif: String = "",
         reviewNegatif: String = "",
-        imgUrl: String? = nil,
+        imgUrls: String? = nil,
         reportCount: Int = 0
     ) -> Place {
         Place(
@@ -44,7 +44,7 @@ extension Place {
             halalEvidence: halalEvidence,
             reviewPositif: reviewPositif,
             reviewNegatif: reviewNegatif,
-            imgUrl: imgUrl,
+            imgUrls: imgUrls,
             reportCount: reportCount
         )
     }

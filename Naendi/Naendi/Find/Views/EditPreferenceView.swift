@@ -1,60 +1,55 @@
 import MapKit
 import SwiftUI
 
+/// Edits a copy of the user's preferences. Everything lives in local state so
+/// Back can discard cleanly; only Save hands the result back to the caller,
+/// which is what persists it and re-runs the search.
 struct EditPreferenceView: View {
-    private static let timeFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        return formatter
-    }()
+    @Environment(\.dismiss) var dismiss
 
-    private enum PreferredTimeField {
-        case start
-        case end
+    let onSave: (PreferenceCriteria) -> Void
+
+    @State var isSelectingLocation = false
+    @State var selectedLocationName: String
+    @State var selectedCoordinate: CLLocationCoordinate2D
+    @State var radius: Double
+    @State var budgetViewModel: EditPreferenceViewModel
+    @State var selectedType: String
+    @State var selectedVibe: String
+    @State var selectedHalalOption: HalalPreference
+    @State var isSelectingOutputResult = false
+    @State var outputResult: Int
+    @State var selectedSortOption: SortOption
+    @State var isSelectingPreferredTime = false
+    @State var activePreferredTimeField: PreferredTimeField = .start
+    @State var preferredStartTime: Date
+    @State var preferredEndTime: Date
+
+    init(
+        criteria: PreferenceCriteria = .default,
+        onSave: @escaping (PreferenceCriteria) -> Void
+    ) {
+        self.onSave = onSave
+        _selectedLocationName = State(initialValue: criteria.locationName ?? Self.locationPlaceholder)
+        _selectedCoordinate = State(
+            initialValue: criteria.coordinate?.clCoordinate ?? Self.defaultCoordinate
+        )
+        _radius = State(initialValue: criteria.radiusKm)
+        _budgetViewModel = State(
+            initialValue: EditPreferenceViewModel(
+                selectedBudgetOption: criteria.budget,
+                minimumBudget: Self.budgetText(criteria.customMinBudget),
+                maximumBudget: Self.budgetText(criteria.customMaxBudget)
+            )
+        )
+        _selectedType = State(initialValue: criteria.type ?? Self.anyOption)
+        _selectedVibe = State(initialValue: criteria.vibe ?? Self.anyOption)
+        _selectedHalalOption = State(initialValue: criteria.halal)
+        _outputResult = State(initialValue: criteria.outputResult)
+        _selectedSortOption = State(initialValue: criteria.sortBy)
+        _preferredStartTime = State(initialValue: Self.date(fromMinutes: criteria.startMinutes))
+        _preferredEndTime = State(initialValue: Self.date(fromMinutes: criteria.endMinutes))
     }
-
-    @Environment(\.dismiss) private var dismiss
-
-    @State private var isSelectingLocation = false
-    @State private var selectedLocationName = "Search Location"
-    @State private var selectedCoordinate = CLLocationCoordinate2D(latitude: 37.3377, longitude: -121.8787)
-    @State private var radius = 1.0
-    @State private var selectedBudgetOption: BudgetOption = .any
-    @State private var minimumBudget = ""
-    @State private var maximumBudget = ""
-    @State private var selectedType = "Cafe"
-    @State private var selectedVibe = "Lively"
-    @State private var selectedHalalOption = "Halal"
-    @State private var isSelectingOutputResult = false
-    @State private var outputResult = 5
-    @State private var selectedSortOption = "Surprise Me"
-    @State private var isSelectingPreferredTime = false
-    @State private var activePreferredTimeField: PreferredTimeField = .start
-    @State private var preferredStartTime = Calendar.current.date(
-        bySettingHour: 8,
-        minute: 0,
-        second: 0,
-        of: Date()
-    ) ?? Date()
-    @State private var preferredEndTime = Calendar.current.date(
-        bySettingHour: 10,
-        minute: 0,
-        second: 0,
-        of: Date()
-    ) ?? Date()
-
-    private let typeOptions = [
-        "Restaurant",
-        "Cafe",
-        "Warkop",
-        "PKL",
-        "Drinks",
-        "Bakery"
-    ]
-
-    private let vibeOptions = ["Calm", "Balanced", "Lively"]
-    private let halalOptions = ["Halal", "Non-halal", "Any"]
-    private let sortOptions = ["Surprise Me", "Distance"]
 
     var body: some View {
         VStack(spacing: 0) {
@@ -72,13 +67,16 @@ struct EditPreferenceView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("Location")
+                    .accessibilityValue(selectedLocationName)
+                    .accessibilityHint("Double-tap to choose a location and search radius.")
 
-                    BudgetRow(selection: $selectedBudgetOption)
+                    BudgetRow(selection: $budgetViewModel.selectedBudgetOption)
 
-                    if selectedBudgetOption == .custom {
+                    if budgetViewModel.isCustomBudgetRowVisible {
                         CustomBudgetRow(
-                            minimumBudget: $minimumBudget,
-                            maximumBudget: $maximumBudget
+                            minimumBudget: $budgetViewModel.minimumBudget,
+                            maximumBudget: $budgetViewModel.maximumBudget
                         )
                         .transition(.move(edge: .top).combined(with: .opacity))
                     }
@@ -89,18 +87,21 @@ struct EditPreferenceView: View {
                                 selectedType = type
                             } label: {
                                 if selectedType == type {
-                                    Label(type, systemImage: "checkmark")
+                                    Label(localizedPreferenceValue(type), systemImage: "checkmark")
                                 } else {
-                                    Text(type)
+                                    Text(localizedPreferenceValue(type))
                                 }
                             }
                         }
                     } label: {
-                        PreferenceOptionRow(title: "Type", value: selectedType)
+                        PreferenceOptionRow(
+                            title: "Type",
+                            value: localizedPreferenceValue(selectedType)
+                        )
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Type")
-                    .accessibilityValue(selectedType)
+                    .accessibilityValue(localizedPreferenceValue(selectedType))
                     .accessibilityHint("Double tap to choose a place type")
                     Menu {
                         ForEach(vibeOptions, id: \.self) { vibe in
@@ -108,18 +109,21 @@ struct EditPreferenceView: View {
                                 selectedVibe = vibe
                             } label: {
                                 if selectedVibe == vibe {
-                                    Label(vibe, systemImage: "checkmark")
+                                    Label(localizedPreferenceValue(vibe), systemImage: "checkmark")
                                 } else {
-                                    Text(vibe)
+                                    Text(localizedPreferenceValue(vibe))
                                 }
                             }
                         }
                     } label: {
-                        PreferenceOptionRow(title: "Vibe", value: selectedVibe)
+                        PreferenceOptionRow(
+                            title: "Vibe",
+                            value: localizedPreferenceValue(selectedVibe)
+                        )
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Vibe")
-                    .accessibilityValue(selectedVibe)
+                    .accessibilityValue(localizedPreferenceValue(selectedVibe))
                     .accessibilityHint("Double tap to choose a vibe")
                     Button {
                         isSelectingPreferredTime = true
@@ -134,26 +138,26 @@ struct EditPreferenceView: View {
                     .accessibilityValue(preferredTimeRange)
                     .accessibilityHint("Double tap to choose start and end times")
                     Menu {
-                        ForEach(halalOptions, id: \.self) { option in
+                        ForEach(HalalPreference.allCases, id: \.self) { option in
                             Button {
                                 selectedHalalOption = option
                             } label: {
                                 if selectedHalalOption == option {
-                                    Label(option, systemImage: "checkmark")
+                                    Label(option.title, systemImage: "checkmark")
                                 } else {
-                                    Text(option)
+                                    Text(option.title)
                                 }
                             }
                         }
                     } label: {
                         PreferenceOptionRow(
                             title: "Halal",
-                            value: selectedHalalOption
+                            value: selectedHalalOption.title
                         )
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Halal preference")
-                    .accessibilityValue(selectedHalalOption)
+                    .accessibilityValue(selectedHalalOption.title)
                     .accessibilityHint("Double tap to choose a halal preference")
                     Button {
                         isSelectingOutputResult = true
@@ -168,37 +172,36 @@ struct EditPreferenceView: View {
                     .accessibilityValue("\(outputResult) places")
                     .accessibilityHint("Double tap to choose the number of results")
                     Menu {
-                        ForEach(sortOptions, id: \.self) { option in
+                        ForEach(SortOption.allCases, id: \.self) { option in
                             Button {
                                 selectedSortOption = option
                             } label: {
                                 if selectedSortOption == option {
-                                    Label(option, systemImage: "checkmark")
+                                    Label(option.title, systemImage: "checkmark")
                                 } else {
-                                    Text(option)
+                                    Text(option.title)
                                 }
                             }
                         }
                     } label: {
                         PreferenceOptionRow(
                             title: "Sort By",
-                            value: selectedSortOption
+                            value: selectedSortOption.title
                         )
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Sort By")
-                    .accessibilityValue(selectedSortOption)
+                    .accessibilityValue(selectedSortOption.title)
                     .accessibilityHint("Double tap to choose a sorting option")
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 32)
                 .padding(.top, 8)
                 .padding(.bottom, 40)
-                .animation(.snappy(duration: 0.24), value: selectedBudgetOption)
+                .animation(.snappy(duration: 0.24), value: budgetViewModel.selectedBudgetOption)
             }
             .scrollIndicators(.hidden)
         }
-        .background(Color(uiColor: .systemBackground))
         .fullScreenCover(isPresented: $isSelectingLocation) {
             SelectLocationView(
                 selectedLocationName: $selectedLocationName,
@@ -216,159 +219,13 @@ struct EditPreferenceView: View {
                 .presentationDetents([.height(300)])
                 .presentationDragIndicator(.visible)
         }
-    }
-
-    private var preferredTimeRange: String {
-        let start = Self.timeFormatter.string(from: preferredStartTime)
-        let end = Self.timeFormatter.string(from: preferredEndTime)
-        return "\(start)  –  \(end)"
-    }
-
-    private var preferredTimePicker: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                preferredTimeRow(
-                    title: "Starts",
-                    time: preferredStartTime,
-                    field: .start
-                )
-
-                Divider()
-                    .padding(.leading, 20)
-
-                preferredTimeRow(
-                    title: "Ends",
-                    time: preferredEndTime,
-                    field: .end
-                )
-
-                Divider()
-
-                Group {
-                    if activePreferredTimeField == .start {
-                        DatePicker(
-                            "Start Time",
-                            selection: $preferredStartTime,
-                            displayedComponents: .hourAndMinute
-                        )
-                    } else {
-                        DatePicker(
-                            "End Time",
-                            selection: $preferredEndTime,
-                            in: preferredStartTime...,
-                            displayedComponents: .hourAndMinute
-                        )
-                    }
-                }
-                .datePickerStyle(.wheel)
-                .labelsHidden()
-                .frame(maxWidth: .infinity)
-                .clipped()
-
-                Spacer(minLength: 0)
-            }
-            .navigationTitle("Preferred Time")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") {
-                        isSelectingPreferredTime = false
-                    }
-                }
-            }
-            .onChange(of: preferredStartTime) { _, newStartTime in
-                if preferredEndTime < newStartTime {
-                    preferredEndTime = newStartTime
-                }
-            }
+        .background {
+            GreenBlurBackground()
         }
     }
 
-    private func preferredTimeRow(
-        title: String,
-        time: Date,
-        field: PreferredTimeField
-    ) -> some View {
-        Button {
-            withAnimation(.easeInOut(duration: 0.2)) {
-                activePreferredTimeField = field
-            }
-        } label: {
-            HStack {
-                Text(title)
-                    .foregroundStyle(.primary)
-
-                Spacer()
-
-                Text(time.formatted(date: .omitted, time: .shortened))
-                    .foregroundStyle(activePreferredTimeField == field ? .red : .primary)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 7)
-                    .background(
-                        activePreferredTimeField == field
-                            ? Color.red.opacity(0.12)
-                            : Color(uiColor: .secondarySystemFill),
-                        in: Capsule()
-                    )
-            }
-            .font(.system(size: 17))
-            .contentShape(Rectangle())
-            .padding(.horizontal, 20)
-            .padding(.vertical, 10)
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(title)
-        .accessibilityValue(time.formatted(date: .omitted, time: .shortened))
-        .accessibilityAddTraits(activePreferredTimeField == field ? .isSelected : [])
-    }
-
-    private var outputResultPicker: some View {
-        NavigationStack {
-            Picker("Output Result", selection: $outputResult) {
-                ForEach(3...10, id: \.self) { result in
-                    Text("\(result)")
-                        .tag(result)
-                }
-            }
-            .pickerStyle(.wheel)
-            .accessibilityLabel("Number of results")
-            .navigationTitle("Output Result")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") {
-                        isSelectingOutputResult = false
-                    }
-                }
-            }
-        }
-    }
-
-    private var navigationHeader: some View {
-        VStack(spacing: 14) {
-            HStack {
-                CircleIconButton(
-                    systemName: "chevron.left",
-                    accessibilityLabel: "Back"
-                ) { dismiss() }
-
-                Spacer()
-
-                CircleIconButton(
-                    systemName: "checkmark",
-                    accessibilityLabel: "Save"
-                ) { dismiss() }
-            }
-
-            Text("Edit Preference")
-                .font(.system(size: 24, weight: .bold))
-        }
-        .padding(.horizontal, 24)
-        .padding(.top, 12)
-        .padding(.bottom, 14)
-    }
 }
 
 #Preview {
-    EditPreferenceView()
+    EditPreferenceView(criteria: .default) { _ in }
 }
