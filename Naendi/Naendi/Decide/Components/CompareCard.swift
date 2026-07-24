@@ -50,13 +50,14 @@ struct CompareCard: View {
                     }
                     
                     ReportBubbleView(reportCount: viewModel.reportCount(for: item))
-                        .padding(.top, 10)
+                        .padding(12)
                 }
                 
                 VStack(alignment: .leading, spacing: 8) {
                     
                     Text(item.nama)
-                        .font(.system(size: 16, weight: .bold))
+                        .font(.headline)
+                        .fontWeight(.bold)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
                         .padding(.top, 10)
@@ -67,10 +68,11 @@ struct CompareCard: View {
                         HStack(spacing: 3) {
                             Image(systemName: "star.fill")
                                 .foregroundColor(Color(red: 0.95, green: 0.76, blue: 0.29))
-                                .font(.system(size: 13))
+                                .font(.body)
                             
                             Text(String(format: "%.1f", item.rating))
-                                .font(.system(size: 12, weight: .semibold))
+                                .font(.body)
+                                .fontWeight(.semibold)
                                 .foregroundColor(.gray)
                         }
                         
@@ -98,9 +100,9 @@ struct CompareCard: View {
                     VStack(alignment: .leading, spacing: 2) {
                         if let locationName = viewModel.criteria.locationName,
                            viewModel.criteria.coordinate != nil {
-                            Text("\(viewModel.calculateDistance(to: item)) dari \(locationName),")
+                            Text("\(viewModel.calculateDistance(to: item)) dari \(locationName),").font(.caption)
                         };
-                            Text("\(viewModel.calculateDistanceFromMe(to: item)) dari lokasi Anda saat ini.")
+                            Text("\(viewModel.calculateDistanceFromMe(to: item)) dari lokasi Anda saat ini.").font(.caption)
                     }
                     .font(.system(size: 12))
                     .foregroundColor(.gray)
@@ -140,27 +142,6 @@ struct CompareCard: View {
                 .frame(height: 130)
                 .overlay(ProgressView())
         }
-
-// MARK: - Sub Component Detail Row
-struct DetailRowView: View {
-    let title: String
-    let value: String
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(LocalizedStringKey(title))
-                .font(.system(size: 14, weight: .bold))
-                .foregroundColor(.primary)
-            
-            Text(value)
-                .font(.system(size: 12, weight: .regular))
-                .foregroundColor(.gray)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding(.bottom, 6)
-    }
-}
 
 #Preview("Selected") {
     CompareCard(
