@@ -84,7 +84,9 @@ struct SelectLocationView: View {
                 .padding(.top, 28)
                 .padding(.bottom, 36)
         }
-        .background(Color(uiColor: .systemBackground))
+        .background {
+            GreenBlurBackground()
+        }
         .fullScreenCover(isPresented: $isMapExpanded) {
             ExpandedLocationMapView(
                 cameraPosition: $cameraPosition,
