@@ -69,7 +69,26 @@ struct PlaceCardExpandPhotoView: View {
                                 AsyncImage(url: url) { phase in
                                     if let image = phase.image {
                                         image.resizable().aspectRatio(contentMode: .fill)
-                                    } else {
+                                    } else if !viewModel.isNetworkConnected {
+                                        ZStack {
+                                            Color.gray.opacity(0.2)
+                                            VStack(spacing: 8) {
+                                                Image(systemName: "wifi.slash")
+                                                    .font(.largeTitle)
+                                                    .foregroundColor(.gray.opacity(0.8))
+                                                Text("Tidak ada koneksi internet")
+                                                    .font(.caption)
+                                                    .fontWeight(.medium)
+                                                    .foregroundColor(.gray.opacity(0.8))
+                                                Text("Gambar tidak dapat dimuat")
+                                                    .font(.caption)
+                                                    .fontWeight(.medium)
+                                                    .foregroundColor(.gray.opacity(0.8))
+                                                
+                                            }
+                                        }
+                                    }
+                                    else {
                                         Color.gray.opacity(0.3)
                                     }
                                 }
@@ -91,8 +110,19 @@ struct PlaceCardExpandPhotoView: View {
                                     AsyncImage(url: url) { phase in
                                         if let image = phase.image {
                                             image.resizable().aspectRatio(contentMode: .fill)
+                                        } else if !viewModel.isNetworkConnected {
+                                            ZStack {
+                                                Color.gray.opacity(0.2)
+                                                Image(systemName: "wifi.slash")
+                                                    .font(.largeTitle)
+                                                    .foregroundColor(.gray.opacity(0.8))
+                                            }
                                         } else {
-                                            Color.gray.opacity(0.3)
+                                            ZStack {
+                                                Color.gray.opacity(0.1)
+                                                ProgressView()
+                                                    .scaleEffect(0.7)
+                                            }
                                         }
                                     }
                                     // 3. Set tinggi menjadi 104 agar total tinggi + spacing pas 220 (104 + 12 + 104)
@@ -110,8 +140,19 @@ struct PlaceCardExpandPhotoView: View {
                                     AsyncImage(url: nextUrl) { phase in
                                         if let image = phase.image {
                                             image.resizable().aspectRatio(contentMode: .fill)
+                                        } else if !viewModel.isNetworkConnected {
+                                            ZStack {
+                                                Color.gray.opacity(0.2)
+                                                Image(systemName: "wifi.slash")
+                                                    .font(.largeTitle)
+                                                    .foregroundColor(.gray.opacity(0.8))
+                                            }
                                         } else {
-                                            Color.gray.opacity(0.3)
+                                            ZStack {
+                                                Color.gray.opacity(0.1)
+                                                ProgressView()
+                                                    .scaleEffect(0.7)
+                                            }
                                         }
                                     }
                                     .frame(width: 160, height: 104)
