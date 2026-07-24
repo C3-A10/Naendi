@@ -69,6 +69,15 @@ struct SwiftDataPlaceStoreTests {
         #expect(store.hasSeededData == false)
     }
 
+    @Test("saving a second batch adds to existing rows (per-page seeding)")
+    func saveAccumulatesBatches() throws {
+        let store = newStore()
+        try store.save([.stub(id: "1", nama: "A")])
+        try store.save([.stub(id: "2", nama: "B")])
+
+        #expect(try store.loadPlaces().count == 2)
+    }
+
     @Test("re-seeding replaces the dataset instead of duplicating rows")
     func reSaveReplacesInsteadOfDuplicating() throws {
         let store = newStore()
