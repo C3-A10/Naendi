@@ -57,8 +57,31 @@ struct PlaceCardNormalView: View {
                                     image
                                         .resizable()
                                         .aspectRatio(contentMode: .fill)
+                                } else if !viewModel.isNetworkConnected {
+                                    ZStack {
+                                        Color.gray.opacity(0.2)
+                                        VStack(spacing: 8) {
+                                            Image(systemName: "wifi.slash")
+                                                .font(.largeTitle)
+                                                .foregroundColor(.gray.opacity(0.8))
+                                            
+                                            Text("Tidak ada koneksi internet")
+                                                .font(.caption)
+                                                .fontWeight(.medium)
+                                                .foregroundColor(.gray.opacity(0.8))
+                                            
+                                            Text("Gambar tidak dapat dimuat")
+                                                .font(.caption)
+                                                .fontWeight(.medium)
+                                                .foregroundColor(.gray.opacity(0.8))
+                                        }
+                                        .padding(.bottom, 32)
+                                    }
                                 } else {
-                                    Color.gray.opacity(0.3)
+                                    ZStack {
+                                        Color.gray.opacity(0.1)
+                                        ProgressView().padding(.bottom, 32)
+                                    }
                                 }
                             }
                         } else {
@@ -132,8 +155,32 @@ struct PlaceCardNormalView: View {
                                             image
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fill)
+                                        } else if !viewModel.isNetworkConnected {
+                                            ZStack {
+                                                Color.gray.opacity(0.2)
+                                                VStack(spacing: 4) {
+                                                    
+                                                    Text("Tidak ada koneksi internet")
+                                                        .font(.caption)
+                                                        .fontWeight(.medium)
+                                                        .foregroundColor(.gray.opacity(0.8))
+                                                    
+                                                    Image(systemName: "wifi.slash")
+                                                        .font(.largeTitle)
+                                                        .foregroundColor(.gray.opacity(0.8))
+                                                    
+                                                    Text("Gambar tidak dapat dimuat")
+                                                        .font(.caption)
+                                                        .fontWeight(.medium)
+                                                        .foregroundColor(.gray.opacity(0.8))
+                                                }
+                                                .padding(.bottom, 64)
+                                            }
                                         } else {
-                                            Color.gray.opacity(0.3)
+                                            ZStack {
+                                                Color.gray.opacity(0.1)
+                                                ProgressView().padding(.bottom, 40)
+                                            }
                                         }
                                     }
                                 } else {
