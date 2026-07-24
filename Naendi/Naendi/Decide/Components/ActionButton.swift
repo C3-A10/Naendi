@@ -31,7 +31,8 @@ struct CustomActionButton: View {
     var body: some View {
         Button(action: action) {
             Text(text)
-                .font(.system(size: 18, weight: .bold))
+                .font(.headline)
+                .fontWeight(.bold)
                 .foregroundColor(textColor)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
