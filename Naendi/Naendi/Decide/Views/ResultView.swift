@@ -45,41 +45,31 @@ struct ResultView: View {
                         } label: {
                             Text("Cancel")
                                 .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(.white)
+                                .foregroundColor(.primary)
                                 .frame(height: 36)
                                 .padding(.horizontal, 16)
-                                .background(Color(white: 0.15))
+                                .background(.background)
                                 .clipShape(Capsule())
                         }
                         .transition(.scale.combined(with: .opacity))
+                        
                     } else {
-                        Button {
+                        
+                        CircleIconButton(systemName: "arrow.left.arrow.right", accessibilityLabel: "Compare", backgroundColor: Color(.systemBackground)) {
                             withAnimation(.spring()) {
                                 isComparing = true
                             }
-                        } label: {
-                            Image(systemName: "arrow.left.arrow.right")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.white)
-                                .frame(width: 40, height: 40)
-                                .background(Color(white: 0.15))
-                                .clipShape(Circle())
                         }
                         .transition(.scale.combined(with: .opacity))
 
-                        Button {
-                            isShowingEditPreference = true
-                        } label: {
-                            Image(systemName: "pencil")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.white)
-                                .frame(width: 40, height: 40)
-                                .background(Color(white: 0.15))
-                                .clipShape(Circle())
-                                .contentShape(Circle())
+                        
+                        CircleIconButton(systemName: "pencil", accessibilityLabel: "Preference",                     backgroundColor: Color(.systemBackground)) {
+                            withAnimation(.spring()) {
+                                isShowingEditPreference = true
+                            }
                         }
-                        .buttonStyle(.plain)
                         .transition(.scale.combined(with: .opacity))
+                        
                     }
                 }
             }
@@ -175,7 +165,7 @@ struct ResultView: View {
         }
         .fullScreenCover(isPresented: $isNavigatingToCompare) {
             if viewModel.selectedPlaces.count >= 2 {
-                NavigationStack {                   
+                NavigationStack {
                     CompareView(
                         placeA: viewModel.selectedPlaces[0],
                         placeB: viewModel.selectedPlaces[1],
@@ -186,7 +176,7 @@ struct ResultView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $isShowingEditPreference) {           
+        .fullScreenCover(isPresented: $isShowingEditPreference) {
             EditPreferenceView(criteria: viewModel.criteria) { criteria in
                 Task {
                     await viewModel.applyPreferences(
