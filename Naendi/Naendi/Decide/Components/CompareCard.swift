@@ -143,28 +143,6 @@ struct CompareCard: View {
                 .overlay(ProgressView())
         }
 
-// MARK: - Sub Component Detail Row
-struct DetailRowView: View {
-    let title: String
-    let value: String
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(LocalizedStringKey(title))
-                .font(.subheadline)
-                .fontWeight(.bold)
-                .foregroundColor(.primary)
-            
-            Text(value)
-                .font(.caption)
-                .foregroundColor(.gray)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding(.bottom, 6)
-    }
-}
-
 #Preview("Selected") {
     CompareCard(
         item: Place.dummyData[1],

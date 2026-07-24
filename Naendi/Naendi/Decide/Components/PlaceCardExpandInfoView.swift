@@ -29,7 +29,8 @@ struct PlaceCardExpandInfoView: View {
                     
                     // Nama tempat
                     Text(place.nama)
-                        .font(.system(size: 20, weight: .bold))
+                        .font(.title3)
+                        .fontWeight(.bold)
                         .foregroundColor(.primary)
                     
                     // Rating - jml rating - range harga
@@ -38,21 +39,22 @@ struct PlaceCardExpandInfoView: View {
                         // icon bintang
                         Image(systemName: "star.fill")
                             .foregroundColor(.yellow)
-                            .font(.system(size: 14))
+                            .font(.body)
                         
                         // rating
                         Text("\(place.rating, specifier: "%.1f")")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(.body)
+                            .fontWeight(.semibold)
                             .foregroundColor(.primary)
                         
-                        Text("•").foregroundColor(.secondary)
+                        Text("•").foregroundColor(.secondary).font(.body)
                         
                         // jml review
-                        Text("(\(place.jumlahReview))").font(.system(size: 13)).foregroundColor(.secondary)
-                        Text("•").foregroundColor(.secondary)
+                        Text("(\(place.jumlahReview))").font(.body).foregroundColor(.secondary)
+                        Text("•").foregroundColor(.secondary).font(.body)
                         
                         // range harga
-                        Text(place.rangeHarga).font(.system(size: 13, weight: .regular)).foregroundColor(.secondary).lineLimit(1)
+                        Text(place.rangeHarga).font(.body).foregroundColor(.secondary).lineLimit(1)
                     }
                     
                     // Badges Type - Vibe - Halal
@@ -71,7 +73,7 @@ struct PlaceCardExpandInfoView: View {
                 }
                 Spacer()
                 Image(systemName: "chevron.up")
-                    .font(.system(size: 16, weight: .bold))
+                    .font(.title3).fontWeight(.bold)
                     .foregroundColor(.primary)
                     .padding(4)
             }
@@ -100,7 +102,8 @@ struct PlaceCardExpandInfoView: View {
             
             VStack (alignment: .leading, spacing: 2) {
                 Text("AI Reviews Summary")
-                    .font(.system(size: 14, weight: .bold))
+                    .font(.body)
+                    .fontWeight(.bold)
                     .lineLimit(2)
                 
                 if !reviewItems.isEmpty {
@@ -108,11 +111,12 @@ struct PlaceCardExpandInfoView: View {
                         let item = reviewItems[index]
                         VStack(alignment: .leading, spacing: 6) {
                             Text(item.title)
-                                .font(.system(size: 12, weight: .bold))
+                                .font(.caption)
+                                .fontWeight(.bold)
                                 .foregroundColor(item.isPositive ? .green : .red)
                             
                             Text(item.text)
-                                .font(.system(size: 12, weight: .regular))
+                                .font(.caption)
                                 .foregroundColor(.secondary)
                                 .lineSpacing(2)
                                 .fixedSize(horizontal: false, vertical: true)
