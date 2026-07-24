@@ -138,43 +138,40 @@ extension EditPreferenceView {
     }
 
     var navigationHeader: some View {
-        VStack(spacing: 14) {
-            HStack {
-                CircleIconButton(
-                    systemName: "chevron.left",
-                    accessibilityLabel: "Back",
-                    accessibilityInputLabels: ["Back"],
-                    backgroundColor: Color(.systemBackground)
-                ) { dismiss() }
-                .accessibilitySortPriority(3)
+        HStack(spacing: 16) {
+            CircleIconButton(
+                systemName: "chevron.left",
+                accessibilityLabel: "Back",
+                accessibilityInputLabels: ["Back"],
+                backgroundColor: Color(.systemBackground)
+            ) { dismiss() }
 
-                Spacer()
-
-                CircleIconButton(
-                    systemName: "checkmark",
-                    accessibilityLabel: "Save preferences",
-                    accessibilityInputLabels: ["Save", "Save preferences"],
-                    backgroundColor: Color(.systemBackground)
-                ) {
-                    onSave(editedCriteria)
-                    dismiss()
-                }
-                .disabled(!budgetViewModel.isBudgetValid)
-                .opacity(budgetViewModel.isBudgetValid ? 1 : 0.5)
-                .accessibilityHint(
-                    budgetViewModel.isBudgetValid
-                        ? "Applies the selected preferences and returns to results."
-                        : "Enter a valid custom budget range before saving."
-                )
-                .accessibilitySortPriority(1)
-            }
+            Spacer(minLength: 0)
 
             Text("Edit Preference")
                 .font(.title2.bold())
                 .multilineTextAlignment(.center)
                 .accessibilityAddTraits(.isHeader)
-                .accessibilitySortPriority(2)
                 .foregroundColor(.black)
+
+            Spacer(minLength: 0)
+
+            CircleIconButton(
+                systemName: "checkmark",
+                accessibilityLabel: "Save preferences",
+                accessibilityInputLabels: ["Save", "Save preferences"],
+                backgroundColor: Color(.systemBackground)
+            ) {
+                onSave(editedCriteria)
+                dismiss()
+            }
+            .disabled(!budgetViewModel.isBudgetValid)
+            .opacity(budgetViewModel.isBudgetValid ? 1 : 0.5)
+            .accessibilityHint(
+                budgetViewModel.isBudgetValid
+                    ? "Applies the selected preferences and returns to results."
+                    : "Enter a valid custom budget range before saving."
+            )
         }
         .padding(.horizontal, 24)
         .padding(.top, 12)
