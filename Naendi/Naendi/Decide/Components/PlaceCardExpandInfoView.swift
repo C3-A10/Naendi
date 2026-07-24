@@ -43,18 +43,18 @@ struct PlaceCardExpandInfoView: View {
                         
                         // rating
                         Text("\(place.rating, specifier: "%.1f")")
-                            .font(.body)
+                            .font(.caption)
                             .fontWeight(.semibold)
                             .foregroundColor(.primary)
                         
-                        Text("•").foregroundColor(.secondary).font(.body)
+                        Text("•").foregroundColor(.secondary).font(.caption)
                         
                         // jml review
-                        Text("(\(place.jumlahReview))").font(.body).foregroundColor(.secondary)
-                        Text("•").foregroundColor(.secondary).font(.body)
+                        Text("(\(place.jumlahReview))").font(.caption).foregroundColor(.secondary)
+                        Text("•").foregroundColor(.secondary).font(.caption)
                         
                         // range harga
-                        Text(place.rangeHarga).font(.body).foregroundColor(.secondary).lineLimit(1)
+                        Text(place.rangeHarga).font(.caption).foregroundColor(.secondary).lineLimit(1)
                     }
                     
                     // Badges Type - Vibe - Halal
@@ -102,7 +102,7 @@ struct PlaceCardExpandInfoView: View {
             
             VStack (alignment: .leading, spacing: 2) {
                 Text("AI Reviews Summary")
-                    .font(.body)
+                    .font(.subheadline)
                     .fontWeight(.bold)
                     .lineLimit(2)
                 
