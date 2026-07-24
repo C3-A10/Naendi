@@ -342,6 +342,19 @@
         }
       }
     },
+    "Budget cannot be negative." : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anggaran tidak boleh bernilai negatif."
+          }
+        }
+      }
+    },
+    "Budget error" : {
+
+    },
     "Cafe" : {
       "localizations" : {
         "id" : {
@@ -745,6 +758,36 @@
         }
       }
     },
+    "Enter a valid budget amount." : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Masukkan jumlah anggaran yang valid."
+          }
+        }
+      }
+    },
+    "Enter a valid custom budget range before saving." : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Masukkan rentang anggaran kustom yang valid sebelum menyimpan."
+          }
+        }
+      }
+    },
+    "Enter both minimum and maximum budget." : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Masukkan anggaran minimum dan maksimum."
+          }
+        }
+      }
+    },
     "Expand map" : {
       "localizations" : {
         "id" : {
@@ -951,6 +994,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Anggaran minimum"
+          }
+        }
+      }
+    },
+    "Minimum budget must not exceed maximum budget." : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anggaran minimum tidak boleh melebihi anggaran maksimum."
           }
         }
       }

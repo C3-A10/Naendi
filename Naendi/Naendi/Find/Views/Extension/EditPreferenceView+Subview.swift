@@ -159,7 +159,13 @@ extension EditPreferenceView {
                     onSave(editedCriteria)
                     dismiss()
                 }
-                .accessibilityHint("Applies the selected preferences and returns to results.")
+                .disabled(!budgetViewModel.isBudgetValid)
+                .opacity(budgetViewModel.isBudgetValid ? 1 : 0.5)
+                .accessibilityHint(
+                    budgetViewModel.isBudgetValid
+                        ? "Applies the selected preferences and returns to results."
+                        : "Enter a valid custom budget range before saving."
+                )
                 .accessibilitySortPriority(1)
             }
 

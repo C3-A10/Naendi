@@ -74,10 +74,22 @@ struct EditPreferenceView: View {
                     BudgetRow(selection: $budgetViewModel.selectedBudgetOption)
 
                     if budgetViewModel.isCustomBudgetRowVisible {
-                        CustomBudgetRow(
-                            minimumBudget: $budgetViewModel.minimumBudget,
-                            maximumBudget: $budgetViewModel.maximumBudget
-                        )
+                        VStack(alignment: .leading, spacing: 8) {
+                            CustomBudgetRow(
+                                minimumBudget: $budgetViewModel.minimumBudget,
+                                maximumBudget: $budgetViewModel.maximumBudget
+                            )
+
+                            if let validationMessage = budgetViewModel.budgetValidationMessage {
+                                Text(validationMessage)
+                                    .font(.footnote)
+                                    .foregroundStyle(.red)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .padding(.horizontal, 18)
+                                    .accessibilityLabel("Budget error")
+                                    .accessibilityValue(validationMessage)
+                            }
+                        }
                         .transition(.move(edge: .top).combined(with: .opacity))
                     }
 
