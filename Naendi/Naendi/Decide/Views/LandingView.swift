@@ -153,7 +153,7 @@ struct LandingView: View {
         .navigationTitle(Text("Discover"))
         .fullScreenCover(item: $selectedPlaceForImage) { place in
             NavigationStack {
-                FullImageDetailView(imageUrls: place.parsedImageUrls, startIndex: 2)
+                FullImageDetailView(imageUrls: place.parsedImageUrls, startIndex: imgStartIndex)
             }
         }
         .fullScreenCover(item: $selectedPlace) { place in
