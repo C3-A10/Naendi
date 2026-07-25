@@ -17,7 +17,7 @@ struct PlaceCardExpandPhotoView: View {
     let isDetail: Bool
     let isReported: Bool
     let onReport: () -> Void
-    @Binding var selectedImageURL: URL?
+    let onSelectImageIndex: (Int) -> Void
     
     init(
         isComparing: Bool,
@@ -28,7 +28,7 @@ struct PlaceCardExpandPhotoView: View {
         isDetail: Bool = false,
         isReported: Bool = false,
         onReport: @escaping () -> Void = {},
-        selectedImageURL: Binding<URL?>
+        onSelectImageIndex: @escaping (Int) -> Void,
     ) {
         self.isComparing = isComparing
         self.isSelected = isSelected
@@ -38,7 +38,7 @@ struct PlaceCardExpandPhotoView: View {
         self.isDetail = isDetail
         self.isReported = isReported
         self.onReport = onReport
-        self._selectedImageURL = selectedImageURL
+        self.onSelectImageIndex = onSelectImageIndex
     }
     
     private var imageGallery: [String] {
@@ -75,7 +75,7 @@ struct PlaceCardExpandPhotoView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                                 .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous)) 
                                 .onTapGesture {
-                                    selectedImageURL = url
+                                    onSelectImageIndex(index)
                                 }
                             }
                         }
@@ -104,7 +104,7 @@ struct PlaceCardExpandPhotoView: View {
                                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                                     .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                                     .onTapGesture {
-                                        selectedImageURL = url
+                                        onSelectImageIndex(index)
                                     }
                                 }
                                 
@@ -128,7 +128,7 @@ struct PlaceCardExpandPhotoView: View {
                                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                                     .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                                     .onTapGesture {
-                                        selectedImageURL = nextUrl
+                                        onSelectImageIndex(index + 1)
                                     }
                                 }
                             }

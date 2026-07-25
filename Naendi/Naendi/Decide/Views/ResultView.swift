@@ -12,10 +12,11 @@ struct ResultView: View {
     @Environment(\.modelContext) private var modelContext
     @State var viewModel: DecideViewModel
     @State private var isComparing = false
-    @State private var selectedImageURL: URL?
     @State private var isNavigatingToCompare = false
     @State private var selectedPlace: Place?
     @State private var isShowingEditPreference = false
+    @State private var imgStartIndex: Int = 0
+    @State private var selectedPlaceForImage: Place?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -110,17 +111,22 @@ struct ResultView: View {
                     ScrollView {
                         LazyVStack(spacing: 20) {
                             ForEach(viewModel.places) { place in
+                                
                                 PlaceCardView(
                                     place: place,
                                     mode: .result,
                                     isChooseThisLocationBtnVisible: true,
-                                    isTagVisible: false,
+                                    isTagVisible: true,
                                     isReportVisible: false,
                                     viewModel: viewModel,
                                     isComparing: $isComparing,
-                                    selectedImageURL: $selectedImageURL,
+                                    onSelectImageIndex: { index in
+                                        imgStartIndex = index
+                                        selectedPlaceForImage = place
+                                    },
                                     selectedPlace: $selectedPlace
                                 )
+        
                             }
                         }
                         .padding(.vertical, 16)
@@ -153,9 +159,10 @@ struct ResultView: View {
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .fullScreenCover(item: $selectedImageURL) { url in
+        .fullScreenCover(item: $selectedPlaceForImage) { place in
             NavigationStack {
-                FullImageDetailView(url: url)
+                FullImageDetailView(imageUrls: place.parsedImageUrls, startIndex: imgStartIndex)
+                    .id("\(place.id)-\(imgStartIndex)")
             }
         }
         .fullScreenCover(item: $selectedPlace) { place in

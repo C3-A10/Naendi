@@ -24,7 +24,7 @@ struct PlaceCardView: View {
     @State var viewModel: DecideViewModel
     
     @Binding var isComparing: Bool
-    @Binding var selectedImageURL: URL?
+    let onSelectImageIndex: (Int) -> Void
     @Binding var selectedPlace: Place?
     
     init(
@@ -38,7 +38,7 @@ struct PlaceCardView: View {
         onReport: @escaping () -> Void = {},
         viewModel: DecideViewModel,
         isComparing: Binding<Bool>,
-        selectedImageURL: Binding<URL?>,
+        onSelectImageIndex: @escaping (Int) -> Void,
         selectedPlace: Binding<Place?>
     ) {
         self.place = place
@@ -51,7 +51,7 @@ struct PlaceCardView: View {
         self.onReport = onReport
         self._viewModel = State(initialValue: viewModel)
         self._isComparing = isComparing
-        self._selectedImageURL = selectedImageURL
+        self.onSelectImageIndex = onSelectImageIndex
         self._selectedPlace = selectedPlace
     }
     
@@ -59,7 +59,7 @@ struct PlaceCardView: View {
         ZStack {
             VStack(spacing: 0) {
                 if isExpanded {
-                    PlaceCardExpandView(place: place, isChooseThisLocationBtnVisible: isChooseThisLocationBtnVisible, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel, selectedImageURL: $selectedImageURL, selectedPlace: $selectedPlace, isDetail: isDetail, isReported: isReported, onReport: onReport)
+                    PlaceCardExpandView(place: place, isChooseThisLocationBtnVisible: isChooseThisLocationBtnVisible, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel, onSelectImageIndex: onSelectImageIndex, selectedPlace: $selectedPlace, isDetail: isDetail, isReported: isReported, onReport: onReport)
                 } else {
                     PlaceCardNormalView(place: place, mode: mode, isReported: isReported, isTagVisible: isTagVisible, isDetail: isDetail, onReport: onReport, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel)
                 }
@@ -87,7 +87,7 @@ struct PlaceCardView: View {
                 mode: .result, isChooseThisLocationBtnVisible: true,
                 isTagVisible: true, isReportVisible: true,
                 viewModel: DecideViewModel(), isComparing: .constant(true),
-                selectedImageURL: .constant(nil), selectedPlace: .constant(Place.dummyData[0])
+                onSelectImageIndex: {index in }, selectedPlace: .constant(Place.dummyData[0])
             )
             .padding(.vertical)
         }

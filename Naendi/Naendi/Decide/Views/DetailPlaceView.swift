@@ -39,7 +39,7 @@ struct DetailPlaceView: View {
                         onReport: handleReportTapped,
                         viewModel: viewModel,
                         isComparing: $isComparing,
-                        selectedImageURL: $selectedImageURL,
+                        onSelectImageIndex: {index in },
                         selectedPlace: $dummySelectedPlace
                     )
                     .frame(maxWidth: .infinity)

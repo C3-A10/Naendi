@@ -15,7 +15,7 @@ struct PlaceCardExpandView: View {
     @Binding var isExpanded: Bool
     @Binding var isComparing: Bool
     @State var viewModel: DecideViewModel
-    @Binding var selectedImageURL: URL?
+    let onSelectImageIndex: (Int) -> Void
     @Binding var selectedPlace: Place?
     let isDetail: Bool
     let isReported: Bool
@@ -27,7 +27,7 @@ struct PlaceCardExpandView: View {
         isExpanded: Binding<Bool>,
         isComparing: Binding<Bool>,
         viewModel: DecideViewModel,
-        selectedImageURL: Binding<URL?>,
+        onSelectImageIndex: @escaping (Int) -> Void,
         selectedPlace: Binding<Place?>,
         isDetail: Bool = false,
         isReported: Bool = false,
@@ -38,7 +38,7 @@ struct PlaceCardExpandView: View {
         self._isExpanded = isExpanded
         self._isComparing = isComparing
         self._viewModel = State(initialValue: viewModel)
-        self._selectedImageURL = selectedImageURL
+        self.onSelectImageIndex = onSelectImageIndex
         self._selectedPlace = selectedPlace
         self.isDetail = isDetail
         self.isReported = isReported
@@ -62,7 +62,7 @@ struct PlaceCardExpandView: View {
                 isDetail: isDetail,
                 isReported: isReported,
                 onReport: onReport,
-                selectedImageURL: $selectedImageURL
+                onSelectImageIndex: onSelectImageIndex,
             )
             
             PlaceCardExpandInfoView(
@@ -88,7 +88,7 @@ struct PlaceCardExpandView: View {
                 isExpanded: .constant(false),
                 isComparing: .constant(true),
                 viewModel: DecideViewModel(),
-                selectedImageURL: .constant(URL(string: Place.dummyData[0].imgUrl ?? "")),
+                onSelectImageIndex: { index in },
                 selectedPlace: .constant(nil),
             )
             .padding(.horizontal)

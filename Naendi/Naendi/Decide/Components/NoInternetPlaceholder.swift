@@ -11,10 +11,13 @@ struct NoInternetPlaceholder: View {
     
     var paddingBottom: CGFloat = 0
     var isCaptionHidden: Bool = false
+    var isTransparent: Bool = false
     
     var body: some View {
         ZStack {
-            Color.gray.opacity(0.2)
+            if !isTransparent {
+                Color.gray.opacity(0.2)
+            }
             VStack(spacing: 4) {
                 
                 Image(systemName: "wifi.slash")
