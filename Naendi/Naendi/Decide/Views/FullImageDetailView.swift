@@ -21,40 +21,45 @@ struct FullImageDetailView: View {
     }
     
     var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             Color.black
                 .ignoresSafeArea()
-            TabView(selection: $selectedIndex) {
-                ForEach(Array(imageUrls.enumerated()), id: \.offset) { index, urlString in
-                    ZoomableImageItem(urlString: urlString)
-                        .tag(index)
+            VStack {
+                header
+                TabView(selection: $selectedIndex) {
+                    ForEach(Array(imageUrls.enumerated()), id: \.offset) { index, urlString in
+                        ZoomableImageItem(urlString: urlString)
+                            .tag(index)
+                    }
                 }
+                .tabViewStyle(.page(indexDisplayMode: .always))
             }
-            .tabViewStyle(.page(indexDisplayMode: .always))
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarColorScheme(.dark, for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
-        .toolbarBackground(Color.black, for: .navigationBar)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text("\(selectedIndex + 1) / \(imageUrls.count)")
-                    .font(.headline)
-                    .foregroundColor(.white)
-            }
-            
-            // Ikon close di kanan karena bentuknya Modal (sheet/fullScreenCover)
-            ToolbarItem(placement: .topBarTrailing) {
+    }
+    
+    private var header: some View {
+        ZStack {
+            Text("\(selectedIndex + 1) / \(imageUrls.count)")
+                .font(.headline)
+                .foregroundColor(.white)
+                .multilineTextAlignment(.center)
+                .accessibilityAddTraits(.isHeader)
                 
-                Button(action: { dismiss() }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .symbolRenderingMode(.hierarchical)
-                        .font(.title2)
-                        .foregroundColor(.white.opacity(0.8))
+            HStack {
+                Spacer() // Mendorong konten ke kanan
+                
+                CircleIconButton(
+                    systemName: "xmark",
+                    accessibilityLabel: "Close full image",
+                    backgroundColor: Color(.darkGray)
+                ) {
+                    dismiss()
                 }
             }
         }
-        
+        .padding(.horizontal, 24)
+        .padding(.top, 12)
+        .padding(.bottom, 16)
     }
 }
 
