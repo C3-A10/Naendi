@@ -47,13 +47,7 @@ struct PlaceCardExpandPhotoView: View {
         if !urls.isEmpty {
             return urls
         }
-        
-        // (Opsional) Fallback: Jika tempat tersebut sama sekali tidak punya gambar di JSON
-        // Gunakan 1 atau 2 gambar default agar layout grid di UI tidak rusak/kosong
-        return [
-            "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=800&auto=format&fit=crop"
-        ]
+        return []
     }
     
     var body: some View {
@@ -70,23 +64,7 @@ struct PlaceCardExpandPhotoView: View {
                                     if let image = phase.image {
                                         image.resizable().aspectRatio(contentMode: .fill)
                                     } else if !viewModel.isNetworkConnected {
-                                        ZStack {
-                                            Color.gray.opacity(0.2)
-                                            VStack(spacing: 8) {
-                                                Image(systemName: "wifi.slash")
-                                                    .font(.largeTitle)
-                                                    .foregroundColor(.gray.opacity(0.8))
-                                                Text("Tidak ada koneksi internet")
-                                                    .font(.caption)
-                                                    .fontWeight(.medium)
-                                                    .foregroundColor(.gray.opacity(0.8))
-                                                Text("Gambar tidak dapat dimuat")
-                                                    .font(.caption)
-                                                    .fontWeight(.medium)
-                                                    .foregroundColor(.gray.opacity(0.8))
-                                                
-                                            }
-                                        }
+                                        NoInternetPlaceholder()
                                     }
                                     else {
                                         Color.gray.opacity(0.3)
@@ -111,12 +89,7 @@ struct PlaceCardExpandPhotoView: View {
                                         if let image = phase.image {
                                             image.resizable().aspectRatio(contentMode: .fill)
                                         } else if !viewModel.isNetworkConnected {
-                                            ZStack {
-                                                Color.gray.opacity(0.2)
-                                                Image(systemName: "wifi.slash")
-                                                    .font(.largeTitle)
-                                                    .foregroundColor(.gray.opacity(0.8))
-                                            }
+                                            NoInternetPlaceholder(isCaptionHidden: true)
                                         } else {
                                             ZStack {
                                                 Color.gray.opacity(0.1)
@@ -141,12 +114,7 @@ struct PlaceCardExpandPhotoView: View {
                                         if let image = phase.image {
                                             image.resizable().aspectRatio(contentMode: .fill)
                                         } else if !viewModel.isNetworkConnected {
-                                            ZStack {
-                                                Color.gray.opacity(0.2)
-                                                Image(systemName: "wifi.slash")
-                                                    .font(.largeTitle)
-                                                    .foregroundColor(.gray.opacity(0.8))
-                                            }
+                                            NoInternetPlaceholder(isCaptionHidden: true)
                                         } else {
                                             ZStack {
                                                 Color.gray.opacity(0.1)

@@ -58,25 +58,7 @@ struct PlaceCardNormalView: View {
                                         .resizable()
                                         .aspectRatio(contentMode: .fill)
                                 } else if !viewModel.isNetworkConnected {
-                                    ZStack {
-                                        Color.gray.opacity(0.2)
-                                        VStack(spacing: 8) {
-                                            Image(systemName: "wifi.slash")
-                                                .font(.largeTitle)
-                                                .foregroundColor(.gray.opacity(0.8))
-                                            
-                                            Text("Tidak ada koneksi internet")
-                                                .font(.caption)
-                                                .fontWeight(.medium)
-                                                .foregroundColor(.gray.opacity(0.8))
-                                            
-                                            Text("Gambar tidak dapat dimuat")
-                                                .font(.caption)
-                                                .fontWeight(.medium)
-                                                .foregroundColor(.gray.opacity(0.8))
-                                        }
-                                        .padding(.bottom, 32)
-                                    }
+                                    NoInternetPlaceholder(paddingBottom: 32)
                                 } else {
                                     ZStack {
                                         Color.gray.opacity(0.1)
@@ -156,26 +138,7 @@ struct PlaceCardNormalView: View {
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fill)
                                         } else if !viewModel.isNetworkConnected {
-                                            ZStack {
-                                                Color.gray.opacity(0.2)
-                                                VStack(spacing: 4) {
-                                                    
-                                                    Text("Tidak ada koneksi internet")
-                                                        .font(.caption)
-                                                        .fontWeight(.medium)
-                                                        .foregroundColor(.gray.opacity(0.8))
-                                                    
-                                                    Image(systemName: "wifi.slash")
-                                                        .font(.largeTitle)
-                                                        .foregroundColor(.gray.opacity(0.8))
-                                                    
-                                                    Text("Gambar tidak dapat dimuat")
-                                                        .font(.caption)
-                                                        .fontWeight(.medium)
-                                                        .foregroundColor(.gray.opacity(0.8))
-                                                }
-                                                .padding(.bottom, 64)
-                                            }
+                                            NoInternetPlaceholder(paddingBottom: 64)
                                         } else {
                                             ZStack {
                                                 Color.gray.opacity(0.1)
