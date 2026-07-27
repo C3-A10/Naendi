@@ -1,9 +1,6 @@
 import MapKit
 import SwiftUI
 
-/// Edits a copy of the user's preferences. Everything lives in local state so
-/// Back can discard cleanly; only Save hands the result back to the caller,
-/// which is what persists it and re-runs the search.
 struct EditPreferenceView: View {
     @Environment(\.dismiss) var dismiss
 
@@ -25,6 +22,8 @@ struct EditPreferenceView: View {
     @State var preferredStartTime: Date
     @State var preferredEndTime: Date
     @State var activeTooltip: PreferenceTooltip?
+    @State var locationPermission = LocationPermission()
+    @State var isShowingLocationDeniedAlert = false
 
     init(
         criteria: PreferenceCriteria = .default,
@@ -201,6 +200,7 @@ struct EditPreferenceView: View {
                         ForEach(SortOption.allCases, id: \.self) { option in
                             Button {
                                 selectedSortOption = option
+                                warnIfSortNeedsLocation(option)
                             } label: {
                                 if selectedSortOption == option {
                                     Label(option.title, systemImage: "checkmark")
@@ -230,6 +230,7 @@ struct EditPreferenceView: View {
             }
             .scrollIndicators(.hidden)
         }
+        .locationDeniedAlert(isPresented: $isShowingLocationDeniedAlert)
         .fullScreenCover(isPresented: $isSelectingLocation) {
             SelectLocationView(
                 selectedLocationName: $selectedLocationName,
