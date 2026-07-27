@@ -249,7 +249,7 @@ class DecideViewModel {
             if isNew {
                 reportCounts[place.id, default: place.reportCount] += 1
             }
-            return isNew
+            return true // dilaporkan oleh user ini, baru maupun sudah ada sebelumnya
         } catch let error as CKError where error.code == .notAuthenticated {
             reportMessage = "Masuk ke iCloud dulu untuk bisa melaporkan tempat."
         } catch {
@@ -258,7 +258,15 @@ class DecideViewModel {
         return false
     }
 
-    // ambil reportcount terbaru 
+    // cek apakah user ini sudah pernah melaporkan tempat tsb
+    func hasReported(
+        _ place: Place,
+        using repository: CloudKitPlaceRepository = CloudKitPlaceRepository()
+    ) async -> Bool {
+        await repository.hasReported(placeID: place.id)
+    }
+
+    // ambil reportcount terbaru
     func reportCount(for place: Place) -> Int {
         reportCounts[place.id] ?? place.reportCount
     }

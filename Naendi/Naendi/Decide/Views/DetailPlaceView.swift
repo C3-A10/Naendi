@@ -97,8 +97,13 @@ struct DetailPlaceView: View {
         } message: {
             Text("Apakah anda yakin ingin melaporkan \(place.nama)? Data ini tidak dapat diubah lagi.")
         }
-        // Start GPS so isWithinReportRadius has a fix to compare against.
-        .task { viewModel.startLocationUpdates() }
+        // Start GPS so isWithinReportRadius has a fix to compare against, and
+        // seed the report icon from CloudKit — this @State resets every time the
+        // sheet is presented, so it has to be read back rather than remembered.
+        .task {
+            viewModel.startLocationUpdates()
+            isReported = await viewModel.hasReported(place)
+        }
         // Report outcome (success / already reported / failure).
         .alert(
             "Laporan",
