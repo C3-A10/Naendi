@@ -11,9 +11,9 @@ struct SelectLocationView: View {
     @State private var query = ""
     @State private var submittedSearchQuery = ""
     @State private var cameraPosition: MapCameraPosition
-    @State private var showsUserLocation = true
     @State private var isMapExpanded = false
     @State private var searchState = LocationSearchState.idle
+    @State private var suggestionProvider = LocationSuggestionProvider()
 
     init(
         selectedLocationName: Binding<String>,
@@ -38,43 +38,14 @@ struct SelectLocationView: View {
             header
 
             ZStack(alignment: .top) {
-                LocationMapView(
-                    cameraPosition: $cameraPosition,
-                    selectedLocationName: $selectedLocationName,
-                    selectedCoordinate: $selectedCoordinate,
-                    radius: $radius,
-                    submittedSearchQuery: $submittedSearchQuery,
-                    showsUserLocation: $showsUserLocation,
-                    searchState: $searchState
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 34, style: .continuous))
+                map
+                    .clipShape(RoundedRectangle(cornerRadius: 34, style: .continuous))
 
-                PreferenceSearchField(query: $query, placeholder: "Search location")
-                    .onSubmit(submitSearch)
+                searchField
                     .padding(20)
 
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        VStack(spacing: 12) {
-                            CircleIconButton(
-                                systemName: "location.fill",
-                                accessibilityLabel: "Go to current location",
-                                backgroundColor: Color(.systemBackground),
-                                size: 48
-                            ) { recenterOnUser() }
-
-                            CircleIconButton(
-                                systemName: "arrow.up.left.and.arrow.down.right",
-                                accessibilityLabel: "Expand map",
-                                backgroundColor: Color(.systemBackground),
-                                size: 48
-                            ) { isMapExpanded = true }
-                        }
-                    }
-                }
-                .padding(18)
+                mapControls
+                    .padding(18)
             }
             .frame(maxHeight: .infinity)
             .padding(.horizontal, 20)
@@ -92,18 +63,49 @@ struct SelectLocationView: View {
                 cameraPosition: $cameraPosition,
                 selectedLocationName: $selectedLocationName,
                 selectedCoordinate: $selectedCoordinate,
-                radius: $radius,
-                submittedSearchQuery: $submittedSearchQuery,
-                showsUserLocation: $showsUserLocation,
-                searchState: $searchState
+                searchState: $searchState,
+                radius: radius,
+                submittedSearchQuery: submittedSearchQuery
             )
         }
-        .alert(searchAlertTitle, isPresented: isShowingSearchAlert) {
+        .alert(searchState.alertTitle, isPresented: isShowingSearchAlert) {
             Button("OK", role: .cancel) {
                 searchState = .idle
             }
         } message: {
-            Text(searchAlertMessage)
+            Text(searchState.alertMessage)
+        }
+    }
+
+    private var map: some View {
+        LocationMapView(
+            cameraPosition: $cameraPosition,
+            selectedLocationName: $selectedLocationName,
+            selectedCoordinate: $selectedCoordinate,
+            searchState: $searchState,
+            radius: radius,
+            submittedSearchQuery: submittedSearchQuery
+        )
+    }
+
+    private var searchField: some View {
+        PreferenceSearchField(
+            query: $query,
+            placeholder: "Search location",
+            suggestions: suggestionProvider.suggestions
+        ) { suggestion in
+            query = suggestion.title
+            suggestionProvider.clear()
+            search(for: [suggestion.title, suggestion.subtitle]
+                .filter { !$0.isEmpty }
+                .joined(separator: ", "))
+        }
+        .onSubmit {
+            suggestionProvider.clear()
+            search(for: query)
+        }
+        .onChange(of: query) { _, newValue in
+            suggestionProvider.update(query: newValue)
         }
     }
 
@@ -139,6 +141,20 @@ struct SelectLocationView: View {
         .padding(.bottom, 16)
     }
 
+    private var mapControls: some View {
+        VStack(spacing: 12) {
+            RecenterButton(cameraPosition: $cameraPosition)
+
+            CircleIconButton(
+                systemName: "arrow.up.left.and.arrow.down.right",
+                accessibilityLabel: "Expand map",
+                backgroundColor: Color(.systemBackground),
+                size: 48
+            ) { isMapExpanded = true }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+    }
+
     private var radiusControl: some View {
         VStack(alignment: .leading, spacing: 14) {
             Text("Custom local radius (km)")
@@ -148,8 +164,8 @@ struct SelectLocationView: View {
         }
     }
 
-    private func submitSearch() {
-        let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
+    private func search(for text: String) {
+        let trimmedQuery = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedQuery.isEmpty else { return }
 
         submittedSearchQuery = ""
@@ -158,39 +174,18 @@ struct SelectLocationView: View {
         }
     }
 
-    private func recenterOnUser() {
-        withAnimation(.smooth(duration: 0.45)) {
-            cameraPosition = .userLocation(fallback: .automatic)
-        }
-    }
-
     private func confirmLocation() {
-        if let centerCoordinate = currentCameraCenter {
-            selectedCoordinate = centerCoordinate
+        if let camera = cameraPosition.camera {
+            selectedCoordinate = camera.centerCoordinate
+        } else if let region = cameraPosition.region {
+            selectedCoordinate = region.center
         }
         dismiss()
     }
 
-    private var currentCameraCenter: CLLocationCoordinate2D? {
-        if let camera = cameraPosition.camera {
-            return camera.centerCoordinate
-        }
-        if let region = cameraPosition.region {
-            return region.center
-        }
-        return nil
-    }
-
     private var isShowingSearchAlert: Binding<Bool> {
         Binding(
-            get: {
-                switch searchState {
-                case .emptyResult, .failure:
-                    true
-                case .idle, .searching, .success:
-                    false
-                }
-            },
+            get: { searchState.isAlerting },
             set: { isPresented in
                 if !isPresented {
                     searchState = .idle
@@ -198,83 +193,11 @@ struct SelectLocationView: View {
             }
         )
     }
-
-    private var searchAlertTitle: String {
-        switch searchState {
-        case .emptyResult:
-            String(localized: "Location Not Found")
-        case .failure:
-            String(localized: "Unable to Search")
-        case .idle, .searching, .success:
-            ""
-        }
-    }
-
-    private var searchAlertMessage: String {
-        switch searchState {
-        case .emptyResult:
-            String(localized: "Try a different city, place, or address.")
-        case .failure(let message):
-            message
-        case .idle, .searching, .success:
-            ""
-        }
-    }
-}
-
-private struct ExpandedLocationMapView: View {
-    @Environment(\.dismiss) private var dismiss
-
-    @Binding var cameraPosition: MapCameraPosition
-    @Binding var selectedLocationName: String
-    @Binding var selectedCoordinate: CLLocationCoordinate2D
-    @Binding var radius: Double
-    @Binding var submittedSearchQuery: String
-    @Binding var showsUserLocation: Bool
-    @Binding var searchState: LocationSearchState
-
-    var body: some View {
-        ZStack(alignment: .topTrailing) {
-            LocationMapView(
-                cameraPosition: $cameraPosition,
-                selectedLocationName: $selectedLocationName,
-                selectedCoordinate: $selectedCoordinate,
-                radius: $radius,
-                submittedSearchQuery: $submittedSearchQuery,
-                showsUserLocation: $showsUserLocation,
-                searchState: $searchState
-            )
-            .ignoresSafeArea()
-
-            CircleIconButton(
-                systemName: "arrow.down.right.and.arrow.up.left",
-                accessibilityLabel: "Collapse map",
-                backgroundColor: Color(.systemBackground),
-                size: 48
-            ) { dismiss() }
-            .padding(.top, 12)
-            .padding(.trailing, 20)
-        }
-        .overlay(alignment: .bottomTrailing) {
-            CircleIconButton(
-                systemName: "location.fill",
-                accessibilityLabel: "Go to current location",
-                backgroundColor: Color(.systemBackground),
-                size: 48
-            ) {
-                withAnimation(.smooth(duration: 0.45)) {
-                    cameraPosition = .userLocation(fallback: .automatic)
-                }
-            }
-            .padding(.trailing, 20)
-            .padding(.bottom, 32)
-        }
-    }
 }
 
 #Preview {
     @Previewable @State var locationName = "Search Location"
-    @Previewable @State var coordinate = CLLocationCoordinate2D(latitude: 37.3377, longitude: -121.8787)
+    @Previewable @State var coordinate = MKCoordinateRegion.surabaya.center
     @Previewable @State var radius = 1.0
 
     SelectLocationView(

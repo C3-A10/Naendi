@@ -17,6 +17,16 @@ extension EditPreferenceView {
         selectedLocationName != Self.locationPlaceholder
     }
 
+    /// Sorting by distance measures from the picked location, falling back to
+    /// GPS. Only the fallback can fail, so a picked location needs no warning.
+    func warnIfSortNeedsLocation(_ option: SortOption) {
+        guard option == .distance, !hasSelectedLocation else { return }
+
+        if !locationPermission.requestIfNeeded() {
+            isShowingLocationDeniedAlert = true
+        }
+    }
+
     var editedCriteria: PreferenceCriteria {
         PreferenceCriteria(
             locationName: hasSelectedLocation ? selectedLocationName : nil,
