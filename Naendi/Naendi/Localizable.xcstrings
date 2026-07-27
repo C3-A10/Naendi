@@ -818,32 +818,32 @@
         }
       }
     },
-    "Choose how many place recommendations you want to see in your results." : {
+    "Choose how your recommendations are sorted." : {
       "localizations" : {
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilih jumlah rekomendasi tempat yang ingin Anda lihat dalam hasil."
+            "value" : "Pilih cara rekomendasi Anda diurutkan."
           }
         }
       }
     },
-    "Choose how your results are ordered, such as by distance, rating, or review count." : {
+    "Choose the atmosphere that fits your mood, from quiet spaces to lively spots." : {
       "localizations" : {
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilih urutan hasil, misalnya berdasarkan jarak, rating, atau jumlah ulasan."
+            "value" : "Pilih suasana yang sesuai dengan suasana hati Anda, dari tempat yang tenang hingga tempat yang ramai."
           }
         }
       }
     },
-    "Choose the atmosphere you prefer, from calm and relaxed to lively and energetic." : {
+    "Select when you plan to visit so we can recommend places that fit your schedule." : {
       "localizations" : {
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilih suasana yang Anda sukai, dari tenang dan santai hingga ramai dan penuh energi."
+            "value" : "Pilih waktu kunjungan agar kami dapat merekomendasikan tempat yang sesuai dengan jadwal Anda."
           }
         }
       }
@@ -858,12 +858,12 @@
         }
       }
     },
-    "Set when you plan to visit so the results can match places that are open at that time." : {
+    "Set the number of places shown in your results." : {
       "localizations" : {
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Atur waktu kunjungan agar hasil dapat menampilkan tempat yang buka pada waktu tersebut."
+            "value" : "Atur jumlah tempat yang ditampilkan dalam hasil Anda."
           }
         }
       }
@@ -1041,6 +1041,16 @@
       }
     },
     "Output Result" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jumlah Hasil"
+          }
+        }
+      }
+    },
+    "Output Results" : {
       "localizations" : {
         "id" : {
           "stringUnit" : {

@@ -53,7 +53,7 @@ extension EditPreferenceView {
             case .type: "Type"
             case .vibe: "Vibe"
             case .preferredTime: "Preferred Time"
-            case .outputResult: "Output Result"
+            case .outputResult: "Output Results"
             case .sortBy: "Sort By"
             }
         }
@@ -73,13 +73,13 @@ extension EditPreferenceView {
             case .type:
                 "Choose the type of place you're looking for, such as cafes, restaurants, street food, or more."
             case .vibe:
-                "Choose the atmosphere you prefer, from calm and relaxed to lively and energetic."
+                "Choose the atmosphere that fits your mood, from quiet spaces to lively spots."
             case .preferredTime:
-                "Set when you plan to visit so the results can match places that are open at that time."
+                "Select when you plan to visit so we can recommend places that fit your schedule."
             case .outputResult:
-                "Choose how many place recommendations you want to see in your results."
+                "Set the number of places shown in your results."
             case .sortBy:
-                "Choose how your results are ordered, such as by distance, rating, or review count."
+                "Choose how your recommendations are sorted."
             }
         }
     }
