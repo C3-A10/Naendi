@@ -14,6 +14,7 @@ struct SelectLocationView: View {
     @State private var showsUserLocation = true
     @State private var isMapExpanded = false
     @State private var searchState = LocationSearchState.idle
+    @State private var suggestionProvider = LocationSuggestionProvider()
 
     init(
         selectedLocationName: Binding<String>,
@@ -49,9 +50,22 @@ struct SelectLocationView: View {
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 34, style: .continuous))
 
-                PreferenceSearchField(query: $query, placeholder: "Search location")
-                    .onSubmit(submitSearch)
-                    .padding(20)
+                PreferenceSearchField(
+                    query: $query,
+                    placeholder: "Search location",
+                    suggestions: suggestionProvider.suggestions
+                ) { suggestion in
+                    query = suggestion.title
+                    suggestionProvider.clear()
+                    search(for: [suggestion.title, suggestion.subtitle]
+                        .filter { !$0.isEmpty }
+                        .joined(separator: ", "))
+                }
+                .onSubmit(submitSearch)
+                .onChange(of: query) { _, newValue in
+                    suggestionProvider.update(query: newValue)
+                }
+                .padding(20)
 
                 VStack {
                     Spacer()
@@ -149,7 +163,12 @@ struct SelectLocationView: View {
     }
 
     private func submitSearch() {
-        let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        suggestionProvider.clear()
+        search(for: query)
+    }
+
+    private func search(for text: String) {
+        let trimmedQuery = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedQuery.isEmpty else { return }
 
         submittedSearchQuery = ""
@@ -219,6 +238,47 @@ struct SelectLocationView: View {
         case .idle, .searching, .success:
             ""
         }
+    }
+}
+
+@MainActor
+@Observable
+final class LocationSuggestionProvider: NSObject, MKLocalSearchCompleterDelegate {
+    private(set) var suggestions: [SearchSuggestion] = []
+
+    private let completer = MKLocalSearchCompleter()
+
+    override init() {
+        super.init()
+        completer.resultTypes = [.address, .pointOfInterest]
+        completer.delegate = self
+    }
+
+    func update(query: String) {
+        let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard trimmedQuery.count >= 2 else {
+            clear()
+            return
+        }
+
+        completer.queryFragment = trimmedQuery
+    }
+
+    func clear() {
+        completer.cancel()
+        suggestions = []
+    }
+
+    nonisolated func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
+        let results = completer.results.prefix(5).map {
+            SearchSuggestion(title: $0.title, subtitle: $0.subtitle)
+        }
+        MainActor.assumeIsolated { suggestions = results }
+    }
+
+    nonisolated func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
+        MainActor.assumeIsolated { suggestions = [] }
     }
 }
 
