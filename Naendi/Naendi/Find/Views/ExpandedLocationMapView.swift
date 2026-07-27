@@ -34,18 +34,9 @@ struct ExpandedLocationMapView: View {
             .padding(.trailing, 20)
         }
         .overlay(alignment: .bottomTrailing) {
-            CircleIconButton(
-                systemName: "location.fill",
-                accessibilityLabel: "Go to current location",
-                backgroundColor: Color(.systemBackground),
-                size: 48
-            ) {
-                withAnimation(.smooth(duration: 0.45)) {
-                    cameraPosition = .userLocation(fallback: .automatic)
-                }
-            }
-            .padding(.trailing, 20)
-            .padding(.bottom, 32)
+            RecenterButton(cameraPosition: $cameraPosition)
+                .padding(.trailing, 20)
+                .padding(.bottom, 32)
         }
     }
 }

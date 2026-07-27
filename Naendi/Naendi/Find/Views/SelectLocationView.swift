@@ -143,16 +143,7 @@ struct SelectLocationView: View {
 
     private var mapControls: some View {
         VStack(spacing: 12) {
-            CircleIconButton(
-                systemName: "location.fill",
-                accessibilityLabel: "Go to current location",
-                backgroundColor: Color(.systemBackground),
-                size: 48
-            ) {
-                withAnimation(.smooth(duration: 0.45)) {
-                    cameraPosition = .userLocation(fallback: .automatic)
-                }
-            }
+            RecenterButton(cameraPosition: $cameraPosition)
 
             CircleIconButton(
                 systemName: "arrow.up.left.and.arrow.down.right",
