@@ -12,10 +12,11 @@ struct ResultView: View {
     @Environment(\.modelContext) private var modelContext
     @State var viewModel: DecideViewModel
     @State private var isComparing = false
-    @State private var selectedImageURL: URL?
     @State private var isNavigatingToCompare = false
     @State private var selectedPlace: Place?
     @State private var isShowingEditPreference = false
+    @State private var imgStartIndex: Int = 0
+    @State private var selectedPlaceForImage: Place?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -45,41 +46,31 @@ struct ResultView: View {
                         } label: {
                             Text("Cancel")
                                 .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(.white)
+                                .foregroundColor(.primary)
                                 .frame(height: 36)
                                 .padding(.horizontal, 16)
-                                .background(Color(white: 0.15))
+                                .background(.background)
                                 .clipShape(Capsule())
                         }
                         .transition(.scale.combined(with: .opacity))
+                        
                     } else {
-                        Button {
+                        
+                        CircleIconButton(systemName: "arrow.left.arrow.right", accessibilityLabel: "Compare", backgroundColor: Color(.systemBackground)) {
                             withAnimation(.spring()) {
                                 isComparing = true
                             }
-                        } label: {
-                            Image(systemName: "arrow.left.arrow.right")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.white)
-                                .frame(width: 40, height: 40)
-                                .background(Color(white: 0.15))
-                                .clipShape(Circle())
                         }
                         .transition(.scale.combined(with: .opacity))
 
-                        Button {
-                            isShowingEditPreference = true
-                        } label: {
-                            Image(systemName: "pencil")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.white)
-                                .frame(width: 40, height: 40)
-                                .background(Color(white: 0.15))
-                                .clipShape(Circle())
-                                .contentShape(Circle())
+                        
+                        CircleIconButton(systemName: "pencil", accessibilityLabel: "Preference",                     backgroundColor: Color(.systemBackground)) {
+                            withAnimation(.spring()) {
+                                isShowingEditPreference = true
+                            }
                         }
-                        .buttonStyle(.plain)
                         .transition(.scale.combined(with: .opacity))
+                        
                     }
                 }
             }
@@ -120,17 +111,22 @@ struct ResultView: View {
                     ScrollView {
                         LazyVStack(spacing: 20) {
                             ForEach(viewModel.places) { place in
+                                
                                 PlaceCardView(
                                     place: place,
                                     mode: .result,
                                     isChooseThisLocationBtnVisible: true,
-                                    isTagVisible: false,
+                                    isTagVisible: true,
                                     isReportVisible: false,
                                     viewModel: viewModel,
                                     isComparing: $isComparing,
-                                    selectedImageURL: $selectedImageURL,
+                                    onSelectImageIndex: { index in
+                                        imgStartIndex = index
+                                        selectedPlaceForImage = place
+                                    },
                                     selectedPlace: $selectedPlace
                                 )
+        
                             }
                         }
                         .padding(.vertical, 16)
@@ -163,9 +159,10 @@ struct ResultView: View {
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .fullScreenCover(item: $selectedImageURL) { url in
+        .fullScreenCover(item: $selectedPlaceForImage) { place in
             NavigationStack {
-                FullImageDetailView(url: url)
+                FullImageDetailView(imageUrls: place.parsedImageUrls, startIndex: imgStartIndex)
+                    .id("\(place.id)-\(imgStartIndex)")
             }
         }
         .fullScreenCover(item: $selectedPlace) { place in
@@ -175,7 +172,7 @@ struct ResultView: View {
         }
         .fullScreenCover(isPresented: $isNavigatingToCompare) {
             if viewModel.selectedPlaces.count >= 2 {
-                NavigationStack {                   
+                NavigationStack {
                     CompareView(
                         placeA: viewModel.selectedPlaces[0],
                         placeB: viewModel.selectedPlaces[1],
@@ -186,7 +183,7 @@ struct ResultView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $isShowingEditPreference) {           
+        .fullScreenCover(isPresented: $isShowingEditPreference) {
             EditPreferenceView(criteria: viewModel.criteria) { criteria in
                 Task {
                     await viewModel.applyPreferences(

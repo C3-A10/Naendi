@@ -12,11 +12,11 @@ struct LandingView: View {
     @Environment(\.modelContext) private var modelContext
     @State var viewModel: DecideViewModel
     @State private var isComparing: Bool = false
-    @State private var selectedImageURL: URL? = nil
     @State private var selectedPlace: Place? = nil
     @State private var scrollOffset: CGFloat = 0
     @State private var isShowingEditPreference = false
-    
+    @State private var imgStartIndex: Int = 0
+    @State private var selectedPlaceForImage: Place?
     
     var body: some View {
         VStack(spacing: 0) {
@@ -117,8 +117,21 @@ struct LandingView: View {
                         
                         LazyVStack(spacing: 20) {
                             ForEach(viewModel.landingPagePlaces) { place in
-                                
-                                PlaceCardView(place: place, mode: .landing, isChooseThisLocationBtnVisible: true, isTagVisible: true, isReportVisible: false, viewModel: viewModel, isComparing: $isComparing, selectedImageURL: $selectedImageURL, selectedPlace: $selectedPlace)
+                    
+                                PlaceCardView(
+                                    place: place,
+                                    mode: .landing,
+                                    isChooseThisLocationBtnVisible: true,
+                                    isTagVisible: true,
+                                    isReportVisible: false,
+                                    viewModel: viewModel,
+                                    isComparing: $isComparing,
+                                    onSelectImageIndex: { index in
+                                        imgStartIndex = index
+                                        selectedPlaceForImage = place
+                                    },
+                                    selectedPlace: $selectedPlace
+                                )
                                 
                             }
                         }
@@ -138,9 +151,9 @@ struct LandingView: View {
             isComparing = false
         }
         .navigationTitle(Text("Discover"))
-        .fullScreenCover(item: $selectedImageURL) { url in
+        .fullScreenCover(item: $selectedPlaceForImage) { place in
             NavigationStack {
-                FullImageDetailView(url: url)
+                FullImageDetailView(imageUrls: place.parsedImageUrls, startIndex: imgStartIndex)
             }
         }
         .fullScreenCover(item: $selectedPlace) { place in

@@ -57,8 +57,13 @@ struct PlaceCardNormalView: View {
                                     image
                                         .resizable()
                                         .aspectRatio(contentMode: .fill)
+                                } else if !viewModel.isNetworkConnected {
+                                    NoInternetPlaceholder(paddingBottom: 32)
                                 } else {
-                                    Color.gray.opacity(0.3)
+                                    ZStack {
+                                        Color.gray.opacity(0.1)
+                                        ProgressView().padding(.bottom, 32)
+                                    }
                                 }
                             }
                         } else {
@@ -132,8 +137,13 @@ struct PlaceCardNormalView: View {
                                             image
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fill)
+                                        } else if !viewModel.isNetworkConnected {
+                                            NoInternetPlaceholder(paddingBottom: 64)
                                         } else {
-                                            Color.gray.opacity(0.3)
+                                            ZStack {
+                                                Color.gray.opacity(0.1)
+                                                ProgressView().padding(.bottom, 40)
+                                            }
                                         }
                                     }
                                 } else {

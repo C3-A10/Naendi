@@ -17,7 +17,7 @@ struct PlaceCardExpandPhotoView: View {
     let isDetail: Bool
     let isReported: Bool
     let onReport: () -> Void
-    @Binding var selectedImageURL: URL?
+    let onSelectImageIndex: (Int) -> Void
     
     init(
         isComparing: Bool,
@@ -28,7 +28,7 @@ struct PlaceCardExpandPhotoView: View {
         isDetail: Bool = false,
         isReported: Bool = false,
         onReport: @escaping () -> Void = {},
-        selectedImageURL: Binding<URL?>
+        onSelectImageIndex: @escaping (Int) -> Void,
     ) {
         self.isComparing = isComparing
         self.isSelected = isSelected
@@ -38,7 +38,7 @@ struct PlaceCardExpandPhotoView: View {
         self.isDetail = isDetail
         self.isReported = isReported
         self.onReport = onReport
-        self._selectedImageURL = selectedImageURL
+        self.onSelectImageIndex = onSelectImageIndex
     }
     
     private var imageGallery: [String] {
@@ -47,13 +47,7 @@ struct PlaceCardExpandPhotoView: View {
         if !urls.isEmpty {
             return urls
         }
-        
-        // (Opsional) Fallback: Jika tempat tersebut sama sekali tidak punya gambar di JSON
-        // Gunakan 1 atau 2 gambar default agar layout grid di UI tidak rusak/kosong
-        return [
-            "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=800&auto=format&fit=crop"
-        ]
+        return []
     }
     
     var body: some View {
@@ -69,7 +63,10 @@ struct PlaceCardExpandPhotoView: View {
                                 AsyncImage(url: url) { phase in
                                     if let image = phase.image {
                                         image.resizable().aspectRatio(contentMode: .fill)
-                                    } else {
+                                    } else if !viewModel.isNetworkConnected {
+                                        NoInternetPlaceholder()
+                                    }
+                                    else {
                                         Color.gray.opacity(0.3)
                                     }
                                 }
@@ -78,7 +75,7 @@ struct PlaceCardExpandPhotoView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                                 .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous)) 
                                 .onTapGesture {
-                                    selectedImageURL = url
+                                    onSelectImageIndex(index)
                                 }
                             }
                         }
@@ -91,8 +88,14 @@ struct PlaceCardExpandPhotoView: View {
                                     AsyncImage(url: url) { phase in
                                         if let image = phase.image {
                                             image.resizable().aspectRatio(contentMode: .fill)
+                                        } else if !viewModel.isNetworkConnected {
+                                            NoInternetPlaceholder(isCaptionHidden: true)
                                         } else {
-                                            Color.gray.opacity(0.3)
+                                            ZStack {
+                                                Color.gray.opacity(0.1)
+                                                ProgressView()
+                                                    .scaleEffect(0.7)
+                                            }
                                         }
                                     }
                                     // 3. Set tinggi menjadi 104 agar total tinggi + spacing pas 220 (104 + 12 + 104)
@@ -101,7 +104,7 @@ struct PlaceCardExpandPhotoView: View {
                                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                                     .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                                     .onTapGesture {
-                                        selectedImageURL = url
+                                        onSelectImageIndex(index)
                                     }
                                 }
                                 
@@ -110,8 +113,14 @@ struct PlaceCardExpandPhotoView: View {
                                     AsyncImage(url: nextUrl) { phase in
                                         if let image = phase.image {
                                             image.resizable().aspectRatio(contentMode: .fill)
+                                        } else if !viewModel.isNetworkConnected {
+                                            NoInternetPlaceholder(isCaptionHidden: true)
                                         } else {
-                                            Color.gray.opacity(0.3)
+                                            ZStack {
+                                                Color.gray.opacity(0.1)
+                                                ProgressView()
+                                                    .scaleEffect(0.7)
+                                            }
                                         }
                                     }
                                     .frame(width: 160, height: 104)
@@ -119,7 +128,7 @@ struct PlaceCardExpandPhotoView: View {
                                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                                     .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                                     .onTapGesture {
-                                        selectedImageURL = nextUrl
+                                        onSelectImageIndex(index + 1)
                                     }
                                 }
                             }
