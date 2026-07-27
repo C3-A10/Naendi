@@ -23,6 +23,7 @@ class DecideViewModel {
     private let mapKitService = MapKitService()
     private let locationProvider: LocationProviding
     private let recommender: PlaceRecommender
+    private let networkMonitor = NetworkMonitor()
 
     /// The filtered, sorted results shown on the results screen.
     var places: [Place] = []
@@ -44,6 +45,8 @@ class DecideViewModel {
 
     var phase: DecidePhase = .landing
     var criteria: PreferenceCriteria = .default
+    
+    var isNetworkConnected: Bool { networkMonitor.isConnected }
 
     private(set) var awaitingOrigin = false
 

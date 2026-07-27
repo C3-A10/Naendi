@@ -8,90 +8,67 @@
 import SwiftUI
 
 struct FullImageDetailView: View {
-    let url: URL
+    let imageUrls: [String]
+    let startIndex: Int
     
     @Environment(\.dismiss) private var dismiss
-    @State private var scale: CGFloat = 1.0
-    @State private var lastScale: CGFloat = 1.0
+    @State private var selectedIndex: Int
+    
+    init(imageUrls: [String], startIndex: Int) {
+        self.imageUrls = imageUrls
+        self.startIndex = startIndex
+        self._selectedIndex = State(initialValue: startIndex)
+    }
     
     var body: some View {
-        ZStack {
-            // Latar belakang hitam penuh mengabaikan Safe Area
+        ZStack(alignment: .top) {
             Color.black
                 .ignoresSafeArea()
-            
-            // Render Gambar
-            AsyncImage(url: url) { phase in
-                switch phase {
-                case .success(let image):
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        // Fitur Pinch-to-Zoom menggunakan MagnificationGesture
-                        .scaleEffect(scale)
-                        .gesture(
-                            MagnificationGesture()
-                                .onChanged { value in
-                                    let delta = value / lastScale
-                                    lastScale = value
-                                    scale = min(max(scale * delta, 1.0), 4.0) // Batasi zoom minimal 1x, maksimal 4x
-                                }
-                                .onEnded { _ in
-                                    lastScale = 1.0
-                                    if scale < 1.0 {
-                                        withAnimation(.spring()) {
-                                            scale = 1.0
-                                        }
-                                    }
-                                }
-                        )
-                        // Double tap untuk reset zoom
-                        .onTapGesture(count: 2) {
-                            withAnimation(.spring()) {
-                                if scale > 1.0 {
-                                    scale = 1.0
-                                } else {
-                                    scale = 2.0
-                                }
-                            }
-                        }
-                    
-                case .failure(_):
-                    VStack(spacing: 12) {
-                        Image(systemName: "photo")
-                            .font(.system(size: 40))
-                            .foregroundColor(.gray)
-                        Text("Failed to load image")
-                            .font(.system(size: 14))
-                            .foregroundColor(.gray)
+            VStack {
+                header
+                TabView(selection: $selectedIndex) {
+                    ForEach(Array(imageUrls.enumerated()), id: \.offset) { index, urlString in
+                        ZoomableImageItem(urlString: urlString)
+                            .tag(index)
                     }
-                    
-                case .empty:
-                    ProgressView()
-                        .tint(.white)
-                        
-                @unknown default:
-                    EmptyView()
+                }
+                .tabViewStyle(.page(indexDisplayMode: .always))
+            }
+        }
+    }
+    
+    private var header: some View {
+        ZStack {
+            Text("\(selectedIndex + 1) / \(imageUrls.count)")
+                .font(.headline)
+                .foregroundColor(.white)
+                .multilineTextAlignment(.center)
+                .accessibilityAddTraits(.isHeader)
+                
+            HStack {
+                Spacer() // Mendorong konten ke kanan
+                
+                CircleIconButton(
+                    systemName: "xmark",
+                    accessibilityLabel: "Close full image",
+                    backgroundColor: Color(.darkGray)
+                ) {
+                    dismiss()
                 }
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarColorScheme(.dark, for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
-        .toolbarBackground(Color.black, for: .navigationBar)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: { dismiss() }) {
-                    Image(systemName: "chevron.backward")
-                        .foregroundColor(.white) // Pastikan dikunci warna putih
-                }
-            }
-        }
+        .padding(.horizontal, 24)
+        .padding(.top, 12)
+        .padding(.bottom, 16)
     }
 }
 
 #Preview {
-    NavigationStack {
-        FullImageDetailView(url: URL(string: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop")!)
-    }
+    FullImageDetailView(
+        imageUrls: [
+            "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=800&auto=format&fit=crop"
+        ],
+        startIndex: 0
+    )
 }
