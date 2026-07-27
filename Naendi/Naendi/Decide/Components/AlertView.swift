@@ -18,19 +18,19 @@ struct AlertView: View {
 
             VStack(alignment: .leading, spacing: 10) {
                 Text(LocalizedStringKey(title))
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.headline)
                     .foregroundStyle(.white)
                     .fixedSize(horizontal: false, vertical: true)
 
                 Text(message)
-                    .font(.system(size: 18, weight: .regular))
+                    .font(.body)
                     .foregroundStyle(.gray)
                     .fixedSize(horizontal: false, vertical: true)
             }
 
             Button(action: action) {
                 Text(LocalizedStringKey(buttonTitle))
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.headline)
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
@@ -53,6 +53,7 @@ struct AlertView: View {
                 .stroke(Color.white.opacity(0.06), lineWidth: 1)
         )
         .shadow(color: .black.opacity(0.3), radius: 20, y: 10)
+        .accessibilityElement(children: .contain)
     }
 }
 

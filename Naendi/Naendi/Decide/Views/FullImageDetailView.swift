@@ -10,16 +10,16 @@ import SwiftUI
 struct FullImageDetailView: View {
     let imageUrls: [String]
     let startIndex: Int
-    
+
     @Environment(\.dismiss) private var dismiss
     @State private var selectedIndex: Int
-    
+
     init(imageUrls: [String], startIndex: Int) {
         self.imageUrls = imageUrls
         self.startIndex = startIndex
         self._selectedIndex = State(initialValue: startIndex)
     }
-    
+
     var body: some View {
         ZStack(alignment: .top) {
             Color.black
@@ -36,7 +36,7 @@ struct FullImageDetailView: View {
             }
         }
     }
-    
+
     private var header: some View {
         ZStack {
             Text("\(selectedIndex + 1) / \(imageUrls.count)")
@@ -44,10 +44,10 @@ struct FullImageDetailView: View {
                 .foregroundColor(.white)
                 .multilineTextAlignment(.center)
                 .accessibilityAddTraits(.isHeader)
-                
+
             HStack {
                 Spacer() // Mendorong konten ke kanan
-                
+
                 CircleIconButton(
                     systemName: "xmark",
                     accessibilityLabel: "Close full image",
