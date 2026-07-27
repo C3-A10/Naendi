@@ -70,8 +70,14 @@ struct DistanceCheckmarkView: View {
                 .buttonStyle(.plain)
                 .disabled(isCheckDisabled)
                 .frame(minWidth: 44, minHeight: 44)
-                .accessibilityLabel("Select \(place.nama) for comparison")
-                .accessibilityValue(isSelected ? "Selected" : "Not selected")
+                .accessibilityLabel(Text("Select \(place.nama) for comparison"))
+                .accessibilityValue(
+                    Text(
+                        isSelected
+                            ? String(localized: "Selected")
+                            : String(localized: "Not selected")
+                    )
+                )
                 .accessibilityAddTraits(isSelected ? .isSelected : [])
             } else if isDetail {
                 Button {
