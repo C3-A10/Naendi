@@ -67,6 +67,21 @@ extension EditPreferenceView {
             case .sortBy: "About Sort By"
             }
         }
+
+        var description: LocalizedStringResource {
+            switch self {
+            case .type:
+                "Choose the type of place you're looking for, such as cafes, restaurants, street food, or more."
+            case .vibe:
+                "Choose the atmosphere you prefer, from calm and relaxed to lively and energetic."
+            case .preferredTime:
+                "Set when you plan to visit so the results can match places that are open at that time."
+            case .outputResult:
+                "Choose how many place recommendations you want to see in your results."
+            case .sortBy:
+                "Choose how your results are ordered, such as by distance, rating, or review count."
+            }
+        }
     }
 
     var typeOptions: [String] {

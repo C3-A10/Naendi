@@ -39,7 +39,7 @@ extension EditPreferenceView {
                     Text(tooltip.title)
                         .font(.headline)
 
-                    Text("Lorem ipsum…")
+                    Text(tooltip.description)
                         .font(.body)
                         .foregroundStyle(.secondary)
                 }
