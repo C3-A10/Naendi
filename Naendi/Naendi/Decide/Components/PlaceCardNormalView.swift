@@ -85,6 +85,7 @@ struct PlaceCardNormalView: View {
                     isReported: isReported,
                     onReport: onReport
                 )
+                .allowsHitTesting(isComparing || isDetail)
 
                 // Tombol Expand
                 Button {
@@ -113,8 +114,16 @@ struct PlaceCardNormalView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                     .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
                     .padding(12)
+                    .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .zIndex(2)
+                .accessibilityLabel(place.nama)
+                .accessibilityValue("Rating \(place.rating, specifier: "%.1f"), \(place.jumlahReview) reviews")
+                .accessibilityHint("Shows more details about this place.")
+                .accessibilityAction {
+                    expandCard()
+                }
             }
             .frame(maxWidth: .infinity)
             .frame(height: 240)
@@ -167,6 +176,7 @@ struct PlaceCardNormalView: View {
                             isReported: isReported,
                             onReport: onReport
                         )
+                        .allowsHitTesting(isDetail)
                         .padding(.top, 4)
                         .padding(.horizontal, 2)
 
@@ -206,8 +216,16 @@ struct PlaceCardNormalView: View {
                                 }
                                 .padding(12)
                                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                                .contentShape(Rectangle())
                             }
                             .buttonStyle(.plain)
+                            .zIndex(2)
+                            .accessibilityLabel(place.nama)
+                            .accessibilityValue("Rating \(place.rating, specifier: "%.1f"), \(place.jumlahReview) reviews")
+                            .accessibilityHint("Shows more details about this place.")
+                            .accessibilityAction {
+                                expandCard()
+                            }
                         }
                         .padding(12)
                         .frame(maxWidth: .infinity)
@@ -234,6 +252,12 @@ struct PlaceCardNormalView: View {
                 .shadow(color: Color.black.opacity(0.3), radius: 12, x: 0, y: 6)
             }
             .contentShape(Rectangle())
+        }
+    }
+
+    private func expandCard() {
+        withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
+            isExpanded = true
         }
     }
 }
