@@ -96,6 +96,12 @@ struct DistanceCheckmarkView: View {
                 .frame(minWidth: 44, minHeight: 44)
                 .accessibilityLabel(isReported ? "Place reported" : "Report \(place.nama)")
                 .accessibilityHint(isReported ? "" : "Reports inaccurate information about this place.")
+                .shadow(
+                        color: !isReported ? .black.opacity(0.15) : .clear,
+                        radius: !isReported ? 4 : 0,
+                        x: 0,
+                        y: 2
+                    )
             } else {
                 ReportBubbleView(reportCount: viewModel.reportCount(for: place))
                     .padding(.horizontal, 12)
