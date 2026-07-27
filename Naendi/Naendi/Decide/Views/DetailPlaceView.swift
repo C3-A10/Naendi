@@ -96,15 +96,15 @@ struct DetailPlaceView: View {
             GreenBlurBackground()
         }
         // GPS / out-of-radius alert
-        .alert("Pastikan kamu berada di lokasi!", isPresented: $showGPSAlert) {
-            Button("Aku mengerti", role: .cancel) { }
+        .alert("Location Required!", isPresented: $showGPSAlert) {
+            Button("I Understand", role: .cancel) { }
         } message: {
-            Text("Pelaporan hanya dapat diberikan di lokasi agar menjaga keakuratan informasi.")
+            Text("Make sure you're at the location and that GPS is enabled.")
         }
         // Confirmation alert when user IS within radius
-        .alert("Laporkan Tempat Ini?", isPresented: $showReportConfirm) {
-            Button("Batal", role: .cancel) { }
-            Button("Laporkan", role: .destructive) {
+        .alert("Report This Place?", isPresented: $showReportConfirm) {
+            Button("Cancel", role: .cancel) { }
+            Button("Report", role: .destructive) {
                 Task {
                     let didReport = await viewModel.reportPlace(place)
                     if didReport {
@@ -113,13 +113,15 @@ struct DetailPlaceView: View {
                 }
             }
         } message: {
-            Text("Apakah anda yakin ingin melaporkan \(place.nama)? Data ini tidak dapat diubah lagi.")
+            Text("Are you sure want to report \(place.nama)? Once submitted, this report can't be changed.")
         }
         // Start GPS so isWithinReportRadius has a fix to compare against.
         .task { viewModel.startLocationUpdates() }
         // Report outcome (success / already reported / failure).
         .alert(
-            "Laporan",
+            viewModel.reportMessage?.contains("already submitted") == true
+                ? "You've Already Reported"
+                : "Report Submitted",
             isPresented: Binding(
                 get: { viewModel.reportMessage != nil },
                 set: { if !$0 { viewModel.reportMessage = nil } }
