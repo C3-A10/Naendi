@@ -161,7 +161,7 @@ struct PlaceCardNormalView: View {
                             isCheckDisabled: true,
                             place: place,
                             viewModel: viewModel,
-                            distancePillColor: .white,
+                            distancePillColor: Color("color_green"),
                             isTagVisible: isTagVisible,
                             isDetail: isDetail,
                             isReported: isReported,
