@@ -178,7 +178,6 @@ struct ResultView: View {
                         placeB: viewModel.selectedPlaces[1],
                         viewModel: viewModel
                     )
-                    .navigationTitle("Compare")
                     .navigationBarTitleDisplayMode(.inline)
                 }
             }

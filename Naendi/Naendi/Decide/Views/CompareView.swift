@@ -25,6 +25,33 @@ struct CompareView: View {
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
+                // Header Bar
+                ZStack {
+                    Text("Compare")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.black)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                        .padding(.horizontal, 48)
+
+                    HStack {
+                        Spacer()
+
+                        CircleIconButton(
+                            systemName: "xmark",
+                            accessibilityLabel: "Close",
+                            backgroundColor: Color(.systemBackground)
+                        ) {
+                            withAnimation(.spring()) {
+                                dismiss()
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+                .frame(maxWidth: .infinity)
                 // Compare Table
                 CompareTable(
                     placeA: placeA,
@@ -65,21 +92,6 @@ struct CompareView: View {
         }
         .background {
             GreenBlurBackground()
-        }
-        
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                    Text("Compare")
-                        .font(.headline)
-                        .foregroundStyle(.black)
-                }
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: { dismiss() }) {
-                    Image(systemName: "xmark")
-                        .font(.headline)
-                }
-            }
         }
         
     }
