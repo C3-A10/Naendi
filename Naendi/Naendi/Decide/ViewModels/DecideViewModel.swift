@@ -155,7 +155,9 @@ class DecideViewModel {
         self.criteria = criteria
         shuffleSeed = UInt64.random(in: .min ... .max)
 
-        phase = .loading
+        if phase != .results {
+            phase = .loading
+        }
         isLoading = true
         errorMessage = nil
 
