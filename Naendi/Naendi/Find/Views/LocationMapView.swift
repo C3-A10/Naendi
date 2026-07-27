@@ -115,12 +115,19 @@ struct LocationMapView: View {
         }
     }
 
+    private static let pinSize: CGFloat = 88
+    /// The point the pin marks is the centre of the dark dot the teardrop rests
+    /// on, measured at 92.8% down the square asset — not the asset's bottom edge,
+    /// which is only that dot's lower arc.
+    private static let pinAnchorFraction: CGFloat = 0.928
+
     private var centerPin: some View {
         Image("naendi_location_pin")
             .resizable()
             .scaledToFit()
-            .frame(width: 88, height: 114)
-            .offset(y: -25)
+            .frame(width: Self.pinSize, height: Self.pinSize)
+            // Lift the anchor onto the camera centre the radius circle is drawn around.
+            .offset(y: -(Self.pinAnchorFraction - 0.5) * Self.pinSize)
             .accessibilityElement()
             .accessibilityLabel("Selected location")
             .accessibilityValue(selectedLocationName)
