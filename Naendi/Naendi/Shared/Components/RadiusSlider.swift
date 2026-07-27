@@ -37,6 +37,8 @@ struct RadiusSlider: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .offset(y: 28)
+                    .opacity(labelX < 46 ? 0 : 1)
+                    .animation(.easeInOut(duration: 0.15), value: labelX < 46)
                     .accessibilityHidden(true)
 
                 Text(formattedValue)
@@ -51,6 +53,8 @@ struct RadiusSlider: View {
                     .foregroundStyle(.secondary)
                     .frame(width: 22, alignment: .trailing)
                     .offset(x: trackWidth - 22, y: 28)
+                    .opacity(labelX > trackWidth - 40 ? 0 : 1)
+                    .animation(.easeInOut(duration: 0.15), value: labelX > trackWidth - 40)
                     .accessibilityHidden(true)
             }
             .contentShape(Rectangle())

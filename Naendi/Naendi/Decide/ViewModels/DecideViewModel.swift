@@ -23,6 +23,7 @@ class DecideViewModel {
     private let mapKitService = MapKitService()
     private let locationProvider: LocationProviding
     private let recommender: PlaceRecommender
+    private let networkMonitor = NetworkMonitor()
 
     /// The filtered, sorted results shown on the results screen.
     var places: [Place] = []
@@ -44,6 +45,8 @@ class DecideViewModel {
 
     var phase: DecidePhase = .landing
     var criteria: PreferenceCriteria = .default
+
+    var isNetworkConnected: Bool { networkMonitor.isConnected }
 
     private(set) var awaitingOrigin = false
 
@@ -94,42 +97,10 @@ class DecideViewModel {
         isLoading = true
         errorMessage = nil
         do {
-            let all = try await provider.places()
-
-            let byDistance: [Place]
-            if let origin {
-                let from = origin.clLocation
-                byDistance = all.sorted {
-                    from.distance(from: $0.coordinate.clLocation)
-                        < from.distance(from: $1.coordinate.clLocation)
-                }
-            } else {
-                byDistance = []
+            let all = try await provider.places { [weak self] fresh in
+                self?.applyLanding(fresh, perGroup: perGroup)
             }
-
-            func topReviewed(ofType type: String) -> [Place] {
-                all.filter { $0.typeTempat == type }
-                    .sorted { $0.jumlahReview > $1.jumlahReview }
-            }
-
-            var tags: [String: LandingTag] = [:]
-            var ordered: [Place] = []
-            func add(_ group: [Place], _ tag: LandingTag) {
-                var taken = 0
-                for place in group where tags[place.id] == nil {
-                    tags[place.id] = tag
-                    ordered.append(place)
-                    taken += 1
-                    if taken == perGroup { break }
-                }
-            }
-
-            add(byDistance, .nearby)
-            add(topReviewed(ofType: "Restaurant"), .top(type: "Restaurant"))
-            add(topReviewed(ofType: "Cafe"), .top(type: "Cafe"))
-
-            landingPagePlaces = ordered
-            landingTags = tags
+            applyLanding(all, perGroup: perGroup)
         } catch {
             errorMessage = error.localizedDescription
             landingPagePlaces = []
@@ -137,6 +108,43 @@ class DecideViewModel {
         }
         await loadReportCounts()
         isLoading = false
+    }
+
+    private func applyLanding(_ all: [Place], perGroup: Int) {
+        let byDistance: [Place]
+        if let origin {
+            let from = origin.clLocation
+            byDistance = all.sorted {
+                from.distance(from: $0.coordinate.clLocation)
+                    < from.distance(from: $1.coordinate.clLocation)
+            }
+        } else {
+            byDistance = []
+        }
+
+        func topReviewed(ofType type: String) -> [Place] {
+            all.filter { $0.typeTempat == type }
+                .sorted { $0.jumlahReview > $1.jumlahReview }
+        }
+
+        var tags: [String: LandingTag] = [:]
+        var ordered: [Place] = []
+        func add(_ group: [Place], _ tag: LandingTag) {
+            var taken = 0
+            for place in group where tags[place.id] == nil {
+                tags[place.id] = tag
+                ordered.append(place)
+                taken += 1
+                if taken == perGroup { break }
+            }
+        }
+
+        add(byDistance, .nearby)
+        add(topReviewed(ofType: "Restaurant"), .top(type: "Restaurant"))
+        add(topReviewed(ofType: "Cafe"), .top(type: "Cafe"))
+
+        landingPagePlaces = ordered
+        landingTags = tags
     }
 
     func loadRecommendations(
@@ -164,7 +172,17 @@ class DecideViewModel {
         awaitingOrigin = false
 
         do {
-            let all = try await provider.places()
+            let seed = shuffleSeed
+            let all = try await provider.places { [weak self] fresh in
+                guard let self else { return }
+                self.places = self.recommender.recommend(
+                    fresh,
+                    criteria: criteria,
+                    origin: origin,
+                    now: now,
+                    seed: seed
+                )
+            }
             places = recommender.recommend(
                 all,
                 criteria: criteria,
@@ -243,7 +261,7 @@ class DecideViewModel {
         return false
     }
 
-    // ambil reportcount terbaru 
+    // ambil reportcount terbaru
     func reportCount(for place: Place) -> Int {
         reportCounts[place.id] ?? place.reportCount
     }

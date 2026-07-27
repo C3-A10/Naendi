@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PlaceCardExpandPhotoView: View {
-    
+
     let isComparing: Bool
     let isSelected: Bool
     let isCheckDisabled: Bool
@@ -17,8 +17,8 @@ struct PlaceCardExpandPhotoView: View {
     let isDetail: Bool
     let isReported: Bool
     let onReport: () -> Void
-    @Binding var selectedImageURL: URL?
-    
+    let onSelectImageIndex: (Int) -> Void
+
     init(
         isComparing: Bool,
         isSelected: Bool,
@@ -28,7 +28,7 @@ struct PlaceCardExpandPhotoView: View {
         isDetail: Bool = false,
         isReported: Bool = false,
         onReport: @escaping () -> Void = {},
-        selectedImageURL: Binding<URL?>
+        onSelectImageIndex: @escaping (Int) -> Void,
     ) {
         self.isComparing = isComparing
         self.isSelected = isSelected
@@ -38,52 +38,45 @@ struct PlaceCardExpandPhotoView: View {
         self.isDetail = isDetail
         self.isReported = isReported
         self.onReport = onReport
-        self._selectedImageURL = selectedImageURL
+        self.onSelectImageIndex = onSelectImageIndex
     }
-    
+
     private var imageGallery: [String] {
         let urls = place.parsedImageUrls
-        
+
         if !urls.isEmpty {
             return urls
         }
-        
-        // (Opsional) Fallback: Jika tempat tersebut sama sekali tidak punya gambar di JSON
-        // Gunakan 1 atau 2 gambar default agar layout grid di UI tidak rusak/kosong
-        return [
-            "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=800&auto=format&fit=crop"
-        ]
+        return []
     }
-    
+
     var body: some View {
         ZStack(alignment: .top) {
             ScrollView(.horizontal, showsIndicators: false) {
                 // 1. Set spacing LazyHStack ke 12, dan beri padding horizontal 12
                 LazyHStack(spacing: 12) {
                     ForEach(Array(imageGallery.enumerated()), id: \.offset) { index, urlString in
-                        
+
                         // POLA 1: FULL IMAGE (Indeks 0, 3, 6, ...)
                         if index % 3 == 0 {
                             if let url = URL(string: urlString) {
-                                Button {
-                                    selectedImageURL = url
-                                } label: {
-                                    AsyncImage(url: url) { phase in
-                                        if let image = phase.image {
-                                            image.resizable().aspectRatio(contentMode: .fill)
-                                        } else {
-                                            Color.gray.opacity(0.3)
-                                        }
+                                AsyncImage(url: url) { phase in
+                                    if let image = phase.image {
+                                        image.resizable().aspectRatio(contentMode: .fill)
+                                    } else if !viewModel.isNetworkConnected {
+                                        NoInternetPlaceholder()
+                                    }
+                                    else {
+                                        Color.gray.opacity(0.3)
                                     }
                                 }
-                                .buttonStyle(.plain)
                                 .frame(width: 290, height: 220)
                                 .clipped()
                                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                                .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous)) 
-                                .accessibilityLabel("Photo \(index + 1) of \(imageGallery.count) for \(place.nama)")
-                                .accessibilityHint("Opens the photo in full screen.")
+                                .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                                .onTapGesture {
+                                    onSelectImageIndex(index)
+                                }
                             }
                         }
                         // POLA 2: TUMPUK ATAS BAWAH (Mulai di Indeks 1, 4, 7, ...)
@@ -92,47 +85,51 @@ struct PlaceCardExpandPhotoView: View {
                             VStack(spacing: 12) {
                                 // Gambar Atas (Indeks saat ini)
                                 if let url = URL(string: urlString) {
-                                    Button {
-                                        selectedImageURL = url
-                                    } label: {
-                                        AsyncImage(url: url) { phase in
-                                            if let image = phase.image {
-                                                image.resizable().aspectRatio(contentMode: .fill)
-                                            } else {
-                                                Color.gray.opacity(0.3)
+                                    AsyncImage(url: url) { phase in
+                                        if let image = phase.image {
+                                            image.resizable().aspectRatio(contentMode: .fill)
+                                        } else if !viewModel.isNetworkConnected {
+                                            NoInternetPlaceholder(isCaptionHidden: true)
+                                        } else {
+                                            ZStack {
+                                                Color.gray.opacity(0.1)
+                                                ProgressView()
+                                                    .scaleEffect(0.7)
                                             }
                                         }
                                     }
-                                    .buttonStyle(.plain)
                                     // 3. Set tinggi menjadi 104 agar total tinggi + spacing pas 220 (104 + 12 + 104)
                                     .frame(width: 160, height: 104)
                                     .clipped()
                                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                                     .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                                    .accessibilityLabel("Photo \(index + 1) of \(imageGallery.count) for \(place.nama)")
-                                    .accessibilityHint("Opens the photo in full screen.")
+                                    .onTapGesture {
+                                        onSelectImageIndex(index)
+                                    }
                                 }
-                                
+
                                 // Gambar Bawah (Ambil indeks + 1 jika ada)
                                 if index + 1 < imageGallery.count, let nextUrl = URL(string: imageGallery[index + 1]) {
-                                    Button {
-                                        selectedImageURL = nextUrl
-                                    } label: {
-                                        AsyncImage(url: nextUrl) { phase in
-                                            if let image = phase.image {
-                                                image.resizable().aspectRatio(contentMode: .fill)
-                                            } else {
-                                                Color.gray.opacity(0.3)
+                                    AsyncImage(url: nextUrl) { phase in
+                                        if let image = phase.image {
+                                            image.resizable().aspectRatio(contentMode: .fill)
+                                        } else if !viewModel.isNetworkConnected {
+                                            NoInternetPlaceholder(isCaptionHidden: true)
+                                        } else {
+                                            ZStack {
+                                                Color.gray.opacity(0.1)
+                                                ProgressView()
+                                                    .scaleEffect(0.7)
                                             }
                                         }
                                     }
-                                    .buttonStyle(.plain)
                                     .frame(width: 160, height: 104)
                                     .clipped()
                                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                                     .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                                    .accessibilityLabel("Photo \(index + 2) of \(imageGallery.count) for \(place.nama)")
-                                    .accessibilityHint("Opens the photo in full screen.")
+                                    .onTapGesture {
+                                        onSelectImageIndex(index + 1)
+                                    }
                                 }
                             }
                         }
@@ -143,7 +140,7 @@ struct PlaceCardExpandPhotoView: View {
                 .padding(.vertical, 10)   // Penyeimbang sisa tinggi frame kontainer (240 - 220) / 2
             }
             .frame(height: 240)
-            
+
             // --- Overlay: Pill Jarak dan Checkbox Kanan ---
             DistanceCheckmarkView(
                 isComparing: isComparing,

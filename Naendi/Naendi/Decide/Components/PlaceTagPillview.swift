@@ -10,7 +10,7 @@ import SwiftUI
 struct PlaceTagPillView: View {
     let title: String
     var style: PlaceTagStyle
-    
+
     var body: some View {
         HStack(spacing: 4) {
 
@@ -18,9 +18,10 @@ struct PlaceTagPillView: View {
                 .resizable()
                 .frame(width: style == .pinLight ? 9 : 15, height: 15)
                 .accessibilityHidden(true)
-            
+
             Text(title)
-                .font(.system(size: 14, weight: .semibold))
+                .font(.caption2)
+                .fontWeight(.semibold)
                 .foregroundColor(style.contentColor)
         }
         .padding(.horizontal, 14)

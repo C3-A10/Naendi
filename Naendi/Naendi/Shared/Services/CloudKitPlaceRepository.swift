@@ -14,28 +14,47 @@ final class CloudKitPlaceRepository: PlaceRepository {
     private var container: CKContainer { CKContainer(identifier: containerID) }
 
     func getAllPlaces() async throws -> [Place] {
-        let database = container.publicCloudDatabase
-            let query = CKQuery(recordType: "Places", predicate: NSPredicate(value: true))
-
-            var places: [Place] = []
-
-            let firstPage = try await database.records(matching: query)
-            let firstRecords = firstPage.matchResults
-            var cursor = firstPage.queryCursor
-
-            addPlaces(from: firstRecords, into: &places)
-
-            while let currentCursor = cursor {
-                let nextPage = try await database.records(continuingMatchFrom: currentCursor)
-                let nextRecords = nextPage.matchResults
-                cursor = nextPage.queryCursor
-
-                addPlaces(from: nextRecords, into: &places)
-            }
-
-            return places
+        var places: [Place] = []
+        try await streamAllPlaces { places += $0 }
+        return places
     }
-    
+
+    // Most-reviewed first, so the first page shown at launch is the best content.
+    // Requires jumlah_review to be marked Sortable in the CloudKit dashboard.
+    private var placesQuery: CKQuery {
+        let query = CKQuery(recordType: "Places", predicate: NSPredicate(value: true))
+        query.sortDescriptors = [NSSortDescriptor(key: "jumlah_review", ascending: false)]
+        return query
+    }
+
+    func fetchFirstPage() async throws -> [Place] {
+        let database = container.publicCloudDatabase
+        var places: [Place] = []
+        let firstPage = try await database.records(matching: placesQuery)
+        addPlaces(from: firstPage.matchResults, into: &places)
+        return places
+    }
+
+    func streamAllPlaces(onPage: ([Place]) async throws -> Void) async throws {
+        let database = container.publicCloudDatabase
+
+        let firstPage = try await database.records(matching: placesQuery)
+        var cursor = firstPage.queryCursor
+
+        var places: [Place] = []
+        addPlaces(from: firstPage.matchResults, into: &places)
+        try await onPage(places)
+
+        while let currentCursor = cursor {
+            let nextPage = try await database.records(continuingMatchFrom: currentCursor)
+            cursor = nextPage.queryCursor
+
+            var batch: [Place] = []
+            addPlaces(from: nextPage.matchResults, into: &batch)
+            try await onPage(batch)
+        }
+    }
+
     @discardableResult
     func report(placeID: String) async throws -> Bool {
         let database = container.publicCloudDatabase
@@ -92,7 +111,7 @@ final class CloudKitPlaceRepository: PlaceRepository {
             }
         }
     }
-    
+
     func makePlace(from record: CKRecord) -> Place? {
         guard let nama = record["nama"] as? String,
               let location = record["location"] as? CLLocation else {
@@ -119,9 +138,9 @@ final class CloudKitPlaceRepository: PlaceRepository {
             halalEvidence: (record["halal_evidence"] as? String) ?? "",
             reviewPositif: (record["review_positif"] as? String) ?? "",
             reviewNegatif: (record["review_negatif"] as? String) ?? "",
-            imgUrls: (record["images"] as? String) ?? (record["images"] as? String),
+            imgUrls: record["images"] as? String,
             reportCount: 0
         )
     }
-    
+
 }

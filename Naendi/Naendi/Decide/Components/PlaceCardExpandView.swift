@@ -9,25 +9,25 @@ import SwiftUI
 import Combine
 
 struct PlaceCardExpandView: View {
-    
+
     let place: Place
     let isChooseThisLocationBtnVisible: Bool
     @Binding var isExpanded: Bool
     @Binding var isComparing: Bool
     @State var viewModel: DecideViewModel
-    @Binding var selectedImageURL: URL?
+    let onSelectImageIndex: (Int) -> Void
     @Binding var selectedPlace: Place?
     let isDetail: Bool
     let isReported: Bool
     let onReport: () -> Void
-    
+
     init(
         place: Place,
         isChooseThisLocationBtnVisible: Bool,
         isExpanded: Binding<Bool>,
         isComparing: Binding<Bool>,
         viewModel: DecideViewModel,
-        selectedImageURL: Binding<URL?>,
+        onSelectImageIndex: @escaping (Int) -> Void,
         selectedPlace: Binding<Place?>,
         isDetail: Bool = false,
         isReported: Bool = false,
@@ -38,21 +38,21 @@ struct PlaceCardExpandView: View {
         self._isExpanded = isExpanded
         self._isComparing = isComparing
         self._viewModel = State(initialValue: viewModel)
-        self._selectedImageURL = selectedImageURL
+        self.onSelectImageIndex = onSelectImageIndex
         self._selectedPlace = selectedPlace
         self.isDetail = isDetail
         self.isReported = isReported
         self.onReport = onReport
     }
-    
+
     // Helper status
     private var isSelected: Bool { viewModel.isSelected(place) }
     private var isCheckDisabled: Bool { viewModel.isCompareLimitReached && !isSelected }
-        
+
     // Di PlaceCardExpandView.swift
     var body: some View {
         VStack { // 1. Kunci jarak atas-bawah di sini (bukan 0)
-            
+
             PlaceCardExpandPhotoView(
                 isComparing: isComparing,
                 isSelected: isSelected,
@@ -62,9 +62,9 @@ struct PlaceCardExpandView: View {
                 isDetail: isDetail,
                 isReported: isReported,
                 onReport: onReport,
-                selectedImageURL: $selectedImageURL
+                onSelectImageIndex: onSelectImageIndex,
             )
-            
+
             PlaceCardExpandInfoView(
                 place: place, isChooseThisLocationBtnVisible: isChooseThisLocationBtnVisible,
                 isExpanded: $isExpanded, selectedPlace: $selectedPlace
@@ -81,14 +81,14 @@ struct PlaceCardExpandView: View {
     ZStack {
         Color(UIColor.systemGray6)
             .ignoresSafeArea()
-        
+
         ScrollView {
             PlaceCardExpandView(
                 place: Place.dummyData[0], isChooseThisLocationBtnVisible: false,
                 isExpanded: .constant(false),
                 isComparing: .constant(true),
                 viewModel: DecideViewModel(),
-                selectedImageURL: .constant(URL(string: Place.dummyData[0].imgUrl ?? "")),
+                onSelectImageIndex: { index in },
                 selectedPlace: .constant(nil),
             )
             .padding(.horizontal)

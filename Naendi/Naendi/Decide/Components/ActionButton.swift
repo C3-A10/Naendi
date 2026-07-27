@@ -13,7 +13,7 @@ struct CustomActionButton: View {
     let textColor: Color
     let isDisabled: Bool
     let action: () -> Void
-    
+
     init(
         text: LocalizedStringResource,
         backgroundColor: Color,
@@ -27,11 +27,12 @@ struct CustomActionButton: View {
         self.isDisabled = isDisabled
         self.action = action
     }
-    
+
     var body: some View {
         Button(action: action) {
             Text(text)
                 .font(.headline)
+                .fontWeight(.bold)
                 .foregroundColor(textColor)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)

@@ -57,12 +57,21 @@ struct SelectLocationView: View {
                     Spacer()
                     HStack {
                         Spacer()
-                        CircleIconButton(
-                            systemName: "arrow.up.left.and.arrow.down.right",
-                            accessibilityLabel: "Expand map",
-                            backgroundColor: Color(.systemBackground),
-                            size: 48
-                        ) { isMapExpanded = true }
+                        VStack(spacing: 12) {
+                            CircleIconButton(
+                                systemName: "location.fill",
+                                accessibilityLabel: "Go to current location",
+                                backgroundColor: Color(.systemBackground),
+                                size: 48
+                            ) { recenterOnUser() }
+
+                            CircleIconButton(
+                                systemName: "arrow.up.left.and.arrow.down.right",
+                                accessibilityLabel: "Expand map",
+                                backgroundColor: Color(.systemBackground),
+                                size: 48
+                            ) { isMapExpanded = true }
+                        }
                     }
                 }
                 .padding(18)
@@ -75,7 +84,9 @@ struct SelectLocationView: View {
                 .padding(.top, 28)
                 .padding(.bottom, 36)
         }
-        .background(Color(uiColor: .systemBackground))
+        .background {
+            GreenBlurBackground()
+        }
         .fullScreenCover(isPresented: $isMapExpanded) {
             ExpandedLocationMapView(
                 cameraPosition: $cameraPosition,
@@ -144,6 +155,12 @@ struct SelectLocationView: View {
         submittedSearchQuery = ""
         Task { @MainActor in
             submittedSearchQuery = trimmedQuery
+        }
+    }
+
+    private func recenterOnUser() {
+        withAnimation(.smooth(duration: 0.45)) {
+            cameraPosition = .userLocation(fallback: .automatic)
         }
     }
 
@@ -237,6 +254,20 @@ private struct ExpandedLocationMapView: View {
             ) { dismiss() }
             .padding(.top, 12)
             .padding(.trailing, 20)
+        }
+        .overlay(alignment: .bottomTrailing) {
+            CircleIconButton(
+                systemName: "location.fill",
+                accessibilityLabel: "Go to current location",
+                backgroundColor: Color(.systemBackground),
+                size: 48
+            ) {
+                withAnimation(.smooth(duration: 0.45)) {
+                    cameraPosition = .userLocation(fallback: .automatic)
+                }
+            }
+            .padding(.trailing, 20)
+            .padding(.bottom, 32)
         }
     }
 }

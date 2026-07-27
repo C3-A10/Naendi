@@ -7,22 +7,20 @@
 import SwiftData
 
 final class SwiftDataPlaceStore: PlaceStore {
-    
+
     private let context: ModelContext
-    
+
     init(context: ModelContext) {
         self.context = context
     }
-    
+
     func save(_ places: [Place]) throws {
-       
-        try context.delete(model: PlaceEntity.self)
         for place in places {
             context.insert(PlaceEntity(from: place))
         }
         try context.save()
     }
-    
+
     func loadPlaces() throws -> [Place] {
         let descriptor = FetchDescriptor<PlaceEntity>()
         let entities = try context.fetch(descriptor)

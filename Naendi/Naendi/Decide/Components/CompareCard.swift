@@ -12,22 +12,21 @@ struct CompareCard: View {
     let isSelected: Bool
     let onTap: () -> Void
     let viewModel: DecideViewModel
-    
-    
+
+
     var body: some View {
-        Button(action: onTap) {
-            VStack(alignment: .leading, spacing: 0) {
-                
+        VStack(alignment: .leading, spacing: 0) {
+
                 // MARK: Image & Badge
                 ZStack(alignment: .topTrailing) {
-                    
+
                     if let imgUrlString = item.imgUrl,
                        !imgUrlString.isEmpty,
                        let url = URL(string: imgUrlString) {
-                        
+
                         AsyncImage(url: url) { phase in
                             switch phase {
-                                
+
                             case .success(let image):
                                 GeometryReader { geo in
                                     image
@@ -37,51 +36,52 @@ struct CompareCard: View {
                                         .clipped()
                                 }
                                 .frame(height: 130)
-                                
+
                             case .failure, .empty:
                                 placeholderView
-                                
+
                             @unknown default:
                                 EmptyView()
                             }
                         }
-                        .accessibilityHidden(true)
-                        
+
                     } else {
                         placeholderView
                     }
-                    
+
                     ReportBubbleView(reportCount: viewModel.reportCount(for: item))
                         .padding(12)
                 }
-                
+
                 VStack(alignment: .leading, spacing: 8) {
-                    
+
                     Text(item.nama)
-                        .font(.system(size: 16, weight: .bold))
+                        .font(.headline)
+                        .fontWeight(.bold)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
                         .padding(.top, 10)
                         .foregroundColor(.primary)
-                    
+
                     BrickLayout(spacing: 6) {
-                        
+
                         HStack(spacing: 3) {
                             Image(systemName: "star.fill")
                                 .foregroundColor(Color(red: 0.95, green: 0.76, blue: 0.29))
-                                .font(.system(size: 13))
-                            
+                                .font(.body)
+
                             Text(String(format: "%.1f", item.rating))
-                                .font(.system(size: 12, weight: .semibold))
+                                .font(.body)
+                                .fontWeight(.semibold)
                                 .foregroundColor(.gray)
                         }
-                        
+
                         TagView(
                             text: item.vibe,
                             backgroundColor: Color(red: 0.82, green: 0.94, blue: 0.89),
                             textColor: Color(red: 0.22, green: 0.55, blue: 0.42)
                         )
-                        
+
                         if item.halal.lowercased() == "halal" {
                             TagView(
                                 text: "Halal",
@@ -96,20 +96,20 @@ struct CompareCard: View {
                             )
                         }
                     }
-                    
+
                     VStack(alignment: .leading, spacing: 2) {
                         if let locationName = viewModel.criteria.locationName,
                            viewModel.criteria.coordinate != nil {
-                            Text("\(viewModel.calculateDistance(to: item)) dari \(locationName),")
+                            Text("\(viewModel.calculateDistance(to: item)) dari \(locationName),").font(.caption)
                         };
-                            Text("\(viewModel.calculateDistanceFromMe(to: item)) dari lokasi Anda saat ini.")
+                            Text("\(viewModel.calculateDistanceFromMe(to: item)) dari lokasi Anda saat ini.").font(.caption)
                     }
                     .font(.system(size: 12))
                     .foregroundColor(.gray)
-                    
+
                     Divider()
                         .padding(.vertical, 4)
-                    
+
                     DetailRowView(title: "Address", value: item.alamat)
                     DetailRowView(title: "Price Range", value: item.rangeHarga)
                     DetailRowView(title: "Operating Hour", value: item.jamHariIniFormatted)
@@ -132,50 +132,16 @@ struct CompareCard: View {
                     )
             )
             .shadow(color: Color.black.opacity(0.08), radius: 10, x: 0, y: 6)
-                .animation(.easeInOut(duration: 0.2), value: isSelected)
-            }
-        .buttonStyle(.plain)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(item.nama)
-        .accessibilityValue(compareAccessibilityValue)
-        .accessibilityHint("Selects this place for comparison.")
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
-    }
-
-    private var compareAccessibilityValue: String {
-        let status = isSelected ? String(localized: "Selected") : String(localized: "Not selected")
-        return String(localized: "\(status), rating \(item.rating, specifier: "%.1f"), \(item.accessibilityPriceRangeDescription), \(item.alamat)")
-    }
-        
-    private var placeholderView: some View {
-        Color.gray.opacity(0.3)
-            .frame(height: 130)
-            .overlay(ProgressView())
-            .accessibilityHidden(true)
-    }
-}
-
-// MARK: - Sub Component Detail Row
-struct DetailRowView: View {
-    let title: String
-    let value: String
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(LocalizedStringKey(title))
-                .font(.system(size: 14, weight: .bold))
-                .foregroundColor(.primary)
-            
-            Text(value)
-                .font(.system(size: 12, weight: .regular))
-                .foregroundColor(.gray)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
+            .animation(.easeInOut(duration: 0.2), value: isSelected)
+            .onTapGesture { onTap() }
         }
-        .accessibilityElement(children: .combine)
-        .padding(.bottom, 6)
     }
-}
+
+        private var placeholderView: some View {
+            Color.gray.opacity(0.3)
+                .frame(height: 130)
+                .overlay(ProgressView())
+        }
 
 #Preview("Selected") {
     CompareCard(
