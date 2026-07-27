@@ -220,8 +220,8 @@ struct PlaceCardNormalView: View {
                         .frame(height: 130)
                         .background(
                             FolderTabShape(
-                                tabWidth: 190,
-                                slopeWidth: 40,
+                                tabWidth: 215,
+                                slopeWidth: 30,
                                 leftTabHeight: 135,
                                 rightTabHeight: 101,
                                 leftCornerRadius: 20,
