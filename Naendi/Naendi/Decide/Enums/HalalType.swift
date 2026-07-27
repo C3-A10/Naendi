@@ -14,9 +14,9 @@ enum HalalType: String, CaseIterable {
     var description: String {
         switch self {
         case .halal:
-            return String(localized: "No pork no lard.")
+            return String(localized: "Shows places that hold a recognized halal certification.")
         case .nonHalal:
-            return String(localized: "Possible pork or lard.")
+            return String(localized: "Shows places that serve non-halal food or ingredients.")
         }
     }
 }
