@@ -16,13 +16,13 @@ enum VibeType: String, CaseIterable {
     var description: String {
         switch self {
         case .any:
-            return String(localized: "Any kind of atmosphere.")
+            return String(localized: "Includes places with all atmosphere types.")
         case .calm:
-            return String(localized: "Quiet and peaceful atmosphere.")
+            return String(localized: "Places with a quieter and more relaxed atmosphere.")
         case .balanced:
-            return String(localized: "Not too crowded, not too quiet.")
+            return String(localized: "Places with a balanced level of activity.")
         case .lively:
-            return String(localized: "Energetic, bustling, and crowded.")
+            return String(localized: "Places with a more active and social atmosphere.")
         }
     }
 }

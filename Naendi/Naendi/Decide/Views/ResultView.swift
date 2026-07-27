@@ -28,7 +28,8 @@ struct ResultView: View {
                         .foregroundColor(.black)
                     if isComparing {
                         Text("Select any 2 places to compare")
-                            .font(.system(size: 14, weight: .medium))
+                            //.font(.system(size: 14, weight: .medium))
+                            .font(.callout.weight(.medium))
                             .foregroundColor(.gray)
                             .transition(.opacity.combined(with: .move(edge: .top)))
                     }
