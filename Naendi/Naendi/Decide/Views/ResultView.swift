@@ -166,9 +166,10 @@ struct ResultView: View {
             }
         }
         .fullScreenCover(item: $selectedPlace) { place in
-            NavigationStack {
-                DetailPlaceView(place: place)
-            }
+            DetailPlaceView(
+                place: place,
+                viewModel: viewModel
+            )
         }
         .fullScreenCover(isPresented: $isNavigatingToCompare) {
             if viewModel.selectedPlaces.count >= 2 {

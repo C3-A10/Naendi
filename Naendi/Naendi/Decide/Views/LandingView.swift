@@ -158,7 +158,7 @@ struct LandingView: View {
         }
         .fullScreenCover(item: $selectedPlace) { place in
             NavigationStack {
-                DetailPlaceView(place: place)
+                DetailPlaceView(place: place,viewModel: viewModel)
             }
         }
         .fullScreenCover(isPresented: $isShowingEditPreference) {

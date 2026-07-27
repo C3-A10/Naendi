@@ -11,7 +11,7 @@ struct DetailPlaceView: View {
     let place: Place
 
     @Environment(\.dismiss) private var dismiss
-    @State private var viewModel = DecideViewModel()
+    let viewModel: DecideViewModel
     @State private var isComparing: Bool = false
     @State private var selectedImageURL: URL? = nil
     @State private var dummySelectedPlace: Place? = nil
@@ -145,5 +145,8 @@ struct DetailPlaceView: View {
 }
 
 #Preview {
-    DetailPlaceView(place: Place.dummyData[1])
+    DetailPlaceView(
+        place: Place.dummyData[1],
+        viewModel: DecideViewModel()
+    )
 }

@@ -83,7 +83,10 @@ struct CompareView: View {
             }) {
                 if let selectedPlace {
                     NavigationStack {
-                        DetailPlaceView(place: selectedPlace)
+                        DetailPlaceView(
+                            place: selectedPlace,
+                            viewModel: viewModel
+                        )
                     }
                 } else {
                     EmptyView()
