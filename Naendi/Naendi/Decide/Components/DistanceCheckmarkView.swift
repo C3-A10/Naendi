@@ -72,9 +72,10 @@ struct DistanceCheckmarkView: View {
                     onReport()
                 } label: {
                     Image(systemName: isReported ? "exclamationmark.bubble.fill" : "exclamationmark.bubble")
-                        .font(.system(size: 20, weight: .bold))
+                        .font(.system(size: 28, weight: .bold))
                         .foregroundColor(isReported ? Color("color_green") : .white)
                         .frame(width: 32, height: 32)
+                        .padding(6)
                 }
                 .buttonStyle(.plain)
             } else {
