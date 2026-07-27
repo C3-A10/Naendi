@@ -2,10 +2,19 @@ import MapKit
 import SwiftUI
 
 extension MKCoordinateRegion {
-    /// All location search is locked to this region.
+    /// All location search and map panning is locked to this region.
     static let surabaya = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: -7.2575, longitude: 112.7521),
         span: MKCoordinateSpan(latitudeDelta: 0.3, longitudeDelta: 0.3)
+    )
+}
+
+extension MapCameraBounds {
+    /// Keeps the pin inside Surabaya: the camera center cannot leave the region,
+    /// and zooming out far enough to aim at another city is capped.
+    static let surabaya = MapCameraBounds(
+        centerCoordinateBounds: .surabaya,
+        maximumDistance: 50_000
     )
 }
 
@@ -61,7 +70,7 @@ struct LocationMapView: View {
 
     var body: some View {
         ZStack {
-            Map(position: $cameraPosition) {
+            Map(position: $cameraPosition, bounds: .surabaya) {
                 MapCircle(center: selectedCoordinate, radius: radius * 1_000)
                     .foregroundStyle(.blue.opacity(0.2))
                     .stroke(.blue, lineWidth: 3)
