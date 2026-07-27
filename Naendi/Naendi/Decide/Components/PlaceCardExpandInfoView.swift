@@ -66,7 +66,7 @@ struct PlaceCardExpandInfoView: View {
                         if place.isHalalConfirmed {
                             TagView(text: "Halal", backgroundColor: Color.green.opacity(0.15), textColor: Color(red: 0.15, green: 0.65, blue: 0.30))
                         } else if place.halal.lowercased() == "non-halal" {
-                            TagView(text: "Non-Halal", backgroundColor: Color(red: 0.98, green: 0.85, blue: 0.85),
+                            TagView(text: "Nonhalal", backgroundColor: Color(red: 0.98, green: 0.85, blue: 0.85),
                                     textColor: Color(red: 0.75, green: 0.22, blue: 0.22))
                         }
                     }
