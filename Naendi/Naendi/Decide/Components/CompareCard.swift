@@ -100,9 +100,9 @@ struct CompareCard: View {
                     VStack(alignment: .leading, spacing: 2) {
                         if let locationName = viewModel.criteria.locationName,
                            viewModel.criteria.coordinate != nil {
-                            Text("\(viewModel.calculateDistance(to: item)) dari \(locationName),").font(.caption)
+                            Text("\(viewModel.calculateDistance(to: item)) from \(locationName),").font(.caption)
                         };
-                            Text("\(viewModel.calculateDistanceFromMe(to: item)) dari lokasi Anda saat ini.").font(.caption)
+                            Text("\(viewModel.calculateDistanceFromMe(to: item)) from your current location").font(.caption)
                     }
                     .font(.system(size: 12))
                     .foregroundColor(.gray)
