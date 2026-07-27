@@ -19,19 +19,20 @@ enum PlaceType: String, CaseIterable {
     var description: String {
         switch self {
         case .any:
-            return String(localized: "Any type of place.")
+            return String(localized: "Includes all place types.")
         case .restaurant:
-            return String(localized: "Full service dining with a complete menu.")
+            return String(localized: "Places for dining, family meals, and gatherings.")
         case .cafe:
-            return String(localized: "Relaxed setting for coffee and light meals.")
+            return String(localized: "Places for coffee, light meals, and a relaxed atmosphere.")
         case .warkop:
-            return String(localized: "Traditional coffee stall with a casual vibe.")
+            return String(localized: "Local coffee stalls with drinks and simple meals.")
         case .pkl:
-            return String(localized: "Street food vendors with local delicacies.")
+            return String(localized: "Street food vendors serving local dishes, quick meals, and affordable eats.")
         case .drinks:
-            return String(localized: "Places primarily serving beverages.")
+            return String(localized: "Places focused on beverages and specialty drinks.")
         case .bakery:
-            return String(localized: "Shops selling fresh breads and pastries.")
+            return String(localized: "Places serving bread, pastries, cakes, and freshly baked goods.")
+
         }
     }
 }

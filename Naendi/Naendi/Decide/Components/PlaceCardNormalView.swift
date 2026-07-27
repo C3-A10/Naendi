@@ -187,8 +187,14 @@ struct PlaceCardNormalView: View {
 
                                 TagView(text: place.vibe, backgroundColor: Color.blue.opacity(0.15), textColor: Color(red: 0.10, green: 0.45, blue: 0.90))
 
-                                if place.isHalalConfirmed {
-                                    TagView(text: "Halal", backgroundColor: Color.green.opacity(0.15), textColor: Color(red: 0.15, green: 0.65, blue: 0.30))
+                                switch place.halal.lowercased() {
+                                    case "halal":
+                                        TagView(text: "Halal", backgroundColor: Color.green.opacity(0.15), textColor: Color(red: 0.15, green: 0.65, blue: 0.30))
+                                    case "non-halal":
+                                        TagView(text: "Nonhalal", backgroundColor: Color(red: 0.98, green: 0.85, blue: 0.85),
+                                                textColor: Color(red: 0.75, green: 0.22, blue: 0.22))
+                                    default:
+                                        EmptyView()
                                 }
                                 Spacer()
                             }

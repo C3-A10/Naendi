@@ -24,6 +24,10 @@ struct TagView: View {
             return vibe.description
         }
 
+        if let halal = HalalType.allCases.first(where: { $0.rawValue.caseInsensitiveCompare(text) == .orderedSame }) {
+            return halal.description
+        }
+
         return nil
     }
 
