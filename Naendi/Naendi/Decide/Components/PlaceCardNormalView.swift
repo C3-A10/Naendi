@@ -86,6 +86,7 @@ struct PlaceCardNormalView: View {
                     onReport: onReport
                 )
                 .allowsHitTesting(isComparing || isDetail)
+                .zIndex(isComparing ? 3 : 1)
 
                 // Tombol Expand
                 Button {
@@ -119,6 +120,8 @@ struct PlaceCardNormalView: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .allowsHitTesting(!isComparing)
+                .accessibilityHidden(isComparing)
                 .zIndex(2)
                 .accessibilityLabel(place.nama)
                 .accessibilityValue("Rating \(place.accessibilityRatingDescription), \(place.jumlahReview) reviews")
@@ -179,6 +182,7 @@ struct PlaceCardNormalView: View {
                             onReport: onReport
                         )
                         .allowsHitTesting(isDetail)
+                        .zIndex(isDetail ? 3 : 1)
                         .padding(.top, 4)
                         .padding(.horizontal, 2)
 
