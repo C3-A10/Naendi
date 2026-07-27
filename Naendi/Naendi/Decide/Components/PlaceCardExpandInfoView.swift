@@ -40,12 +40,14 @@ struct PlaceCardExpandInfoView: View {
                         Image(systemName: "star.fill")
                             .foregroundColor(.yellow)
                             .font(.body)
+                            .accessibilityHidden(true)
 
                         // rating
                         Text("\(place.rating, specifier: "%.1f")")
                             .font(.caption)
                             .fontWeight(.semibold)
                             .foregroundColor(.primary)
+                            .accessibilityLabel("Rating \(place.accessibilityRatingDescription)")
 
                         Text("•").foregroundColor(.secondary).font(.caption)
 

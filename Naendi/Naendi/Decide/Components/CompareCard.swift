@@ -69,11 +69,13 @@ struct CompareCard: View {
                             Image(systemName: "star.fill")
                                 .foregroundColor(Color(red: 0.95, green: 0.76, blue: 0.29))
                                 .font(.body)
+                                .accessibilityHidden(true)
 
                             Text(String(format: "%.1f", item.rating))
                                 .font(.body)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.gray)
+                                .accessibilityLabel("Rating \(item.accessibilityRatingDescription)")
                         }
 
                         TagView(
