@@ -232,7 +232,7 @@ struct SelectLocationView: View {
     private var searchAlertMessage: String {
         switch searchState {
         case .emptyResult:
-            String(localized: "Try a different city, place, or address.")
+            String(localized: "Try a different place or address in Surabaya.")
         case .failure(let message):
             message
         case .idle, .searching, .success:
@@ -251,6 +251,8 @@ final class LocationSuggestionProvider: NSObject, MKLocalSearchCompleterDelegate
     override init() {
         super.init()
         completer.resultTypes = [.address, .pointOfInterest]
+        completer.region = .surabaya
+        completer.regionPriority = .required
         completer.delegate = self
     }
 

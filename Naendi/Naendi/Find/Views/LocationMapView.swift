@@ -1,6 +1,14 @@
 import MapKit
 import SwiftUI
 
+extension MKCoordinateRegion {
+    /// All location search is locked to this region.
+    static let surabaya = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: -7.2575, longitude: 112.7521),
+        span: MKCoordinateSpan(latitudeDelta: 0.3, longitudeDelta: 0.3)
+    )
+}
+
 enum LocationSearchState: Equatable {
     case idle
     case searching
@@ -95,6 +103,8 @@ struct LocationMapView: View {
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = query
         request.resultTypes = [.address, .pointOfInterest]
+        request.region = .surabaya
+        request.regionPriority = .required
 
         do {
             let response = try await MKLocalSearch(request: request).start()

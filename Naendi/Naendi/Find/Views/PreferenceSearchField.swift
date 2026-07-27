@@ -40,7 +40,7 @@ struct PreferenceSearchField: View {
                 .autocorrectionDisabled()
                 .submitLabel(.search)
                 .accessibilityLabel("Search location")
-                .accessibilityHint("Enter a city, place, or address.")
+                .accessibilityHint("Enter a place or address in Surabaya.")
 
             if !query.isEmpty {
                 Button {
