@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PlaceCardExpandPhotoView: View {
-    
+
     let isComparing: Bool
     let isSelected: Bool
     let isCheckDisabled: Bool
@@ -18,7 +18,7 @@ struct PlaceCardExpandPhotoView: View {
     let isReported: Bool
     let onReport: () -> Void
     let onSelectImageIndex: (Int) -> Void
-    
+
     init(
         isComparing: Bool,
         isSelected: Bool,
@@ -40,23 +40,23 @@ struct PlaceCardExpandPhotoView: View {
         self.onReport = onReport
         self.onSelectImageIndex = onSelectImageIndex
     }
-    
+
     private var imageGallery: [String] {
         let urls = place.parsedImageUrls
-        
+
         if !urls.isEmpty {
             return urls
         }
         return []
     }
-    
+
     var body: some View {
         ZStack(alignment: .top) {
             ScrollView(.horizontal, showsIndicators: false) {
                 // 1. Set spacing LazyHStack ke 12, dan beri padding horizontal 12
                 LazyHStack(spacing: 12) {
                     ForEach(Array(imageGallery.enumerated()), id: \.offset) { index, urlString in
-                        
+
                         // POLA 1: FULL IMAGE (Indeks 0, 3, 6, ...)
                         if index % 3 == 0 {
                             if let url = URL(string: urlString) {
@@ -73,7 +73,7 @@ struct PlaceCardExpandPhotoView: View {
                                 .frame(width: 290, height: 220)
                                 .clipped()
                                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                                .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous)) 
+                                .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                                 .onTapGesture {
                                     onSelectImageIndex(index)
                                 }
@@ -107,7 +107,7 @@ struct PlaceCardExpandPhotoView: View {
                                         onSelectImageIndex(index)
                                     }
                                 }
-                                
+
                                 // Gambar Bawah (Ambil indeks + 1 jika ada)
                                 if index + 1 < imageGallery.count, let nextUrl = URL(string: imageGallery[index + 1]) {
                                     AsyncImage(url: nextUrl) { phase in
@@ -140,7 +140,7 @@ struct PlaceCardExpandPhotoView: View {
                 .padding(.vertical, 10)   // Penyeimbang sisa tinggi frame kontainer (240 - 220) / 2
             }
             .frame(height: 240)
-            
+
             // --- Overlay: Pill Jarak dan Checkbox Kanan ---
             DistanceCheckmarkView(
                 isComparing: isComparing,

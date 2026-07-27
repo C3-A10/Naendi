@@ -57,6 +57,18 @@ struct Place: Identifiable, Codable, Hashable {
 
 // MARK: - Helper / Extension
 extension Place {
+    /// A spoken decimal value for VoiceOver, e.g. 4.7 becomes
+    /// "four point seven" in English or "empat koma tujuh" in Indonesian.
+    var accessibilityRatingDescription: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .spellOut
+        formatter.locale = .current
+        formatter.maximumFractionDigits = 1
+
+        return formatter.string(from: NSNumber(value: rating))
+            ?? rating.formatted(.number.precision(.fractionLength(1)))
+    }
+
     /// Computed property untuk memparsing string JSON di dalam kolom `jam_buka`
     /// Menghasilkan dictionary dengan format: ["Senin": ["07.00–22.00"], "Selasa": [...]]
     var jamBukaDictionary: [String: [String]]? {
@@ -233,4 +245,3 @@ extension Place {
     ]
 
 }
-

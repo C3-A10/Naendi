@@ -10,7 +10,7 @@ import Foundation
 enum HalalType: String, CaseIterable {
     case halal = "Halal"
     case nonHalal = "Nonhalal"
-    
+
     var description: String {
         switch self {
         case .halal:

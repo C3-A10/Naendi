@@ -29,6 +29,8 @@ struct DistanceCheckmarkView: View {
                 .padding(.vertical, 8)
                 .background(distancePillColor)
                 .clipShape(Capsule())
+                .accessibilityLabel("Distance")
+                .accessibilityValue(viewModel.calculateDistance(to: place))
             
             if isTagVisible, let tag = viewModel.landingTag(for: place) {
                 switch tag {
@@ -67,6 +69,19 @@ struct DistanceCheckmarkView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(isCheckDisabled)
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Circle())
+                .accessibilityRespondsToUserInteraction(true)
+                .accessibilitySortPriority(3)
+                .accessibilityLabel(Text("Select \(place.nama) for comparison"))
+                .accessibilityValue(
+                    Text(
+                        isSelected
+                            ? String(localized: "Selected")
+                            : String(localized: "Not selected")
+                    )
+                )
+                .accessibilityAddTraits(isSelected ? .isSelected : [])
             } else if isDetail {
                 Button {
                     onReport()
@@ -77,6 +92,9 @@ struct DistanceCheckmarkView: View {
                         .frame(width: 32, height: 32)
                 }
                 .buttonStyle(.plain)
+                .frame(minWidth: 44, minHeight: 44)
+                .accessibilityLabel(isReported ? "Place reported" : "Report \(place.nama)")
+                .accessibilityHint(isReported ? "" : "Reports inaccurate information about this place.")
             } else {
                 ReportBubbleView(reportCount: viewModel.reportCount(for: place))
                     .padding(.horizontal, 12)

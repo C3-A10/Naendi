@@ -72,6 +72,22 @@ struct EditPreferenceViewModelTests {
         )
 
         #expect(!viewModel.isBudgetValid)
+        #expect(
+            viewModel.budgetValidationMessage
+                == String(localized: "Minimum budget must not exceed maximum budget.")
+        )
+    }
+
+    @Test("Equal minimum and maximum budgets are valid")
+    func equalMinimumAndMaximumAreValid() {
+        let viewModel = EditPreferenceViewModel(
+            selectedBudgetOption: .custom,
+            minimumBudget: "25.000",
+            maximumBudget: "25.000"
+        )
+
+        #expect(viewModel.isBudgetValid)
+        #expect(viewModel.budgetValidationMessage == nil)
     }
 
     @Test(

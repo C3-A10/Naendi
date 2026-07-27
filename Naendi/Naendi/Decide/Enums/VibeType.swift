@@ -12,7 +12,7 @@ enum VibeType: String, CaseIterable {
     case calm = "Calm"
     case balanced = "Balanced"
     case lively = "Lively"
-    
+
     var description: String {
         switch self {
         case .any:
@@ -26,4 +26,3 @@ enum VibeType: String, CaseIterable {
         }
     }
 }
-
