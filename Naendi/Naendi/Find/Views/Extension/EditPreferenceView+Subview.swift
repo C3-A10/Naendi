@@ -10,6 +10,55 @@ import SwiftUI
 
 extension EditPreferenceView {
 
+    func preferenceRowWithTooltip<Content: View>(
+        _ tooltip: PreferenceTooltip,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        ZStack(alignment: .trailing) {
+            content()
+
+            Button {
+                activeTooltip = tooltip
+            } label: {
+                Image(systemName: "info.circle")
+                    .font(.title3)
+                    .foregroundStyle(.secondary)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text(tooltip.accessibilityLabel))
+            .accessibilityHint("Shows more information about this preference.")
+            .padding(.trailing, 8)
+            .popover(
+                isPresented: tooltipPresentationBinding(for: tooltip),
+                attachmentAnchor: .rect(.bounds),
+                arrowEdge: .trailing
+            ) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(tooltip.title)
+                        .font(.headline)
+
+                    Text("Lorem ipsum…")
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+                }
+                .padding()
+                .frame(idealWidth: 260, alignment: .leading)
+                .presentationCompactAdaptation(.popover)
+            }
+        }
+    }
+
+    func tooltipPresentationBinding(for tooltip: PreferenceTooltip) -> Binding<Bool> {
+        Binding(
+            get: { activeTooltip == tooltip },
+            set: { isPresented in
+                activeTooltip = isPresented ? tooltip : nil
+            }
+        )
+    }
+
    
    var preferredTimeRange: String {
         let start = Self.timeFormatter.string(from: preferredStartTime)

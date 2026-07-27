@@ -6,15 +6,18 @@ struct PreferenceOptionRow: View {
     let title: String
     let value: String
     let showsDisclosure: Bool
+    let reservesTooltipSpace: Bool
 
     init(
         title: String,
         value: String,
-        showsDisclosure: Bool = true
+        showsDisclosure: Bool = true,
+        reservesTooltipSpace: Bool = false
     ) {
         self.title = title
         self.value = value
         self.showsDisclosure = showsDisclosure
+        self.reservesTooltipSpace = reservesTooltipSpace
     }
 
     var body: some View {
@@ -38,7 +41,8 @@ struct PreferenceOptionRow: View {
                 }
             }
         }
-        .padding(.horizontal, 20)
+        .padding(.leading, 20)
+        .padding(.trailing, reservesTooltipSpace ? 60 : 20)
         .padding(.vertical, 14)
         .frame(minHeight: 60)
         .background(Color(uiColor: .secondarySystemGroupedBackground))

@@ -207,6 +207,56 @@
         }
       }
     },
+    "About Output Result" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tentang Jumlah Hasil"
+          }
+        }
+      }
+    },
+    "About Preferred Time" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tentang Waktu Pilihan"
+          }
+        }
+      }
+    },
+    "About Sort By" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tentang Urutkan Berdasarkan"
+          }
+        }
+      }
+    },
+    "About Type" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tentang Jenis Tempat"
+          }
+        }
+      }
+    },
+    "About Vibe" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tentang Suasana"
+          }
+        }
+      }
+    },
     "Above %@ rupiah" : {
       "localizations" : {
         "id" : {
@@ -956,6 +1006,9 @@
         }
       }
     },
+    "Lorem ipsum…" : {
+
+    },
     "Max" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1541,6 +1594,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Menampilkan informasi lebih lengkap tentang tempat ini."
+          }
+        }
+      }
+    },
+    "Shows more information about this preference." : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menampilkan informasi lebih lanjut tentang preferensi ini."
           }
         }
       }

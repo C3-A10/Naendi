@@ -41,6 +41,34 @@ extension EditPreferenceView {
         case end
     }
 
+    enum PreferenceTooltip: Hashable {
+        case type
+        case vibe
+        case preferredTime
+        case outputResult
+        case sortBy
+
+        var title: LocalizedStringResource {
+            switch self {
+            case .type: "Type"
+            case .vibe: "Vibe"
+            case .preferredTime: "Preferred Time"
+            case .outputResult: "Output Result"
+            case .sortBy: "Sort By"
+            }
+        }
+
+        var accessibilityLabel: LocalizedStringResource {
+            switch self {
+            case .type: "About Type"
+            case .vibe: "About Vibe"
+            case .preferredTime: "About Preferred Time"
+            case .outputResult: "About Output Result"
+            case .sortBy: "About Sort By"
+            }
+        }
+    }
+
     var typeOptions: [String] {
         [
             Self.anyOption,
