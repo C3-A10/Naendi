@@ -22,55 +22,73 @@ struct DetailPlaceView: View {
     @State private var isReported: Bool = false
 
     var body: some View {
-        GeometryReader { geo in
-            ScrollView {
-                VStack {
-                    Spacer()
-                    // Card
-
-                    PlaceCardView(
-                        place: place,
-                        mode: .landing,
-                        isChooseThisLocationBtnVisible: false,
-                        isTagVisible: false,
-                        isReportVisible: true,
-                        isDetail: true,
-                        isReported: isReported,
-                        onReport: handleReportTapped,
-                        viewModel: viewModel,
-                        isComparing: $isComparing,
-                        onSelectImageIndex: {index in },
-                        selectedPlace: $dummySelectedPlace
-                    )
-                    .frame(maxWidth: .infinity)
-
-                    // Button
-                    CustomActionButton(
-                        text: "Go to Destination",
-                        backgroundColor: Color(red: 207/255, green: 245/255, blue: 64/255),
-                        textColor: .black,
-                        action: {
-                            viewModel.openRoute(to: place)
-                        }
-                    )
-                    .padding(.vertical, 20)
-                    Spacer()
-                }
-                .frame(minHeight: geo.size.height, alignment: .center)
-                .padding(.horizontal, 16)
-            }
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
+        VStack(spacing: 0) {
+            // Header Bar
+            ZStack {
                 Text(place.nama)
-                        .font(.headline)
-                        .foregroundStyle(.black)
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.black)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                    .padding(.horizontal, 48) // Memberi jarak aman agar tidak menabrak tombol xmark & tetap di tengah
+
+                HStack {
+                    Spacer()
+
+                    CircleIconButton(
+                        systemName: "xmark",
+                        accessibilityLabel: "Close",
+                        backgroundColor: Color(.systemBackground)
+                    ) {
+                        withAnimation(.spring()) {
+                            dismiss()
+                        }
+                    }
                 }
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: { dismiss() }) {
-                    Image(systemName: "xmark")
-                        .font(.headline)
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 16)
+            .frame(maxWidth: .infinity)
+
+            // Main Content
+            GeometryReader { geo in
+                ScrollView {
+                    VStack {
+                        Spacer()
+
+                        // Card
+                        PlaceCardView(
+                            place: place,
+                            mode: .landing,
+                            isChooseThisLocationBtnVisible: false,
+                            isTagVisible: false,
+                            isReportVisible: true,
+                            isDetail: true,
+                            isReported: isReported,
+                            onReport: handleReportTapped,
+                            viewModel: viewModel,
+                            isComparing: $isComparing,
+                            onSelectImageIndex: { index in },
+                            selectedPlace: $dummySelectedPlace
+                        )
+                        .frame(maxWidth: .infinity)
+
+                        // Button
+                        CustomActionButton(
+                            text: "Go to Destination",
+                            backgroundColor: Color(red: 207/255, green: 245/255, blue: 64/255),
+                            textColor: .black,
+                            action: {
+                                viewModel.openRoute(to: place)
+                            }
+                        )
+                        .padding(.vertical, 20)
+
+                        Spacer()
+                    }
+                    .frame(minHeight: geo.size.height, alignment: .center)
+                    .padding(.horizontal, 16)
                 }
             }
         }
@@ -113,7 +131,7 @@ struct DetailPlaceView: View {
         }
     }
 
-    // MARK: – Report handling
+    // MARK: - Report handling
 
     private func handleReportTapped() {
         if viewModel.isWithinReportRadius(of: place) {
@@ -122,9 +140,7 @@ struct DetailPlaceView: View {
             showGPSAlert = true
         }
     }
-
 }
-
 
 #Preview {
     DetailPlaceView(place: Place.dummyData[1])
