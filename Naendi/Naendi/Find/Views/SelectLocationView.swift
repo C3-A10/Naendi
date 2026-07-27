@@ -165,20 +165,7 @@ struct SelectLocationView: View {
     }
 
     private func confirmLocation() {
-        if let centerCoordinate = currentCameraCenter {
-            selectedCoordinate = centerCoordinate
-        }
         dismiss()
-    }
-
-    private var currentCameraCenter: CLLocationCoordinate2D? {
-        if let camera = cameraPosition.camera {
-            return camera.centerCoordinate
-        }
-        if let region = cameraPosition.region {
-            return region.center
-        }
-        return nil
     }
 
     private var isShowingSearchAlert: Binding<Bool> {

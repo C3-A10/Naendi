@@ -42,12 +42,12 @@ struct LocationMapView: View {
             }
             .onMapCameraChange(frequency: .continuous) { context in
                 selectedCoordinate = context.camera.centerCoordinate
-                if cameraPosition.positionedByUser {
+                if cameraTracksPin {
                     selectedLocationName = String(localized: "Pinned Location")
                 }
             }
             .onMapCameraChange(frequency: .onEnd) { context in
-                guard cameraPosition.positionedByUser else { return }
+                guard cameraTracksPin else { return }
 
                 reverseGeocodingTask?.cancel()
                 let coordinate = context.camera.centerCoordinate
@@ -67,6 +67,10 @@ struct LocationMapView: View {
             centerPin
                 .allowsHitTesting(false)
         }
+    }
+
+    private var cameraTracksPin: Bool {
+        cameraPosition.positionedByUser || cameraPosition.followsUserLocation
     }
 
     private var centerPin: some View {
