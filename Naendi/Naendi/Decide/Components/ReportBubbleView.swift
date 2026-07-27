@@ -28,6 +28,9 @@ struct ReportBubbleView: View {
                 .clipShape(Circle())
                 .offset(x: 6, y: -4)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Reports")
+        .accessibilityValue("\(reportCount)")
     }
 }
 

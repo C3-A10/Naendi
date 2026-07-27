@@ -90,6 +90,8 @@ struct DetailPlaceView: View {
                     .frame(minHeight: geo.size.height, alignment: .center)
                     .padding(.horizontal, 16)
                 }
+                .accessibilityLabel("Close place details")
+                .accessibilityInputLabels(["Close", "Close place details"])
             }
         }
         .background {

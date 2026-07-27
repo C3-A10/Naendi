@@ -9,7 +9,7 @@ import SwiftUI
 import Combine
 
 struct PlaceCardExpandView: View {
-    
+
     let place: Place
     let isChooseThisLocationBtnVisible: Bool
     @Binding var isExpanded: Bool
@@ -20,7 +20,7 @@ struct PlaceCardExpandView: View {
     let isDetail: Bool
     let isReported: Bool
     let onReport: () -> Void
-    
+
     init(
         place: Place,
         isChooseThisLocationBtnVisible: Bool,
@@ -44,15 +44,15 @@ struct PlaceCardExpandView: View {
         self.isReported = isReported
         self.onReport = onReport
     }
-    
+
     // Helper status
     private var isSelected: Bool { viewModel.isSelected(place) }
     private var isCheckDisabled: Bool { viewModel.isCompareLimitReached && !isSelected }
-        
+
     // Di PlaceCardExpandView.swift
     var body: some View {
         VStack { // 1. Kunci jarak atas-bawah di sini (bukan 0)
-            
+
             PlaceCardExpandPhotoView(
                 isComparing: isComparing,
                 isSelected: isSelected,
@@ -64,7 +64,7 @@ struct PlaceCardExpandView: View {
                 onReport: onReport,
                 onSelectImageIndex: onSelectImageIndex,
             )
-            
+
             PlaceCardExpandInfoView(
                 place: place, isChooseThisLocationBtnVisible: isChooseThisLocationBtnVisible,
                 isExpanded: $isExpanded, selectedPlace: $selectedPlace
@@ -81,7 +81,7 @@ struct PlaceCardExpandView: View {
     ZStack {
         Color(UIColor.systemGray6)
             .ignoresSafeArea()
-        
+
         ScrollView {
             PlaceCardExpandView(
                 place: Place.dummyData[0], isChooseThisLocationBtnVisible: false,

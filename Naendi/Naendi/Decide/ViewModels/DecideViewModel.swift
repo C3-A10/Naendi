@@ -45,7 +45,7 @@ class DecideViewModel {
 
     var phase: DecidePhase = .landing
     var criteria: PreferenceCriteria = .default
-    
+
     var isNetworkConnected: Bool { networkMonitor.isConnected }
 
     private(set) var awaitingOrigin = false
@@ -261,7 +261,7 @@ class DecideViewModel {
         return false
     }
 
-    // ambil reportcount terbaru 
+    // ambil reportcount terbaru
     func reportCount(for place: Place) -> Int {
         reportCounts[place.id] ?? place.reportCount
     }

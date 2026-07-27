@@ -9,10 +9,10 @@ import SwiftUI
 
 struct ZoomableImageItem: View {
     let urlString: String
-    
+
     @State private var scale: CGFloat = 1.0
     @State private var lastScale: CGFloat = 1.0
-    
+
     var body: some View {
         if let url = URL(string: urlString) {
             AsyncImage(url: url) { phase in
@@ -47,14 +47,14 @@ struct ZoomableImageItem: View {
                                 }
                             }
                         }
-                    
+
                 case .failure(_):
                     NoInternetPlaceholder(isTransparent: true)
-                    
+
                 case .empty:
                     ProgressView()
                         .tint(.white)
-                        
+
                 @unknown default:
                     EmptyView()
                 }

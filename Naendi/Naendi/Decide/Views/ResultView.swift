@@ -28,7 +28,8 @@ struct ResultView: View {
                         .foregroundColor(.black)
                     if isComparing {
                         Text("Select any 2 places to compare")
-                            .font(.system(size: 14, weight: .medium))
+                            //.font(.system(size: 14, weight: .medium))
+                            .font(.callout.weight(.medium))
                             .foregroundColor(.gray)
                             .transition(.opacity.combined(with: .move(edge: .top)))
                     }
@@ -53,9 +54,9 @@ struct ResultView: View {
                                 .clipShape(Capsule())
                         }
                         .transition(.scale.combined(with: .opacity))
-                        
+
                     } else {
-                        
+
                         CircleIconButton(systemName: "arrow.left.arrow.right", accessibilityLabel: "Compare", backgroundColor: Color(.systemBackground)) {
                             withAnimation(.spring()) {
                                 isComparing = true
@@ -63,14 +64,14 @@ struct ResultView: View {
                         }
                         .transition(.scale.combined(with: .opacity))
 
-                        
+
                         CircleIconButton(systemName: "pencil", accessibilityLabel: "Preference",                     backgroundColor: Color(.systemBackground)) {
                             withAnimation(.spring()) {
                                 isShowingEditPreference = true
                             }
                         }
                         .transition(.scale.combined(with: .opacity))
-                        
+
                     }
                 }
             }
@@ -111,7 +112,7 @@ struct ResultView: View {
                     ScrollView {
                         LazyVStack(spacing: 20) {
                             ForEach(viewModel.places) { place in
-                                
+
                                 PlaceCardView(
                                     place: place,
                                     mode: .result,
@@ -126,7 +127,7 @@ struct ResultView: View {
                                     },
                                     selectedPlace: $selectedPlace
                                 )
-        
+
                             }
                         }
                         .padding(.vertical, 16)

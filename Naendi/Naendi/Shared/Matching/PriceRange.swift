@@ -95,4 +95,43 @@ struct PriceRange: Equatable {
 extension Place {
     /// `nil` when the place has no usable price information.
     var priceRange: PriceRange? { PriceRange(parsing: rangeHarga) }
+
+    /// A spoken alternative to abbreviated visual prices such as
+    /// `Rp 25–50 rb`, which VoiceOver otherwise reads symbol by symbol.
+    var accessibilityPriceRangeDescription: String {
+        guard let priceRange else { return rangeHarga }
+
+        switch (priceRange.lowerBound, priceRange.upperBound) {
+        case let (lower?, upper?) where lower == upper:
+            return String(
+                format: String(localized: "%@ rupiah"),
+                Self.spokenCurrencyAmount(lower)
+            )
+        case let (lower?, upper?):
+            return String(
+                format: String(localized: "Price range from %@ to %@ rupiah"),
+                Self.spokenCurrencyAmount(lower),
+                Self.spokenCurrencyAmount(upper)
+            )
+        case let (nil, upper?):
+            return String(
+                format: String(localized: "Below %@ rupiah"),
+                Self.spokenCurrencyAmount(upper)
+            )
+        case let (lower?, nil):
+            return String(
+                format: String(localized: "Above %@ rupiah"),
+                Self.spokenCurrencyAmount(lower)
+            )
+        case (nil, nil):
+            return rangeHarga
+        }
+    }
+
+    private static func spokenCurrencyAmount(_ value: Double) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .spellOut
+        formatter.locale = .current
+        return formatter.string(from: NSNumber(value: value)) ?? String(Int(value))
+    }
 }

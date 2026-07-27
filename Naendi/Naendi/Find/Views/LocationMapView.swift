@@ -1,40 +1,86 @@
 import MapKit
 import SwiftUI
 
+extension MKCoordinateRegion {
+    static let surabaya = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: -7.2575, longitude: 112.7521),
+        span: MKCoordinateSpan(latitudeDelta: 0.3, longitudeDelta: 0.3)
+    )
+}
+
+extension MKCoordinateRegion {
+
+    func contains(_ coordinate: CLLocationCoordinate2D) -> Bool {
+        abs(coordinate.latitude - center.latitude) <= span.latitudeDelta / 2
+            && abs(coordinate.longitude - center.longitude) <= span.longitudeDelta / 2
+    }
+}
+
+extension MapCameraBounds {
+    static let surabaya = MapCameraBounds(
+        centerCoordinateBounds: .surabaya,
+        maximumDistance: 50_000
+    )
+}
+
 enum LocationSearchState: Equatable {
     case idle
     case searching
     case success
     case emptyResult
     case failure(String)
+
+    var alertTitle: String {
+        switch self {
+        case .emptyResult:
+            String(localized: "Location Not Found")
+        case .failure:
+            String(localized: "Unable to Search")
+        case .idle, .searching, .success:
+            ""
+        }
+    }
+
+    var alertMessage: String {
+        switch self {
+        case .emptyResult:
+            String(localized: "Try a different place or address in Surabaya.")
+        case .failure(let message):
+            message
+        case .idle, .searching, .success:
+            ""
+        }
+    }
+
+    var isAlerting: Bool {
+        switch self {
+        case .emptyResult, .failure:
+            true
+        case .idle, .searching, .success:
+            false
+        }
+    }
 }
 
 struct LocationMapView: View {
     @Binding var cameraPosition: MapCameraPosition
     @Binding var selectedLocationName: String
     @Binding var selectedCoordinate: CLLocationCoordinate2D
-    @Binding var radius: Double
-    @Binding var submittedSearchQuery: String
-    @Binding var showsUserLocation: Bool
     @Binding var searchState: LocationSearchState
+
+    var radius: Double
+    var submittedSearchQuery: String
 
     @State private var reverseGeocodingTask: Task<Void, Never>?
 
-    var interactionModes: MapInteractionModes = .all
-
     var body: some View {
         ZStack {
-            Map(
-                position: $cameraPosition,
-                interactionModes: interactionModes
-            ) {
+            Map(position: $cameraPosition, bounds: .surabaya) {
                 MapCircle(center: selectedCoordinate, radius: radius * 1_000)
                     .foregroundStyle(.blue.opacity(0.2))
                     .stroke(.blue, lineWidth: 3)
 
-                if showsUserLocation {
-                    UserAnnotation()
-                }
+                UserAnnotation()
             }
             .mapControls {
                 MapCompass()
@@ -69,12 +115,19 @@ struct LocationMapView: View {
         }
     }
 
+    private static let pinSize: CGFloat = 88
+    /// The point the pin marks is the centre of the dark dot the teardrop rests
+    /// on, measured at 92.8% down the square asset — not the asset's bottom edge,
+    /// which is only that dot's lower arc.
+    private static let pinAnchorFraction: CGFloat = 0.928
+
     private var centerPin: some View {
         Image("naendi_location_pin")
             .resizable()
             .scaledToFit()
-            .frame(width: 88, height: 114)
-            .offset(y: -25)
+            .frame(width: Self.pinSize, height: Self.pinSize)
+            // Lift the anchor onto the camera centre the radius circle is drawn around.
+            .offset(y: -(Self.pinAnchorFraction - 0.5) * Self.pinSize)
             .accessibilityElement()
             .accessibilityLabel("Selected location")
             .accessibilityValue(selectedLocationName)
@@ -95,11 +148,15 @@ struct LocationMapView: View {
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = query
         request.resultTypes = [.address, .pointOfInterest]
+        request.region = .surabaya
+        request.regionPriority = .required
 
         do {
             let response = try await MKLocalSearch(request: request).start()
 
-            guard let mapItem = response.mapItems.first else {
+            guard let mapItem = response.mapItems.first(where: {
+                MKCoordinateRegion.surabaya.contains($0.location.coordinate)
+            }) else {
                 searchState = .emptyResult
                 return
             }
@@ -160,19 +217,15 @@ struct LocationMapView: View {
 #Preview {
     @Previewable @State var cameraPosition: MapCameraPosition = .automatic
     @Previewable @State var selectedLocationName = "Search Location"
-    @Previewable @State var selectedCoordinate = CLLocationCoordinate2D(latitude: 37.3377, longitude: -121.8787)
-    @Previewable @State var radius = 1.0
-    @Previewable @State var submittedSearchQuery = ""
-    @Previewable @State var showsUserLocation = true
+    @Previewable @State var selectedCoordinate = MKCoordinateRegion.surabaya.center
     @Previewable @State var searchState = LocationSearchState.idle
 
     LocationMapView(
         cameraPosition: $cameraPosition,
         selectedLocationName: $selectedLocationName,
         selectedCoordinate: $selectedCoordinate,
-        radius: $radius,
-        submittedSearchQuery: $submittedSearchQuery,
-        showsUserLocation: $showsUserLocation,
-        searchState: $searchState
+        searchState: $searchState,
+        radius: 1.0,
+        submittedSearchQuery: ""
     )
 }

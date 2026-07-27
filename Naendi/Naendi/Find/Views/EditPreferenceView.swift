@@ -1,9 +1,6 @@
 import MapKit
 import SwiftUI
 
-/// Edits a copy of the user's preferences. Everything lives in local state so
-/// Back can discard cleanly; only Save hands the result back to the caller,
-/// which is what persists it and re-runs the search.
 struct EditPreferenceView: View {
     @Environment(\.dismiss) var dismiss
 
@@ -24,6 +21,9 @@ struct EditPreferenceView: View {
     @State var activePreferredTimeField: PreferredTimeField = .start
     @State var preferredStartTime: Date
     @State var preferredEndTime: Date
+    @State var activeTooltip: PreferenceTooltip?
+    @State var locationPermission = LocationPermission()
+    @State var isShowingLocationDeniedAlert = false
 
     init(
         criteria: PreferenceCriteria = .default,
@@ -74,13 +74,26 @@ struct EditPreferenceView: View {
                     BudgetRow(selection: $budgetViewModel.selectedBudgetOption)
 
                     if budgetViewModel.isCustomBudgetRowVisible {
-                        CustomBudgetRow(
-                            minimumBudget: $budgetViewModel.minimumBudget,
-                            maximumBudget: $budgetViewModel.maximumBudget
-                        )
+                        VStack(alignment: .leading, spacing: 8) {
+                            CustomBudgetRow(
+                                minimumBudget: $budgetViewModel.minimumBudget,
+                                maximumBudget: $budgetViewModel.maximumBudget
+                            )
+
+                            if let validationMessage = budgetViewModel.budgetValidationMessage {
+                                Text(validationMessage)
+                                    .font(.footnote)
+                                    .foregroundStyle(.red)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .padding(.horizontal, 18)
+                                    .accessibilityLabel("Budget error")
+                                    .accessibilityValue(validationMessage)
+                            }
+                        }
                         .transition(.move(edge: .top).combined(with: .opacity))
                     }
 
+                    preferenceRowWithTooltip(.type) {
                     Menu {
                         ForEach(typeOptions, id: \.self) { type in
                             Button {
@@ -96,13 +109,16 @@ struct EditPreferenceView: View {
                     } label: {
                         PreferenceOptionRow(
                             title: "Type",
-                            value: localizedPreferenceValue(selectedType)
+                            value: localizedPreferenceValue(selectedType),
+                            reservesTooltipSpace: true
                         )
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Type")
                     .accessibilityValue(localizedPreferenceValue(selectedType))
                     .accessibilityHint("Double tap to choose a place type")
+                    }
+                    preferenceRowWithTooltip(.vibe) {
                     Menu {
                         ForEach(vibeOptions, id: \.self) { vibe in
                             Button {
@@ -118,25 +134,30 @@ struct EditPreferenceView: View {
                     } label: {
                         PreferenceOptionRow(
                             title: "Vibe",
-                            value: localizedPreferenceValue(selectedVibe)
+                            value: localizedPreferenceValue(selectedVibe),
+                            reservesTooltipSpace: true
                         )
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Vibe")
                     .accessibilityValue(localizedPreferenceValue(selectedVibe))
                     .accessibilityHint("Double tap to choose a vibe")
+                    }
+                    preferenceRowWithTooltip(.preferredTime) {
                     Button {
                         isSelectingPreferredTime = true
                     } label: {
                         PreferenceOptionRow(
                             title: "Preferred Time",
-                            value: preferredTimeRange
+                            value: preferredTimeRange,
+                            reservesTooltipSpace: true
                         )
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Preferred Time")
                     .accessibilityValue(preferredTimeRange)
                     .accessibilityHint("Double tap to choose start and end times")
+                    }
                     Menu {
                         ForEach(HalalPreference.allCases, id: \.self) { option in
                             Button {
@@ -159,22 +180,27 @@ struct EditPreferenceView: View {
                     .accessibilityLabel("Halal preference")
                     .accessibilityValue(selectedHalalOption.title)
                     .accessibilityHint("Double tap to choose a halal preference")
+                    preferenceRowWithTooltip(.outputResult) {
                     Button {
                         isSelectingOutputResult = true
                     } label: {
                         PreferenceOptionRow(
                             title: "Output Result",
-                            value: String(outputResult)
+                            value: String(outputResult),
+                            reservesTooltipSpace: true
                         )
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Output Result")
                     .accessibilityValue("\(outputResult) places")
                     .accessibilityHint("Double tap to choose the number of results")
+                    }
+                    preferenceRowWithTooltip(.sortBy) {
                     Menu {
                         ForEach(SortOption.allCases, id: \.self) { option in
                             Button {
                                 selectedSortOption = option
+                                warnIfSortNeedsLocation(option)
                             } label: {
                                 if selectedSortOption == option {
                                     Label(option.title, systemImage: "checkmark")
@@ -186,13 +212,15 @@ struct EditPreferenceView: View {
                     } label: {
                         PreferenceOptionRow(
                             title: "Sort By",
-                            value: selectedSortOption.title
+                            value: selectedSortOption.title,
+                            reservesTooltipSpace: true
                         )
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("Sort By")
                     .accessibilityValue(selectedSortOption.title)
                     .accessibilityHint("Double tap to choose a sorting option")
+                    }
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 32)
@@ -202,6 +230,7 @@ struct EditPreferenceView: View {
             }
             .scrollIndicators(.hidden)
         }
+        .locationDeniedAlert(isPresented: $isShowingLocationDeniedAlert)
         .fullScreenCover(isPresented: $isSelectingLocation) {
             SelectLocationView(
                 selectedLocationName: $selectedLocationName,

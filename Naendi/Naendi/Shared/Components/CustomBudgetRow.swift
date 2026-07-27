@@ -54,7 +54,7 @@ struct CustomBudgetRow: View {
     private var budgetFields: some View {
         HStack(spacing: 8) {
             budgetField(
-                placeholder: "Min",
+                placeholder: "(Rp)Min",
                 accessibilityLabel: "Minimum budget",
                 text: $minimumBudget,
                 field: .minimum
@@ -66,7 +66,7 @@ struct CustomBudgetRow: View {
                 .accessibilityHidden(true)
 
             budgetField(
-                placeholder: "Max",
+                placeholder: "(Rp)Max",
                 accessibilityLabel: "Maximum budget",
                 text: $maximumBudget,
                 field: .maximum
