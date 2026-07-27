@@ -15,34 +15,58 @@ enum LocationSearchState: Equatable {
     case success
     case emptyResult
     case failure(String)
+
+    var alertTitle: String {
+        switch self {
+        case .emptyResult:
+            String(localized: "Location Not Found")
+        case .failure:
+            String(localized: "Unable to Search")
+        case .idle, .searching, .success:
+            ""
+        }
+    }
+
+    var alertMessage: String {
+        switch self {
+        case .emptyResult:
+            String(localized: "Try a different place or address in Surabaya.")
+        case .failure(let message):
+            message
+        case .idle, .searching, .success:
+            ""
+        }
+    }
+
+    var isAlerting: Bool {
+        switch self {
+        case .emptyResult, .failure:
+            true
+        case .idle, .searching, .success:
+            false
+        }
+    }
 }
 
 struct LocationMapView: View {
     @Binding var cameraPosition: MapCameraPosition
     @Binding var selectedLocationName: String
     @Binding var selectedCoordinate: CLLocationCoordinate2D
-    @Binding var radius: Double
-    @Binding var submittedSearchQuery: String
-    @Binding var showsUserLocation: Bool
     @Binding var searchState: LocationSearchState
+
+    var radius: Double
+    var submittedSearchQuery: String
 
     @State private var reverseGeocodingTask: Task<Void, Never>?
 
-    var interactionModes: MapInteractionModes = .all
-
     var body: some View {
         ZStack {
-            Map(
-                position: $cameraPosition,
-                interactionModes: interactionModes
-            ) {
+            Map(position: $cameraPosition) {
                 MapCircle(center: selectedCoordinate, radius: radius * 1_000)
                     .foregroundStyle(.blue.opacity(0.2))
                     .stroke(.blue, lineWidth: 3)
 
-                if showsUserLocation {
-                    UserAnnotation()
-                }
+                UserAnnotation()
             }
             .mapControls {
                 MapCompass()
@@ -170,19 +194,15 @@ struct LocationMapView: View {
 #Preview {
     @Previewable @State var cameraPosition: MapCameraPosition = .automatic
     @Previewable @State var selectedLocationName = "Search Location"
-    @Previewable @State var selectedCoordinate = CLLocationCoordinate2D(latitude: 37.3377, longitude: -121.8787)
-    @Previewable @State var radius = 1.0
-    @Previewable @State var submittedSearchQuery = ""
-    @Previewable @State var showsUserLocation = true
+    @Previewable @State var selectedCoordinate = MKCoordinateRegion.surabaya.center
     @Previewable @State var searchState = LocationSearchState.idle
 
     LocationMapView(
         cameraPosition: $cameraPosition,
         selectedLocationName: $selectedLocationName,
         selectedCoordinate: $selectedCoordinate,
-        radius: $radius,
-        submittedSearchQuery: $submittedSearchQuery,
-        showsUserLocation: $showsUserLocation,
-        searchState: $searchState
+        searchState: $searchState,
+        radius: 1.0,
+        submittedSearchQuery: ""
     )
 }
