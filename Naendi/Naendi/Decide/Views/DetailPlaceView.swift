@@ -117,8 +117,13 @@ struct DetailPlaceView: View {
         } message: {
             Text("Are you sure want to report \(place.nama)? Once submitted, this report can't be changed.")
         }
-        // Start GPS so isWithinReportRadius has a fix to compare against.
-        .task { viewModel.startLocationUpdates() }
+        // Start GPS so isWithinReportRadius has a fix to compare against, and
+        // seed the report icon from CloudKit — this @State resets every time the
+        // sheet is presented, so it has to be read back rather than remembered.
+        .task {
+            viewModel.startLocationUpdates()
+            isReported = await viewModel.hasReported(place)
+        }
         // Report outcome (success / already reported / failure).
         .alert(
             viewModel.reportMessage?.contains("already submitted") == true
