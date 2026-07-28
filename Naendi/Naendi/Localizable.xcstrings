@@ -2,14 +2,7 @@
   "sourceLanguage" : "en",
   "strings" : {
     "" : {
-      "localizations" : {
-        "id" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "(Empty string)"
-          }
-        }
-      }
+
     },
     "–" : {
       "comment" : "A separator between the minimum and maximum budget fields.",
