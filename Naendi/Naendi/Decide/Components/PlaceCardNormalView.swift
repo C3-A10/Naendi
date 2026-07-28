@@ -72,6 +72,7 @@ struct PlaceCardNormalView: View {
                         }
                     }
                     .clipped()
+                    .allowsHitTesting(false)
 
                 DistanceCheckmarkView(
                     isComparing: isComparing,
@@ -85,7 +86,6 @@ struct PlaceCardNormalView: View {
                     isReported: isReported,
                     onReport: onReport
                 )
-                .allowsHitTesting(isComparing || isDetail)
                 .zIndex(isComparing ? 3 : 1)
 
                 // Tombol Expand
@@ -166,6 +166,7 @@ struct PlaceCardNormalView: View {
                                 }
                             }
                             .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                            .allowsHitTesting(false)
                             .padding(.horizontal, 12)
                             .padding(.bottom, 25)
 
@@ -181,7 +182,6 @@ struct PlaceCardNormalView: View {
                             isReported: isReported,
                             onReport: onReport
                         )
-                        .allowsHitTesting(isDetail)
                         .zIndex(isDetail ? 3 : 1)
                         .padding(.top, 4)
                         .padding(.horizontal, 2)
