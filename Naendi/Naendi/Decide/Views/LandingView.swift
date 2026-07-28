@@ -64,7 +64,7 @@ struct LandingView: View {
                         .padding(.top, 100)
                         .accessibilityHidden(true)
 
-                        Text("Discover somewhere new")
+                        Text("Discover Local Places in Surabaya")
                             .font(.title2.bold())
                             .foregroundColor(.white)
                             .shadow(color: .black.opacity(0.4), radius: 4, x: 0, y: 2)

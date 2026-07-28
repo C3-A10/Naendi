@@ -556,7 +556,18 @@
         }
       }
     },
+    "Discover Local Places in Surabaya" : {
+      "localizations" : {
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temukan Tempat Lokal di Surabaya"
+          }
+        }
+      }
+    },
     "Discover somewhere new" : {
+      "extractionState" : "stale",
       "localizations" : {
         "id" : {
           "stringUnit" : {
