@@ -155,7 +155,9 @@ class DecideViewModel {
         self.criteria = criteria
         shuffleSeed = UInt64.random(in: .min ... .max)
 
-        phase = .loading
+        if phase != .results {
+            phase = .loading
+        }
         isLoading = true
         errorMessage = nil
 
@@ -247,18 +249,26 @@ class DecideViewModel {
         do {
             let isNew = try await repository.report(placeID: place.id)
             reportMessage = isNew
-                ? "Laporan terkirim. Terima kasih!"
-                : "Kamu sudah pernah melaporkan tempat ini."
+                ? "Your report has been submitted successfully. Thanks for your help!"
+                : "Looks lik you've already submitted a report for this place."
             if isNew {
                 reportCounts[place.id, default: place.reportCount] += 1
             }
-            return isNew
+            return true // dilaporkan oleh user ini, baru maupun sudah ada sebelumnya
         } catch let error as CKError where error.code == .notAuthenticated {
-            reportMessage = "Masuk ke iCloud dulu untuk bisa melaporkan tempat."
+            reportMessage = "Log-in to iCloud to submit a report. Please try again when you're back online."
         } catch {
-            reportMessage = "Gagal mengirim laporan. Coba lagi nanti."
+            reportMessage = "Failed to send report, please try again"
         }
         return false
+    }
+
+    // cek apakah user ini sudah pernah melaporkan tempat tsb
+    func hasReported(
+        _ place: Place,
+        using repository: CloudKitPlaceRepository = CloudKitPlaceRepository()
+    ) async -> Bool {
+        await repository.hasReported(placeID: place.id)
     }
 
     // ambil reportcount terbaru

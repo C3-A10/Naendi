@@ -72,6 +72,7 @@ struct PlaceCardNormalView: View {
                         }
                     }
                     .clipped()
+                    .allowsHitTesting(false)
 
                 DistanceCheckmarkView(
                     isComparing: isComparing,
@@ -86,7 +87,6 @@ struct PlaceCardNormalView: View {
                     hidesMetadataFromAccessibility: true,
                     onReport: onReport
                 )
-                .allowsHitTesting(isComparing || isDetail)
                 .zIndex(isComparing ? 3 : 1)
 
                 // Tombol Expand
@@ -178,6 +178,7 @@ struct PlaceCardNormalView: View {
                                 }
                             }
                             .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                            .allowsHitTesting(false)
                             .padding(.horizontal, 12)
                             .padding(.bottom, 25)
 
@@ -187,13 +188,12 @@ struct PlaceCardNormalView: View {
                             isCheckDisabled: true,
                             place: place,
                             viewModel: viewModel,
-                            distancePillColor: .white,
+                            distancePillColor: Color("color_green"),
                             isTagVisible: isTagVisible,
                             isDetail: isDetail,
                             isReported: isReported,
                             onReport: onReport
                         )
-                        .allowsHitTesting(isDetail)
                         .zIndex(isDetail ? 3 : 1)
                         .padding(.top, 4)
                         .padding(.horizontal, 2)
@@ -259,8 +259,8 @@ struct PlaceCardNormalView: View {
                         .frame(height: 130)
                         .background(
                             FolderTabShape(
-                                tabWidth: 190,
-                                slopeWidth: 40,
+                                tabWidth: 215,
+                                slopeWidth: 30,
                                 leftTabHeight: 135,
                                 rightTabHeight: 101,
                                 leftCornerRadius: 20,
@@ -306,7 +306,7 @@ struct PlaceCardNormalView: View {
     ZStack {
         Color(UIColor.systemGray6).ignoresSafeArea()
 
-//        PlaceCardNormalView(place: <#T##Place#>, isReported: <#T##Bool#>, isTagVisible: <#T##Bool#>, isExpanded: <#T##Binding<Bool>#>, isComparing: <#T##Binding<Bool>#>, viewModel: <#T##DecideViewModel#>)
+        PlaceCardNormalView(place: Place.dummyData[0], isReported: false, isTagVisible: false, isExpanded: .constant(false), isComparing: .constant(false), viewModel: DecideViewModel())
         .padding()
     }
 }

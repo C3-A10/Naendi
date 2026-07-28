@@ -1,4 +1,5 @@
 import Testing
+import Foundation
 @testable import Naendi
 
 @Suite("Budget preference")

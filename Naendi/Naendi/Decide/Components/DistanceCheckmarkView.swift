@@ -19,12 +19,15 @@ struct DistanceCheckmarkView: View {
     let isReported: Bool
     var hidesMetadataFromAccessibility: Bool = false
     let onReport: () -> Void
-    
+    @State private var isShowingDistancePopover = false
+    @State private var isShowingPlaceTagPopover = false
+
     var body: some View {
         HStack(alignment: .center, spacing: 6) {
             // 1. Badge Jarak
             Text(viewModel.calculateDistance(to: place))
-                .font(.system(size: 14, weight: .semibold))
+                .font(.footnote)
+                .fontWeight(.semibold)
                 .foregroundColor(.black)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
@@ -33,17 +36,51 @@ struct DistanceCheckmarkView: View {
                 .accessibilityLabel("Distance")
                 .accessibilityValue(viewModel.calculateDistance(to: place))
                 .accessibilityHidden(hidesMetadataFromAccessibility)
+                .onTapGesture {
+                    isShowingDistancePopover.toggle()
+                }
+                .popover(isPresented: $isShowingDistancePopover, arrowEdge: .top) {
+                    if (viewModel.criteria.locationName != nil){
+                        Text("This location is \(viewModel.calculateDistance(to: place)) away from \(viewModel.criteria.locationName ?? "Your location" ).")
+                            .font(.footnote)
+                            .padding()
+                            .presentationCompactAdaptation(.popover)
+                    }else{
+                        Text("This location is \(viewModel.calculateDistance(to: place)) away from your location.")
+                            .font(.footnote)
+                            .padding()
+                            .presentationCompactAdaptation(.popover)
+                    }
+                }
             
             if isTagVisible, let tag = viewModel.landingTag(for: place) {
                 switch tag {
                 case .nearby:
                     PlaceTagPillView(title: "Nearby", style: .pinLight)
+                        .onTapGesture {
+                            isShowingPlaceTagPopover.toggle()
+                        }
+                        .popover(isPresented: $isShowingPlaceTagPopover, arrowEdge: .top) {
+                            Text("This place is nearest to you.")
+                                .font(.footnote)
+                                .padding()
+                                .presentationCompactAdaptation(.popover)
+                        }
                 case .top(let type):
                     // Deterministic style so the pill doesn't flicker on redraw.
                     PlaceTagPillView(
                         title: "Top \(type)",
                         style: place.jumlahReview.isMultiple(of: 2) ? .topDark : .topLight
                     )
+                    .onTapGesture {
+                        isShowingPlaceTagPopover.toggle()
+                    }
+                    .popover(isPresented: $isShowingPlaceTagPopover, arrowEdge: .top) {
+                        Text("This place have most rating.")
+                            .font(.footnote)
+                            .padding()
+                            .presentationCompactAdaptation(.popover)
+                    }
                 }
             }
           
@@ -89,14 +126,21 @@ struct DistanceCheckmarkView: View {
                     onReport()
                 } label: {
                     Image(systemName: isReported ? "exclamationmark.bubble.fill" : "exclamationmark.bubble")
-                        .font(.system(size: 20, weight: .bold))
+                        .font(.system(size: 28, weight: .bold))
                         .foregroundColor(isReported ? Color("color_green") : .white)
                         .frame(width: 32, height: 32)
+                        .padding(6)
                 }
                 .buttonStyle(.plain)
                 .frame(minWidth: 44, minHeight: 44)
                 .accessibilityLabel(isReported ? "Place reported" : "Report \(place.nama)")
                 .accessibilityHint(isReported ? "" : "Reports inaccurate information about this place.")
+                .shadow(
+                        color: !isReported ? .black.opacity(0.15) : .clear,
+                        radius: !isReported ? 4 : 0,
+                        x: 0,
+                        y: 2
+                    )
             } else {
                 ReportBubbleView(reportCount: viewModel.reportCount(for: place))
                     .accessibilityHidden(hidesMetadataFromAccessibility)

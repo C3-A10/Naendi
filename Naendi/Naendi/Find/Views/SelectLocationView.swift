@@ -175,11 +175,6 @@ struct SelectLocationView: View {
     }
 
     private func confirmLocation() {
-        if let camera = cameraPosition.camera {
-            selectedCoordinate = camera.centerCoordinate
-        } else if let region = cameraPosition.region {
-            selectedCoordinate = region.center
-        }
         dismiss()
     }
 

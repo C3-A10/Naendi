@@ -17,6 +17,9 @@ struct ResultView: View {
     @State private var isShowingEditPreference = false
     @State private var imgStartIndex: Int = 0
     @State private var selectedPlaceForImage: Place?
+    @State private var pullDistance: CGFloat = 0
+
+    private let pullRefreshThreshold: CGFloat = 90
 
     var body: some View {
         VStack(spacing: 0) {
@@ -134,12 +137,18 @@ struct ResultView: View {
                         .padding(.horizontal, 20)
                         .padding(.bottom, (isComparing && viewModel.isCompareLimitReached) ? 80 : 16)
                     }
-                    .refreshable {
-                        await viewModel.loadRecommendations(
-                            from: AppServices.placeProvider(context: modelContext),
-                            criteria: viewModel.criteria
-                        )
+                    .onScrollGeometryChange(for: CGFloat.self) { geometry in
+                        max(0, -(geometry.contentOffset.y + geometry.contentInsets.top))
+                    } action: { _, distance in
+                        pullDistance = distance
                     }
+                    .onScrollPhaseChange { oldPhase, _ in
+                        guard oldPhase == .interacting,
+                              pullDistance >= pullRefreshThreshold,
+                              !viewModel.isLoading else { return }
+                        reloadRecommendations()
+                    }
+                    .overlay(alignment: .top) { pullRefreshIndicator }
                 }
             }
         }
@@ -167,9 +176,10 @@ struct ResultView: View {
             }
         }
         .fullScreenCover(item: $selectedPlace) { place in
-            NavigationStack {
-                DetailPlaceView(place: place)
-            }
+            DetailPlaceView(
+                place: place,
+                viewModel: viewModel
+            )
         }
         .fullScreenCover(isPresented: $isNavigatingToCompare) {
             if viewModel.selectedPlaces.count >= 2 {
@@ -179,7 +189,6 @@ struct ResultView: View {
                         placeB: viewModel.selectedPlaces[1],
                         viewModel: viewModel
                     )
-                    .navigationTitle("Compare")
                     .navigationBarTitleDisplayMode(.inline)
                 }
             }
@@ -212,6 +221,27 @@ struct ResultView: View {
         } message: {
             Text(viewModel.persistenceErrorMessage ?? "")
         }
+    }
+
+    @ViewBuilder
+    private var pullRefreshIndicator: some View {
+        let progress = min(pullDistance / pullRefreshThreshold, 1)
+        Group {
+            if viewModel.isLoading {
+                ProgressView()
+            } else {
+                Image(systemName: "arrow.down")
+                    .font(.system(size: 15, weight: .semibold))
+                    .rotationEffect(.degrees(progress == 1 ? 180 : 0))
+                    .animation(.spring(duration: 0.25), value: progress == 1)
+            }
+        }
+        .frame(width: 34, height: 34)
+        .background(.regularMaterial, in: .circle)
+        .scaleEffect(viewModel.isLoading ? 1 : progress)
+        .opacity(viewModel.isLoading ? 1 : progress)
+        .offset(y: viewModel.isLoading ? 12 : min(pullDistance, pullRefreshThreshold) - 22)
+        .animation(.spring(duration: 0.3), value: viewModel.isLoading)
     }
 
     private func reloadRecommendations() {
