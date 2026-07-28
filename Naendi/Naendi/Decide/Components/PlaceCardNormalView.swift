@@ -72,6 +72,10 @@ struct PlaceCardNormalView: View {
                         }
                     }
                     .clipped()
+                    // clipped() clips drawing, not hit testing: the .fill image
+                    // overflows ~100pt past the card and would eat taps on the
+                    // neighbouring card's expand button.
+                    .allowsHitTesting(false)
 
                 DistanceCheckmarkView(
                     isComparing: isComparing,
@@ -166,6 +170,7 @@ struct PlaceCardNormalView: View {
                                 }
                             }
                             .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                            .allowsHitTesting(false)
                             .padding(.horizontal, 12)
                             .padding(.bottom, 25)
 
