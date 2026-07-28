@@ -33,6 +33,16 @@ struct FullImageDetailView: View {
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .always))
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Image gallery")
+                .accessibilityValue("Image \(selectedIndex + 1) of \(imageUrls.count)")
+                .accessibilityAdjustableAction { direction in
+                    switch direction {
+                    case .increment: selectedIndex = min(selectedIndex + 1, imageUrls.count - 1)
+                    case .decrement: selectedIndex = max(selectedIndex - 1, 0)
+                    @unknown default: break
+                    }
+                }
             }
         }
     }
@@ -44,6 +54,7 @@ struct FullImageDetailView: View {
                 .foregroundColor(.white)
                 .multilineTextAlignment(.center)
                 .accessibilityAddTraits(.isHeader)
+                .accessibilityLabel("Image \(selectedIndex + 1) of \(imageUrls.count)")
 
             HStack {
                 Spacer() // Mendorong konten ke kanan
