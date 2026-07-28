@@ -1,5 +1,7 @@
 import MapKit
 import SwiftUI
+import UIKit
+import Combine
 
 struct EditPreferenceView: View {
     @Environment(\.dismiss) var dismiss
@@ -231,6 +233,15 @@ struct EditPreferenceView: View {
             .scrollIndicators(.hidden)
         }
         .locationDeniedAlert(isPresented: $isShowingLocationDeniedAlert)
+        .onReceive(
+            NotificationCenter.default.publisher(
+                for: UIAccessibility.voiceOverStatusDidChangeNotification
+            )
+        ) { _ in
+            if UIAccessibility.isVoiceOverRunning {
+                activeTooltip = nil
+            }
+        }
         .fullScreenCover(isPresented: $isSelectingLocation) {
             SelectLocationView(
                 selectedLocationName: $selectedLocationName,

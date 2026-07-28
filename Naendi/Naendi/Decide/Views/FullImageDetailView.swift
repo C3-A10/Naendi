@@ -12,7 +12,6 @@ struct FullImageDetailView: View {
     let startIndex: Int
 
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.accessibilityVoiceOverEnabled) private var isVoiceOverEnabled
     @State private var selectedIndex: Int
 
     init(imageUrls: [String], startIndex: Int) {
@@ -27,40 +26,31 @@ struct FullImageDetailView: View {
                 .ignoresSafeArea()
             VStack {
                 header
-                ZStack {
-                    TabView(selection: $selectedIndex) {
-                        ForEach(Array(imageUrls.enumerated()), id: \.offset) { index, urlString in
-                            ZoomableImageItem(urlString: urlString)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .tag(index)
-                        }
-                    }
-                    .tabViewStyle(.page(indexDisplayMode: .always))
-                    .accessibilityHidden(true)
-
-                    if isVoiceOverEnabled {
-                        Color.clear
+                TabView(selection: $selectedIndex) {
+                    ForEach(Array(imageUrls.enumerated()), id: \.offset) { index, urlString in
+                        ZoomableImageItem(urlString: urlString)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .contentShape(Rectangle())
-                            .accessibilityElement(children: .ignore)
-                            .accessibilityLabel("Photo gallery")
-                            .accessibilityValue(
-                                Text("Photo \(selectedIndex + 1) of \(imageUrls.count)")
-                            )
-                            .accessibilityHint("Swipe up or down to move between photos.")
-                            .accessibilityAdjustableAction { direction in
-                                switch direction {
-                                case .increment:
-                                    showPhoto(at: selectedIndex + 1)
-                                case .decrement:
-                                    showPhoto(at: selectedIndex - 1)
-                                @unknown default:
-                                    break
-                                }
-                            }
+                            .tag(index)
                     }
                 }
+                .tabViewStyle(.page(indexDisplayMode: .always))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Photo gallery")
+                .accessibilityValue(
+                    Text("Photo \(selectedIndex + 1) of \(imageUrls.count)")
+                )
+                .accessibilityHint("Swipe up for the next photo or down for the previous photo.")
+                .accessibilityAdjustableAction { direction in
+                    switch direction {
+                    case .increment:
+                        showPhoto(at: selectedIndex + 1)
+                    case .decrement:
+                        showPhoto(at: selectedIndex - 1)
+                    @unknown default:
+                        break
+                    }
+                }
             }
         }
     }
@@ -79,7 +69,10 @@ struct FullImageDetailView: View {
                 .font(.headline)
                 .foregroundColor(.white)
                 .multilineTextAlignment(.center)
-                .accessibilityAddTraits(.isHeader)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(
+                    Text("Photo \(selectedIndex + 1) of \(imageUrls.count)")
+                )
 
             HStack {
                 Spacer() // Mendorong konten ke kanan

@@ -23,7 +23,7 @@ struct DistanceCheckmarkView: View {
     @State private var isShowingPlaceTagPopover = false
 
     var body: some View {
-        HStack(alignment: .center, spacing: 6) {
+        HStack(alignment: .top, spacing: 6) {
             // 1. Badge Jarak
             Text(viewModel.calculateDistance(to: place))
                 .font(.footnote)
@@ -144,9 +144,6 @@ struct DistanceCheckmarkView: View {
             } else {
                 ReportBubbleView(reportCount: viewModel.reportCount(for: place))
                     .accessibilityHidden(hidesMetadataFromAccessibility)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .clipShape(Capsule())
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)

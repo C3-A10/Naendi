@@ -78,17 +78,23 @@ struct PlaceCardExpandInfoView: View {
                     }
                 }
                 Spacer()
-                Image(systemName: "chevron.up")
-                    .font(.title3).fontWeight(.bold)
-                    .foregroundColor(.primary)
-                    .padding(4)
+                Button {
+                    withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
+                        isExpanded = false
+                    }
+                } label: {
+                    Image(systemName: "chevron.up")
+                        .font(.title3).fontWeight(.bold)
+                        .foregroundColor(.primary)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
+                        .accessibilityHidden(true)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Collapse place details")
+                .accessibilityHint("Double-tap to collapse this place card.")
             }
             .padding(.horizontal, 12)
-            .onTapGesture {
-                withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
-                    isExpanded = false
-                }
-            }
             .padding(.bottom, 8)
 
             Divider()

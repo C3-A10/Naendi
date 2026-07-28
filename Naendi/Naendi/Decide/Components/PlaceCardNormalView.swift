@@ -150,6 +150,21 @@ struct PlaceCardNormalView: View {
 
         } else if mode == .landing {
             ZStack (alignment: .bottom) {
+                Button {
+                    expandCard()
+                } label: {
+                    Color.clear
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 278)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(Text(place.nama))
+                .accessibilityValue(Text(landingCardAccessibilitySummary))
+                .accessibilityHint("Double-tap to show expanded information.")
+                .accessibilityAddTraits(.isButton)
+                .zIndex(4)
+
                 VStack(spacing: 0) {
                     // MARK: - 2. KARTU DALAM (GAMBAR & FOLDER PUTIH)
                     ZStack(alignment: .bottom) {
@@ -192,6 +207,7 @@ struct PlaceCardNormalView: View {
                             isTagVisible: isTagVisible,
                             isDetail: isDetail,
                             isReported: isReported,
+                            hidesMetadataFromAccessibility: isDetail,
                             onReport: onReport
                         )
                         .zIndex(isDetail ? 3 : 1)
@@ -217,6 +233,7 @@ struct PlaceCardNormalView: View {
                                 Spacer()
                             }
                             .frame(height: 10)
+                            .accessibilityHidden(isDetail)
 
                             // Button Expand
                             Button {
@@ -247,6 +264,7 @@ struct PlaceCardNormalView: View {
                             }
                             .buttonStyle(.plain)
                             .zIndex(2)
+                            .accessibilityHidden(isDetail)
                             .accessibilityLabel(place.nama)
                             .accessibilityValue("Rating \(place.accessibilityRatingDescription), \(place.accessibilityReviewCountDescription) reviews")
                             .accessibilityHint("Shows more details about this place.")
@@ -271,7 +289,10 @@ struct PlaceCardNormalView: View {
 
                         )
                     }
+
                 }
+                .zIndex(1)
+                .accessibilityHidden(true)
                 .frame(maxWidth: .infinity)
                 .frame(height: 278)
                 .background(Color(.secondarySystemGroupedBackground))
@@ -289,7 +310,7 @@ struct PlaceCardNormalView: View {
     }
 
     private var resultCardAccessibilitySummary: String {
-        String(
+        return String(
             format: String(
                 localized: "Rating %@, %@ reviews, distance %@, %lld reports"
             ),
@@ -299,6 +320,78 @@ struct PlaceCardNormalView: View {
             viewModel.calculateDistance(to: place),
             Int64(viewModel.reportCount(for: place))
         )
+    }
+
+    private var detailCardAccessibilitySummary: String {
+        if let halalStatus = halalAccessibilityDescription {
+            return String(
+                format: String(
+                    localized: "Type %@, vibe %@, dietary status %@, rating %@, %@ reviews, distance %@, %lld reports"
+                ),
+                locale: .current,
+                String(localized: String.LocalizationValue(place.typeTempat)),
+                String(localized: String.LocalizationValue(place.vibe)),
+                halalStatus,
+                place.accessibilityRatingDescription,
+                place.accessibilityReviewCountDescription,
+                viewModel.calculateDistance(to: place),
+                Int64(viewModel.reportCount(for: place))
+            )
+        }
+
+        return String(
+            format: String(
+                localized: "Type %@, vibe %@, rating %@, %@ reviews, distance %@, %lld reports"
+            ),
+            locale: .current,
+            String(localized: String.LocalizationValue(place.typeTempat)),
+            String(localized: String.LocalizationValue(place.vibe)),
+            place.accessibilityRatingDescription,
+            place.accessibilityReviewCountDescription,
+            viewModel.calculateDistance(to: place),
+            Int64(viewModel.reportCount(for: place))
+        )
+    }
+
+    private var halalAccessibilityDescription: String? {
+        switch place.halal.lowercased() {
+        case "halal":
+            return String(localized: "Halal")
+        case "non-halal", "nonhalal":
+            return String(localized: "Non-Halal")
+        default:
+            return nil
+        }
+    }
+
+    private var landingCardAccessibilitySummary: String {
+        guard isTagVisible, let tagDescription = landingTagAccessibilityDescription else {
+            return detailCardAccessibilitySummary
+        }
+
+        return String(
+            format: String(
+                localized: "Recommendation %@, %@"
+            ),
+            locale: .current,
+            tagDescription,
+            detailCardAccessibilitySummary
+        )
+    }
+
+    private var landingTagAccessibilityDescription: String? {
+        guard let tag = viewModel.landingTag(for: place) else { return nil }
+
+        switch tag {
+        case .nearby:
+            return String(localized: "Nearby")
+        case .top(let type):
+            return String(
+                format: String(localized: "Top %@"),
+                locale: .current,
+                String(localized: String.LocalizationValue(type))
+            )
+        }
     }
 }
 
