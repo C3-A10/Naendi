@@ -10,6 +10,55 @@ import SwiftUI
 
 extension EditPreferenceView {
 
+    func preferenceRowWithTooltip<Content: View>(
+        _ tooltip: PreferenceTooltip,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        ZStack(alignment: .trailing) {
+            content()
+
+            Button {
+                activeTooltip = tooltip
+            } label: {
+                Image(systemName: "info.circle")
+                    .font(.title3)
+                    .foregroundStyle(.secondary)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text(tooltip.accessibilityLabel))
+            .accessibilityHint("Shows more information about this preference.")
+            .padding(.trailing, 8)
+            .popover(
+                isPresented: tooltipPresentationBinding(for: tooltip),
+                attachmentAnchor: .rect(.bounds),
+                arrowEdge: .trailing
+            ) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(tooltip.title)
+                        .font(.headline)
+
+                    Text(tooltip.description)
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+                }
+                .padding()
+                .frame(idealWidth: 260, alignment: .leading)
+                .presentationCompactAdaptation(.popover)
+            }
+        }
+    }
+
+    func tooltipPresentationBinding(for tooltip: PreferenceTooltip) -> Binding<Bool> {
+        Binding(
+            get: { activeTooltip == tooltip },
+            set: { isPresented in
+                activeTooltip = isPresented ? tooltip : nil
+            }
+        )
+    }
+
    
    var preferredTimeRange: String {
         let start = Self.timeFormatter.string(from: preferredStartTime)
@@ -138,37 +187,40 @@ extension EditPreferenceView {
     }
 
     var navigationHeader: some View {
-        VStack(spacing: 14) {
-            HStack {
-                CircleIconButton(
-                    systemName: "chevron.left",
-                    accessibilityLabel: "Back",
-                    accessibilityInputLabels: ["Back"],
-                    backgroundColor: Color(.systemBackground)
-                ) { dismiss() }
-                .accessibilitySortPriority(3)
+        HStack(spacing: 16) {
+            CircleIconButton(
+                systemName: "chevron.left",
+                accessibilityLabel: "Back",
+                accessibilityInputLabels: ["Back"],
+                backgroundColor: Color(.systemBackground)
+            ) { dismiss() }
 
-                Spacer()
-
-                CircleIconButton(
-                    systemName: "checkmark",
-                    accessibilityLabel: "Save preferences",
-                    accessibilityInputLabels: ["Save", "Save preferences"],
-                    backgroundColor: Color(.systemBackground)
-                ) {
-                    onSave(editedCriteria)
-                    dismiss()
-                }
-                .accessibilityHint("Applies the selected preferences and returns to results.")
-                .accessibilitySortPriority(1)
-            }
+            Spacer(minLength: 0)
 
             Text("Edit Preference")
                 .font(.title2.bold())
                 .multilineTextAlignment(.center)
                 .accessibilityAddTraits(.isHeader)
-                .accessibilitySortPriority(2)
                 .foregroundColor(.black)
+
+            Spacer(minLength: 0)
+
+            CircleIconButton(
+                systemName: "checkmark",
+                accessibilityLabel: "Save preferences",
+                accessibilityInputLabels: ["Save", "Save preferences"],
+                backgroundColor: Color(.systemBackground)
+            ) {
+                onSave(editedCriteria)
+                dismiss()
+            }
+            .disabled(!budgetViewModel.isBudgetValid)
+            .opacity(budgetViewModel.isBudgetValid ? 1 : 0.5)
+            .accessibilityHint(
+                budgetViewModel.isBudgetValid
+                    ? "Applies the selected preferences and returns to results."
+                    : "Enter a valid custom budget range before saving."
+            )
         }
         .padding(.horizontal, 24)
         .padding(.top, 12)

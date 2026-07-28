@@ -45,7 +45,7 @@ class DecideViewModel {
 
     var phase: DecidePhase = .landing
     var criteria: PreferenceCriteria = .default
-    
+
     var isNetworkConnected: Bool { networkMonitor.isConnected }
 
     private(set) var awaitingOrigin = false
@@ -249,21 +249,21 @@ class DecideViewModel {
         do {
             let isNew = try await repository.report(placeID: place.id)
             reportMessage = isNew
-                ? "Laporan terkirim. Terima kasih!"
-                : "Kamu sudah pernah melaporkan tempat ini."
+                ? "Your report has been submitted successfully. Thanks for your help!"
+                : "Looks lik you've already submitted a report for this place."
             if isNew {
                 reportCounts[place.id, default: place.reportCount] += 1
             }
             return isNew
         } catch let error as CKError where error.code == .notAuthenticated {
-            reportMessage = "Masuk ke iCloud dulu untuk bisa melaporkan tempat."
+            reportMessage = "Log-in to iCloud to submit a report. Please try again when you're back online."
         } catch {
-            reportMessage = "Gagal mengirim laporan. Coba lagi nanti."
+            reportMessage = "Failed to send report, please try again"
         }
         return false
     }
 
-    // ambil reportcount terbaru 
+    // ambil reportcount terbaru
     func reportCount(for place: Place) -> Int {
         reportCounts[place.id] ?? place.reportCount
     }

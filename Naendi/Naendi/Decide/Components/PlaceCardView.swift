@@ -22,11 +22,11 @@ struct PlaceCardView: View {
     let onReport: () -> Void
     @State private var isExpanded: Bool = false
     @State var viewModel: DecideViewModel
-    
+
     @Binding var isComparing: Bool
     let onSelectImageIndex: (Int) -> Void
     @Binding var selectedPlace: Place?
-    
+
     init(
         place: Place,
         mode: PlaceCardMode,
@@ -54,7 +54,7 @@ struct PlaceCardView: View {
         self.onSelectImageIndex = onSelectImageIndex
         self._selectedPlace = selectedPlace
     }
-    
+
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
@@ -64,14 +64,6 @@ struct PlaceCardView: View {
                     PlaceCardNormalView(place: place, mode: mode, isReported: isReported, isTagVisible: isTagVisible, isDetail: isDetail, onReport: onReport, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel)
                 }
             }
-            .contentShape(Rectangle())
-            .onTapGesture {
-                if isComparing {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        viewModel.toggleSelection(for: place)
-                    }
-                } 
-            }
         }
     }
 }
@@ -80,7 +72,7 @@ struct PlaceCardView: View {
     ZStack {
         Color(UIColor.systemGray6)
             .ignoresSafeArea()
-        
+
         ScrollView {
             PlaceCardView(
                 place: Place.dummyData[0],

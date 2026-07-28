@@ -75,6 +75,8 @@ struct CompareTable: View {
             }
         }
         .buttonStyle(.plain)
+        .frame(minWidth: 44, minHeight: 44)
+        .accessibilityHidden(true)
     }
 }
 

@@ -29,6 +29,8 @@ struct DistanceCheckmarkView: View {
                 .padding(.vertical, 8)
                 .background(distancePillColor)
                 .clipShape(Capsule())
+                .accessibilityLabel("Distance")
+                .accessibilityValue(viewModel.calculateDistance(to: place))
             
             if isTagVisible, let tag = viewModel.landingTag(for: place) {
                 switch tag {
@@ -67,16 +69,39 @@ struct DistanceCheckmarkView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(isCheckDisabled)
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Circle())
+                .accessibilityRespondsToUserInteraction(true)
+                .accessibilitySortPriority(3)
+                .accessibilityLabel(Text("Select \(place.nama) for comparison"))
+                .accessibilityValue(
+                    Text(
+                        isSelected
+                            ? String(localized: "Selected")
+                            : String(localized: "Not selected")
+                    )
+                )
+                .accessibilityAddTraits(isSelected ? .isSelected : [])
             } else if isDetail {
                 Button {
                     onReport()
                 } label: {
                     Image(systemName: isReported ? "exclamationmark.bubble.fill" : "exclamationmark.bubble")
-                        .font(.system(size: 20, weight: .bold))
+                        .font(.system(size: 28, weight: .bold))
                         .foregroundColor(isReported ? Color("color_green") : .white)
                         .frame(width: 32, height: 32)
+                        .padding(6)
                 }
                 .buttonStyle(.plain)
+                .frame(minWidth: 44, minHeight: 44)
+                .accessibilityLabel(isReported ? "Place reported" : "Report \(place.nama)")
+                .accessibilityHint(isReported ? "" : "Reports inaccurate information about this place.")
+                .shadow(
+                        color: !isReported ? .black.opacity(0.15) : .clear,
+                        radius: !isReported ? 4 : 0,
+                        x: 0,
+                        y: 2
+                    )
             } else {
                 ReportBubbleView(reportCount: viewModel.reportCount(for: place))
                     .padding(.horizontal, 12)

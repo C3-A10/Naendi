@@ -57,9 +57,9 @@ struct ResultView: View {
                                 .clipShape(Capsule())
                         }
                         .transition(.scale.combined(with: .opacity))
-                        
+
                     } else {
-                        
+
                         CircleIconButton(systemName: "arrow.left.arrow.right", accessibilityLabel: "Compare", backgroundColor: Color(.systemBackground)) {
                             withAnimation(.spring()) {
                                 isComparing = true
@@ -67,14 +67,14 @@ struct ResultView: View {
                         }
                         .transition(.scale.combined(with: .opacity))
 
-                        
+
                         CircleIconButton(systemName: "pencil", accessibilityLabel: "Preference",                     backgroundColor: Color(.systemBackground)) {
                             withAnimation(.spring()) {
                                 isShowingEditPreference = true
                             }
                         }
                         .transition(.scale.combined(with: .opacity))
-                        
+
                     }
                 }
             }
@@ -115,7 +115,7 @@ struct ResultView: View {
                     ScrollView {
                         LazyVStack(spacing: 20) {
                             ForEach(viewModel.places) { place in
-                                
+
                                 PlaceCardView(
                                     place: place,
                                     mode: .result,
@@ -130,7 +130,7 @@ struct ResultView: View {
                                     },
                                     selectedPlace: $selectedPlace
                                 )
-        
+
                             }
                         }
                         .padding(.vertical, 16)
@@ -176,9 +176,10 @@ struct ResultView: View {
             }
         }
         .fullScreenCover(item: $selectedPlace) { place in
-            NavigationStack {
-                DetailPlaceView(place: place)
-            }
+            DetailPlaceView(
+                place: place,
+                viewModel: viewModel
+            )
         }
         .fullScreenCover(isPresented: $isNavigatingToCompare) {
             if viewModel.selectedPlaces.count >= 2 {
@@ -188,7 +189,6 @@ struct ResultView: View {
                         placeB: viewModel.selectedPlaces[1],
                         viewModel: viewModel
                     )
-                    .navigationTitle("Compare")
                     .navigationBarTitleDisplayMode(.inline)
                 }
             }

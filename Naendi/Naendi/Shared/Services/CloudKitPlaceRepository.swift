@@ -54,7 +54,7 @@ final class CloudKitPlaceRepository: PlaceRepository {
             try await onPage(batch)
         }
     }
-    
+
     @discardableResult
     func report(placeID: String) async throws -> Bool {
         let database = container.publicCloudDatabase
@@ -111,7 +111,7 @@ final class CloudKitPlaceRepository: PlaceRepository {
             }
         }
     }
-    
+
     func makePlace(from record: CKRecord) -> Place? {
         guard let nama = record["nama"] as? String,
               let location = record["location"] as? CLLocation else {
@@ -142,5 +142,5 @@ final class CloudKitPlaceRepository: PlaceRepository {
             reportCount: 0
         )
     }
-    
+
 }

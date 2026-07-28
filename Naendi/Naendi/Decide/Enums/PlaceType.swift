@@ -15,7 +15,7 @@ enum PlaceType: String, CaseIterable {
     case pkl = "PKL"
     case drinks = "Drinks"
     case bakery = "Bakery"
-    
+
     var description: String {
         switch self {
         case .any:
@@ -32,7 +32,7 @@ enum PlaceType: String, CaseIterable {
             return String(localized: "Places focused on beverages and specialty drinks.")
         case .bakery:
             return String(localized: "Places serving bread, pastries, cakes, and freshly baked goods.")
-            
+
         }
     }
 }
