@@ -85,7 +85,6 @@ struct PlaceCardNormalView: View {
                     isReported: isReported,
                     onReport: onReport
                 )
-                .allowsHitTesting(isComparing || isDetail)
                 .zIndex(isComparing ? 3 : 1)
 
                 // Tombol Expand
@@ -181,7 +180,6 @@ struct PlaceCardNormalView: View {
                             isReported: isReported,
                             onReport: onReport
                         )
-                        .allowsHitTesting(isDetail)
                         .zIndex(isDetail ? 3 : 1)
                         .padding(.top, 4)
                         .padding(.horizontal, 2)

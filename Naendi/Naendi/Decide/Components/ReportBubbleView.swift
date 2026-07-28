@@ -11,6 +11,7 @@ import SwiftUI
 /// Used on place cards to indicate how many reports a location has received.
 struct ReportBubbleView: View {
     let reportCount: Int
+    @State private var isShowingPopover = false
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -31,6 +32,15 @@ struct ReportBubbleView: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Reports")
         .accessibilityValue("\(reportCount)")
+        .onTapGesture {
+            isShowingPopover.toggle()
+        }
+        .popover(isPresented: $isShowingPopover, arrowEdge: .top) {
+            Text("There are \(reportCount) number of reports made about this place being inaccurate.")
+                .font(.footnote)
+                .padding()
+                .presentationCompactAdaptation(.popover)
+        }
     }
 }
 
