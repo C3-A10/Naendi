@@ -37,10 +37,17 @@ struct DistanceCheckmarkView: View {
                     isShowingDistancePopover.toggle()
                 }
                 .popover(isPresented: $isShowingDistancePopover, arrowEdge: .top) {
-                    Text("You are \(viewModel.calculateDistance(to: place)) away from \(viewModel.criteria.locationName ?? "your location")")
-                        .font(.footnote)
-                        .padding()
-                        .presentationCompactAdaptation(.popover)
+                    if (viewModel.criteria.locationName != nil){
+                        Text("This location is \(viewModel.calculateDistance(to: place)) away from \(viewModel.criteria.locationName ?? "Your location" ).")
+                            .font(.footnote)
+                            .padding()
+                            .presentationCompactAdaptation(.popover)
+                    }else{
+                        Text("This location is \(viewModel.calculateDistance(to: place)) away from your location.")
+                            .font(.footnote)
+                            .padding()
+                            .presentationCompactAdaptation(.popover)
+                    }
                 }
             
             if isTagVisible, let tag = viewModel.landingTag(for: place) {
