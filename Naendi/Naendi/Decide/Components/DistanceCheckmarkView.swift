@@ -18,12 +18,14 @@ struct DistanceCheckmarkView: View {
     let isDetail: Bool
     let isReported: Bool
     let onReport: () -> Void
-    
+    @State private var isShowingDistancePopover = false
+
     var body: some View {
         HStack(alignment: .center, spacing: 6) {
             // 1. Badge Jarak
             Text(viewModel.calculateDistance(to: place))
-                .font(.system(size: 14, weight: .semibold))
+                .font(.footnote)
+                .fontWeight(.semibold)
                 .foregroundColor(.black)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
@@ -31,6 +33,22 @@ struct DistanceCheckmarkView: View {
                 .clipShape(Capsule())
                 .accessibilityLabel("Distance")
                 .accessibilityValue(viewModel.calculateDistance(to: place))
+                .onTapGesture {
+                    isShowingDistancePopover.toggle()
+                }
+                .popover(isPresented: $isShowingDistancePopover, arrowEdge: .top) {
+                    if (viewModel.criteria.locationName != nil){
+                        Text("This location is \(viewModel.calculateDistance(to: place)) away from \(viewModel.criteria.locationName ?? "Your location" ).")
+                            .font(.footnote)
+                            .padding()
+                            .presentationCompactAdaptation(.popover)
+                    }else{
+                        Text("This location is \(viewModel.calculateDistance(to: place)) away from your location.")
+                            .font(.footnote)
+                            .padding()
+                            .presentationCompactAdaptation(.popover)
+                    }
+                }
             
             if isTagVisible, let tag = viewModel.landingTag(for: place) {
                 switch tag {
