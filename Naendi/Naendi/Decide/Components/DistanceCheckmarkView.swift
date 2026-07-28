@@ -66,11 +66,11 @@ struct DistanceCheckmarkView: View {
                                 .foregroundColor(.black)
                         }
                     }
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .disabled(isCheckDisabled)
-                .frame(minWidth: 44, minHeight: 44)
-                .contentShape(Circle())
                 .accessibilityRespondsToUserInteraction(true)
                 .accessibilitySortPriority(3)
                 .accessibilityLabel(Text("Select \(place.nama) for comparison"))
