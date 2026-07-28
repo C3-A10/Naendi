@@ -72,6 +72,7 @@ struct PlaceCardNormalView: View {
                         }
                     }
                     .clipped()
+                    .allowsHitTesting(false)
 
                 DistanceCheckmarkView(
                     isComparing: isComparing,
@@ -165,6 +166,7 @@ struct PlaceCardNormalView: View {
                                 }
                             }
                             .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                            .allowsHitTesting(false)
                             .padding(.horizontal, 12)
                             .padding(.bottom, 25)
 
