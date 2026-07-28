@@ -17,6 +17,7 @@ struct DistanceCheckmarkView: View {
     let isTagVisible: Bool
     let isDetail: Bool
     let isReported: Bool
+    var hidesMetadataFromAccessibility: Bool = false
     let onReport: () -> Void
     
     var body: some View {
@@ -31,6 +32,7 @@ struct DistanceCheckmarkView: View {
                 .clipShape(Capsule())
                 .accessibilityLabel("Distance")
                 .accessibilityValue(viewModel.calculateDistance(to: place))
+                .accessibilityHidden(hidesMetadataFromAccessibility)
             
             if isTagVisible, let tag = viewModel.landingTag(for: place) {
                 switch tag {
@@ -97,6 +99,7 @@ struct DistanceCheckmarkView: View {
                 .accessibilityHint(isReported ? "" : "Reports inaccurate information about this place.")
             } else {
                 ReportBubbleView(reportCount: viewModel.reportCount(for: place))
+                    .accessibilityHidden(hidesMetadataFromAccessibility)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
                     .clipShape(Capsule())

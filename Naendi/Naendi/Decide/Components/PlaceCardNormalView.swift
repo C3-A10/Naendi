@@ -83,6 +83,7 @@ struct PlaceCardNormalView: View {
                     isTagVisible: isTagVisible,
                     isDetail: isDetail,
                     isReported: isReported,
+                    hidesMetadataFromAccessibility: true,
                     onReport: onReport
                 )
                 .allowsHitTesting(isComparing || isDetail)
@@ -107,6 +108,7 @@ struct PlaceCardNormalView: View {
                                     .accessibilityLabel("Rating \(place.accessibilityRatingDescription)")
                                 Text("•").foregroundColor(.secondary).font(.body)
                                 Text("(\(place.jumlahReview))").font(.caption).foregroundColor(.secondary)
+                                    .accessibilityLabel("\(place.accessibilityReviewCountDescription) reviews")
                             }
                         }
                         Spacer()
@@ -121,13 +123,23 @@ struct PlaceCardNormalView: View {
                 }
                 .buttonStyle(.plain)
                 .allowsHitTesting(!isComparing)
-                .accessibilityHidden(isComparing)
+                .accessibilityHidden(true)
                 .zIndex(2)
-                .accessibilityLabel(place.nama)
-                .accessibilityValue("Rating \(place.accessibilityRatingDescription), \(place.jumlahReview) reviews")
-                .accessibilityHint("Shows more details about this place.")
-                .accessibilityAction {
-                    expandCard()
+
+                if !isComparing {
+                    Button {
+                        expandCard()
+                    } label: {
+                        Color.clear
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(Text(place.nama))
+                    .accessibilityValue(Text(resultCardAccessibilitySummary))
+                    .accessibilityHint("Double-tap to show expanded information.")
+                    .accessibilityAddTraits(.isButton)
+                    .zIndex(4)
                 }
             }
             .frame(maxWidth: .infinity)
@@ -223,6 +235,7 @@ struct PlaceCardNormalView: View {
                                                 .accessibilityLabel("Rating \(place.accessibilityRatingDescription)")
                                             Text("•").foregroundColor(.secondary).font(.body)
                                             Text("(\(place.jumlahReview))").font(.caption).fontWeight(.semibold).foregroundColor(.secondary)
+                                                .accessibilityLabel("\(place.accessibilityReviewCountDescription) reviews")
                                         }
                                     }
                                     Spacer()
@@ -235,7 +248,7 @@ struct PlaceCardNormalView: View {
                             .buttonStyle(.plain)
                             .zIndex(2)
                             .accessibilityLabel(place.nama)
-                            .accessibilityValue("Rating \(place.accessibilityRatingDescription), \(place.jumlahReview) reviews")
+                            .accessibilityValue("Rating \(place.accessibilityRatingDescription), \(place.accessibilityReviewCountDescription) reviews")
                             .accessibilityHint("Shows more details about this place.")
                             .accessibilityAction {
                                 expandCard()
@@ -273,6 +286,19 @@ struct PlaceCardNormalView: View {
         withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
             isExpanded = true
         }
+    }
+
+    private var resultCardAccessibilitySummary: String {
+        String(
+            format: String(
+                localized: "Rating %@, %@ reviews, distance %@, %lld reports"
+            ),
+            locale: .current,
+            place.accessibilityRatingDescription,
+            place.accessibilityReviewCountDescription,
+            viewModel.calculateDistance(to: place),
+            Int64(viewModel.reportCount(for: place))
+        )
     }
 }
 

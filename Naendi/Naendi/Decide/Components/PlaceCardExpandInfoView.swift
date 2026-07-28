@@ -53,6 +53,7 @@ struct PlaceCardExpandInfoView: View {
 
                         // jml review
                         Text("(\(place.jumlahReview))").font(.caption).foregroundColor(.secondary)
+                            .accessibilityLabel("\(place.accessibilityReviewCountDescription) reviews")
                         Text("•").foregroundColor(.secondary).font(.caption)
 
                         // range harga
