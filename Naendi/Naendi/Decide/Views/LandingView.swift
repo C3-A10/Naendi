@@ -17,7 +17,7 @@ struct LandingView: View {
     @State private var isShowingEditPreference = false
     @State private var imgStartIndex: Int = 0
     @State private var selectedPlaceForImage: Place?
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // MARK: - ZSTACK UTAMA: Memisahkan Latar Belakang (Hero) & Konten (Scroll)
@@ -39,7 +39,8 @@ struct LandingView: View {
                         }
                         .frame(width: UIScreen.main.bounds.width, height: 420)
                         .clipped()
-                        
+                        .accessibilityHidden(true)
+
                         // Maskot di Kiri dan Kanan
                         HStack(spacing: 0) {
                             Image("asset_bicycle")
@@ -48,9 +49,9 @@ struct LandingView: View {
                                 .frame(width: 180, height: 180)
                                 .offset(x: -50)
                                 .offset(y: 30)
-                            
+
                             Spacer()
-                                
+
                             Image("asset_rabbit")
                                 .resizable()
                                 .scaledToFit()
@@ -61,13 +62,15 @@ struct LandingView: View {
                         .frame(maxWidth: .infinity) // Memaksa HStack membentang selebar mungkin
                         .padding(.horizontal, 0) // Memastikan tidak ada jarak/margin bawaan dari sistem
                         .padding(.top, 100)
-                        
+                        .accessibilityHidden(true)
+
                         Text("Discover somewhere new")
-                            .font(.system(size: 24, weight: .bold))
+                            .font(.title2.bold())
                             .foregroundColor(.white)
                             .shadow(color: .black.opacity(0.4), radius: 4, x: 0, y: 2)
                             .padding(.top, 64)
-                        
+                            .accessibilityAddTraits(.isHeader)
+
                         // Gradient Transisi ke Putih (Agar menyatu dengan latar belakang aplikasi)
                         VStack {
                             Spacer()
@@ -77,6 +80,7 @@ struct LandingView: View {
                                 endPoint: .bottom
                             )
                             .frame(height: 140)
+                            .accessibilityHidden(true)
                         }
                     }
                     .frame(width: UIScreen.main.bounds.width, height: 420)
@@ -86,7 +90,7 @@ struct LandingView: View {
                 .opacity(calculateOpacity())
                 .offset(y: scrollOffset < 0 ? (scrollOffset / 2) : 0) // Efek paralaks naik perlahan
                 .ignoresSafeArea(edges: .top)
-                
+
                 ScrollView {
                     VStack(spacing: 0) {
                         GeometryReader { proxy -> Color in
@@ -97,11 +101,11 @@ struct LandingView: View {
                             return Color.clear
                         }
                         .frame(height: 0)
-                        
-                        
+
+
                         VStack {
                             Spacer()
-                            
+
                             // Tombol Hijau ("Select Your Preferences") - Berada di atas gambar
                             CustomActionButton(
                                 text: "Select Your Preferences",
@@ -114,10 +118,10 @@ struct LandingView: View {
                             .padding(.bottom, 20)
                         }
                         .frame(height: 340)
-                        
+
                         LazyVStack(spacing: 20) {
                             ForEach(viewModel.landingPagePlaces) { place in
-                    
+
                                 PlaceCardView(
                                     place: place,
                                     mode: .landing,
@@ -132,7 +136,7 @@ struct LandingView: View {
                                     },
                                     selectedPlace: $selectedPlace
                                 )
-                                
+
                             }
                         }
                         .padding(.vertical, 16)
@@ -142,7 +146,7 @@ struct LandingView: View {
                     .frame(width: UIScreen.main.bounds.width)
                 }
                 .coordinateSpace(name: "scroll_space")
-                
+
             }
         }
         .toolbar(.hidden, for: .navigationBar)
@@ -158,7 +162,7 @@ struct LandingView: View {
         }
         .fullScreenCover(item: $selectedPlace) { place in
             NavigationStack {
-                DetailPlaceView(place: place)
+                DetailPlaceView(place: place,viewModel: viewModel)
             }
         }
         .fullScreenCover(isPresented: $isShowingEditPreference) {
@@ -173,9 +177,9 @@ struct LandingView: View {
             }
         }
     }
-    
+
     // MARK: - Rumus Hitung Efek Blur & Fade Out
-    
+
     // Menghitung intensitas blur: Semakin ke bawah di-scroll, semakin blur (maksimal radius 15)
     private func calculateBlur() -> CGFloat {
         if scrollOffset >= 0 {
@@ -185,7 +189,7 @@ struct LandingView: View {
             return min(CGFloat(progress * 15.0), 15.0)
         }
     }
-    
+
     // Menghitung opasitas: Gambar memudar perlahan agar tidak mengganggu keterbacaan kartu
     private func calculateOpacity() -> Double {
         if scrollOffset >= 0 {

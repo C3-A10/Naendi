@@ -59,9 +59,6 @@ final class CloudKitPlaceRepository: PlaceRepository {
         CKRecord.ID(recordName: "report_\(placeID)_\(userID.recordName)")
     }
 
-    // Read-only counterpart to report(): lets the UI show the reported state
-    // without having to attempt a write first. Never throws — no iCloud account,
-    // offline, or no record all mean "show as unreported".
     func hasReported(placeID: String) async -> Bool {
         guard let userID = try? await container.userRecordID() else { return false }
         let recordID = reportRecordID(placeID: placeID, userID: userID)
@@ -124,7 +121,7 @@ final class CloudKitPlaceRepository: PlaceRepository {
             }
         }
     }
-    
+
     func makePlace(from record: CKRecord) -> Place? {
         guard let nama = record["nama"] as? String,
               let location = record["location"] as? CLLocation else {
@@ -155,5 +152,5 @@ final class CloudKitPlaceRepository: PlaceRepository {
             reportCount: 0
         )
     }
-    
+
 }

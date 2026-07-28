@@ -18,7 +18,7 @@ struct PlaceCardNormalView: View {
     @Binding var isExpanded: Bool
     @Binding var isComparing: Bool
     @State var viewModel: DecideViewModel
-    
+
     init(
         place: Place,
         mode: PlaceCardMode = .landing,
@@ -40,7 +40,7 @@ struct PlaceCardNormalView: View {
         self._isComparing = isComparing
         self._viewModel = State(initialValue: viewModel)
     }
-    
+
     var isSelected: Bool { viewModel.isSelected(place) }
     var isCheckDisabled: Bool { viewModel.isCompareLimitReached && !isSelected }
 
@@ -72,7 +72,7 @@ struct PlaceCardNormalView: View {
                         }
                     }
                     .clipped()
-                
+
                 DistanceCheckmarkView(
                     isComparing: isComparing,
                     isSelected: isSelected,
@@ -85,7 +85,9 @@ struct PlaceCardNormalView: View {
                     isReported: isReported,
                     onReport: onReport
                 )
-                
+                .allowsHitTesting(isComparing || isDetail)
+                .zIndex(isComparing ? 3 : 1)
+
                 // Tombol Expand
                 Button {
                     withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
@@ -100,7 +102,9 @@ struct PlaceCardNormalView: View {
                                 .foregroundColor(.primary).lineLimit(1)
                             HStack(spacing: 6) {
                                 Image(systemName: "star.fill").foregroundColor(.yellow).font(.body)
+                                    .accessibilityHidden(true)
                                 Text("\(place.rating, specifier: "%.1f")").font(.body).fontWeight(.semibold).foregroundColor(.primary)
+                                    .accessibilityLabel("Rating \(place.accessibilityRatingDescription)")
                                 Text("•").foregroundColor(.secondary).font(.body)
                                 Text("(\(place.jumlahReview))").font(.caption).foregroundColor(.secondary)
                             }
@@ -113,15 +117,25 @@ struct PlaceCardNormalView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                     .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
                     .padding(12)
+                    .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .allowsHitTesting(!isComparing)
+                .accessibilityHidden(isComparing)
+                .zIndex(2)
+                .accessibilityLabel(place.nama)
+                .accessibilityValue("Rating \(place.accessibilityRatingDescription), \(place.jumlahReview) reviews")
+                .accessibilityHint("Shows more details about this place.")
+                .accessibilityAction {
+                    expandCard()
+                }
             }
             .frame(maxWidth: .infinity)
             .frame(height: 240)
             .background(Color(.secondarySystemGroupedBackground))
             .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
             .shadow(color: Color.black.opacity(0.12), radius: 12, x: 0, y: 6)
-            
+
         } else if mode == .landing {
             ZStack (alignment: .bottom) {
                 VStack(spacing: 0) {
@@ -154,36 +168,44 @@ struct PlaceCardNormalView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
                             .padding(.horizontal, 12)
                             .padding(.bottom, 25)
-                        
+
                         DistanceCheckmarkView(
                             isComparing: false,
                             isSelected: false,
                             isCheckDisabled: true,
                             place: place,
                             viewModel: viewModel,
-                            distancePillColor: .white,
+                            distancePillColor: Color("color_green"),
                             isTagVisible: isTagVisible,
                             isDetail: isDetail,
                             isReported: isReported,
                             onReport: onReport
                         )
+                        .allowsHitTesting(isDetail)
+                        .zIndex(isDetail ? 3 : 1)
                         .padding(.top, 4)
                         .padding(.horizontal, 2)
 
-                        
+
                         VStack(alignment: .leading, spacing: 16) {
                             HStack(spacing: 4) {
                                 TagView(text: place.typeTempat, backgroundColor: Color.orange.opacity(0.15), textColor: Color(red: 0.90, green: 0.45, blue: 0.10))
 
                                 TagView(text: place.vibe, backgroundColor: Color.blue.opacity(0.15), textColor: Color(red: 0.10, green: 0.45, blue: 0.90))
-                                
-                                if place.isHalalConfirmed {
-                                    TagView(text: "Halal", backgroundColor: Color.green.opacity(0.15), textColor: Color(red: 0.15, green: 0.65, blue: 0.30))
+
+                                switch place.halal.lowercased() {
+                                    case "halal":
+                                        TagView(text: "Halal", backgroundColor: Color.green.opacity(0.15), textColor: Color(red: 0.15, green: 0.65, blue: 0.30))
+                                    case "non-halal":
+                                        TagView(text: "Nonhalal", backgroundColor: Color(red: 0.98, green: 0.85, blue: 0.85),
+                                                textColor: Color(red: 0.75, green: 0.22, blue: 0.22))
+                                    default:
+                                        EmptyView()
                                 }
                                 Spacer()
                             }
                             .frame(height: 10)
-                            
+
                             // Button Expand
                             Button {
                                 withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
@@ -196,7 +218,9 @@ struct PlaceCardNormalView: View {
                                             .fontWeight(.bold).foregroundColor(.primary).lineLimit(1)
                                         HStack(spacing: 6) {
                                             Image(systemName: "star.fill").foregroundColor(.yellow).font(.body)
+                                                .accessibilityHidden(true)
                                             Text("\(place.rating, specifier: "%.1f")").font(.body).fontWeight(.semibold).foregroundColor(.primary)
+                                                .accessibilityLabel("Rating \(place.accessibilityRatingDescription)")
                                             Text("•").foregroundColor(.secondary).font(.body)
                                             Text("(\(place.jumlahReview))").font(.caption).fontWeight(.semibold).foregroundColor(.secondary)
                                         }
@@ -206,16 +230,24 @@ struct PlaceCardNormalView: View {
                                 }
                                 .padding(12)
                                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                                .contentShape(Rectangle())
                             }
                             .buttonStyle(.plain)
+                            .zIndex(2)
+                            .accessibilityLabel(place.nama)
+                            .accessibilityValue("Rating \(place.accessibilityRatingDescription), \(place.jumlahReview) reviews")
+                            .accessibilityHint("Shows more details about this place.")
+                            .accessibilityAction {
+                                expandCard()
+                            }
                         }
                         .padding(12)
                         .frame(maxWidth: .infinity)
                         .frame(height: 130)
                         .background(
                             FolderTabShape(
-                                tabWidth: 190,
-                                slopeWidth: 40,
+                                tabWidth: 215,
+                                slopeWidth: 30,
                                 leftTabHeight: 135,
                                 rightTabHeight: 101,
                                 leftCornerRadius: 20,
@@ -236,13 +268,19 @@ struct PlaceCardNormalView: View {
             .contentShape(Rectangle())
         }
     }
+
+    private func expandCard() {
+        withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
+            isExpanded = true
+        }
+    }
 }
 
 #Preview {
     ZStack {
         Color(UIColor.systemGray6).ignoresSafeArea()
-        
-//        PlaceCardNormalView(place: <#T##Place#>, isReported: <#T##Bool#>, isTagVisible: <#T##Bool#>, isExpanded: <#T##Binding<Bool>#>, isComparing: <#T##Binding<Bool>#>, viewModel: <#T##DecideViewModel#>)
+
+        PlaceCardNormalView(place: Place.dummyData[0], isReported: false, isTagVisible: false, isExpanded: .constant(false), isComparing: .constant(false), viewModel: DecideViewModel())
         .padding()
     }
 }

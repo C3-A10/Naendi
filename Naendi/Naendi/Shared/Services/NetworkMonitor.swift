@@ -13,9 +13,9 @@ import Observation
 class NetworkMonitor {
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue(label: "NetworkMonitorQueue")
-    
+
     var isConnected: Bool = true
-    
+
     init() {
         monitor.pathUpdateHandler = { [weak self] path in
             DispatchQueue.main.async {

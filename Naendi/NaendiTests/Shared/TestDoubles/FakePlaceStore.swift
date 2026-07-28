@@ -26,7 +26,7 @@ final class FakePlaceStore: PlaceStore {
             }
         }
     }
-    
+
     func markSeeded() throws {
         hasSeededData = true
     }

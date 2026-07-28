@@ -12,21 +12,21 @@ struct CompareCard: View {
     let isSelected: Bool
     let onTap: () -> Void
     let viewModel: DecideViewModel
-    
-    
+
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-                
+
                 // MARK: Image & Badge
                 ZStack(alignment: .topTrailing) {
-                    
+
                     if let imgUrlString = item.imgUrl,
                        !imgUrlString.isEmpty,
                        let url = URL(string: imgUrlString) {
-                        
+
                         AsyncImage(url: url) { phase in
                             switch phase {
-                                
+
                             case .success(let image):
                                 GeometryReader { geo in
                                     image
@@ -36,25 +36,25 @@ struct CompareCard: View {
                                         .clipped()
                                 }
                                 .frame(height: 130)
-                                
+
                             case .failure, .empty:
                                 placeholderView
-                                
+
                             @unknown default:
                                 EmptyView()
                             }
                         }
-                        
+
                     } else {
                         placeholderView
                     }
-                    
+
                     ReportBubbleView(reportCount: viewModel.reportCount(for: item))
                         .padding(12)
                 }
-                
+
                 VStack(alignment: .leading, spacing: 8) {
-                    
+
                     Text(item.nama)
                         .font(.headline)
                         .fontWeight(.bold)
@@ -62,26 +62,28 @@ struct CompareCard: View {
                         .multilineTextAlignment(.leading)
                         .padding(.top, 10)
                         .foregroundColor(.primary)
-                    
+
                     BrickLayout(spacing: 6) {
-                        
+
                         HStack(spacing: 3) {
                             Image(systemName: "star.fill")
                                 .foregroundColor(Color(red: 0.95, green: 0.76, blue: 0.29))
                                 .font(.body)
-                            
+                                .accessibilityHidden(true)
+
                             Text(String(format: "%.1f", item.rating))
                                 .font(.body)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.gray)
+                                .accessibilityLabel("Rating \(item.accessibilityRatingDescription)")
                         }
-                        
+
                         TagView(
                             text: item.vibe,
                             backgroundColor: Color(red: 0.82, green: 0.94, blue: 0.89),
                             textColor: Color(red: 0.22, green: 0.55, blue: 0.42)
                         )
-                        
+
                         if item.halal.lowercased() == "halal" {
                             TagView(
                                 text: "Halal",
@@ -96,20 +98,20 @@ struct CompareCard: View {
                             )
                         }
                     }
-                    
+
                     VStack(alignment: .leading, spacing: 2) {
                         if let locationName = viewModel.criteria.locationName,
                            viewModel.criteria.coordinate != nil {
-                            Text("\(viewModel.calculateDistance(to: item)) dari \(locationName),").font(.caption)
+                            Text("\(viewModel.calculateDistance(to: item)) from \(locationName),").font(.caption)
                         };
-                            Text("\(viewModel.calculateDistanceFromMe(to: item)) dari lokasi Anda saat ini.").font(.caption)
+                            Text("\(viewModel.calculateDistanceFromMe(to: item)) from your current location").font(.caption)
                     }
                     .font(.system(size: 12))
                     .foregroundColor(.gray)
-                    
+
                     Divider()
                         .padding(.vertical, 4)
-                    
+
                     DetailRowView(title: "Address", value: item.alamat)
                     DetailRowView(title: "Price Range", value: item.rangeHarga)
                     DetailRowView(title: "Operating Hour", value: item.jamHariIniFormatted)
@@ -136,7 +138,7 @@ struct CompareCard: View {
             .onTapGesture { onTap() }
         }
     }
-        
+
         private var placeholderView: some View {
             Color.gray.opacity(0.3)
                 .frame(height: 130)
