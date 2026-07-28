@@ -72,9 +72,6 @@ struct PlaceCardNormalView: View {
                         }
                     }
                     .clipped()
-                    // clipped() clips drawing, not hit testing: the .fill image
-                    // overflows ~100pt past the card and would eat taps on the
-                    // neighbouring card's expand button.
                     .allowsHitTesting(false)
 
                 DistanceCheckmarkView(
