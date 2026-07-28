@@ -101,7 +101,11 @@ struct DetailPlaceView: View {
         .alert("Location Required!", isPresented: $showGPSAlert) {
             Button("I Understand", role: .cancel) { }
         } message: {
-            Text("Make sure you're at the location and that GPS is enabled.")
+            if viewModel.userLocation != nil {
+                Text("To report this place, your distance must be under 250m. You are currently \(viewModel.calculateDistanceFromMe(to: place)) away.")
+            } else {
+                Text("To report this place, your distance must be under 250m. Please enable your Location.")
+            }
         }
         // Confirmation alert when user IS within radius
         .alert("Report This Place?", isPresented: $showReportConfirm) {
