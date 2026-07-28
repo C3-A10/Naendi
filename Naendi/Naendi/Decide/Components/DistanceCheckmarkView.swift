@@ -19,6 +19,7 @@ struct DistanceCheckmarkView: View {
     let isReported: Bool
     let onReport: () -> Void
     @State private var isShowingDistancePopover = false
+    @State private var isShowingPlaceTagPopover = false
 
     var body: some View {
         HStack(alignment: .center, spacing: 6) {
@@ -54,12 +55,30 @@ struct DistanceCheckmarkView: View {
                 switch tag {
                 case .nearby:
                     PlaceTagPillView(title: "Nearby", style: .pinLight)
+                        .onTapGesture {
+                            isShowingPlaceTagPopover.toggle()
+                        }
+                        .popover(isPresented: $isShowingPlaceTagPopover, arrowEdge: .top) {
+                            Text("This place is nearest to you.")
+                                .font(.footnote)
+                                .padding()
+                                .presentationCompactAdaptation(.popover)
+                        }
                 case .top(let type):
                     // Deterministic style so the pill doesn't flicker on redraw.
                     PlaceTagPillView(
                         title: "Top \(type)",
                         style: place.jumlahReview.isMultiple(of: 2) ? .topDark : .topLight
                     )
+                    .onTapGesture {
+                        isShowingPlaceTagPopover.toggle()
+                    }
+                    .popover(isPresented: $isShowingPlaceTagPopover, arrowEdge: .top) {
+                        Text("This place have most rating.")
+                            .font(.footnote)
+                            .padding()
+                            .presentationCompactAdaptation(.popover)
+                    }
                 }
             }
           
