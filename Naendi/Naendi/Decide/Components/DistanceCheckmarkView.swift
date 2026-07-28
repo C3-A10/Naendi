@@ -24,7 +24,8 @@ struct DistanceCheckmarkView: View {
         HStack(alignment: .center, spacing: 6) {
             // 1. Badge Jarak
             Text(viewModel.calculateDistance(to: place))
-                .font(.system(size: 14, weight: .semibold))
+                .font(.footnote)
+                .fontWeight(.semibold)
                 .foregroundColor(.black)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
