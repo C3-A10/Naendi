@@ -87,14 +87,21 @@ struct DistanceCheckmarkView: View {
                     onReport()
                 } label: {
                     Image(systemName: isReported ? "exclamationmark.bubble.fill" : "exclamationmark.bubble")
-                        .font(.system(size: 20, weight: .bold))
+                        .font(.system(size: 28, weight: .bold))
                         .foregroundColor(isReported ? Color("color_green") : .white)
                         .frame(width: 32, height: 32)
+                        .padding(6)
                 }
                 .buttonStyle(.plain)
                 .frame(minWidth: 44, minHeight: 44)
                 .accessibilityLabel(isReported ? "Place reported" : "Report \(place.nama)")
                 .accessibilityHint(isReported ? "" : "Reports inaccurate information about this place.")
+                .shadow(
+                        color: !isReported ? .black.opacity(0.15) : .clear,
+                        radius: !isReported ? 4 : 0,
+                        x: 0,
+                        y: 2
+                    )
             } else {
                 ReportBubbleView(reportCount: viewModel.reportCount(for: place))
                     .padding(.horizontal, 12)

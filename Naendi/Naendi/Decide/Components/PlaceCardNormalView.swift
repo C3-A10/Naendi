@@ -175,7 +175,7 @@ struct PlaceCardNormalView: View {
                             isCheckDisabled: true,
                             place: place,
                             viewModel: viewModel,
-                            distancePillColor: .white,
+                            distancePillColor: Color("color_green"),
                             isTagVisible: isTagVisible,
                             isDetail: isDetail,
                             isReported: isReported,
@@ -280,7 +280,7 @@ struct PlaceCardNormalView: View {
     ZStack {
         Color(UIColor.systemGray6).ignoresSafeArea()
 
-//        PlaceCardNormalView(place: <#T##Place#>, isReported: <#T##Bool#>, isTagVisible: <#T##Bool#>, isExpanded: <#T##Binding<Bool>#>, isComparing: <#T##Binding<Bool>#>, viewModel: <#T##DecideViewModel#>)
+        PlaceCardNormalView(place: Place.dummyData[0], isReported: false, isTagVisible: false, isExpanded: .constant(false), isComparing: .constant(false), viewModel: DecideViewModel())
         .padding()
     }
 }

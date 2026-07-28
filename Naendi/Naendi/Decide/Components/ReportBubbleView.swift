@@ -20,10 +20,11 @@ struct ReportBubbleView: View {
                 .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
 
             Text("\(reportCount)")
-                .font(.system(size: 9, weight: .bold))
-                .foregroundColor(.white)
+                .font(.caption)
+                .fontWeight(.bold)
+                .foregroundColor(.black)
                 .frame(width: 16, height: 16)
-                .background(.red)
+                .background(Color("color_green"))
                 .clipShape(Circle())
                 .offset(x: 6, y: -4)
         }
