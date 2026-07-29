@@ -24,7 +24,9 @@ extension EditPreferenceView {
 
     static let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
+        formatter.locale = .autoupdatingCurrent
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
         return formatter
     }()
 

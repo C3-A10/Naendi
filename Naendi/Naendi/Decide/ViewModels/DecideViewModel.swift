@@ -318,14 +318,7 @@ class DecideViewModel {
         // menghitung jarak dalam satuan meter, diukur dari titik yang sama
         // dengan filter radius supaya tidak kontradiktif
         let distanceInMeters = origin.clLocation.distance(from: place.coordinate.clLocation)
-
-        // format tampilan teks (jika < 1 km tampilkan "500 m", jika lebih tampilkan "1.2 km")
-        if distanceInMeters < 1000 {
-            return String(format: "%.0f m", distanceInMeters)
-        } else {
-            let distanceInKm = distanceInMeters / 1000
-            return String(format: "%.1f km", distanceInKm)
-        }
+        return formattedDistance(distanceInMeters)
     }
 
     // fungsi untuk hitung jarak dari tempat user saat ini
@@ -335,14 +328,28 @@ class DecideViewModel {
         }
 
         let distanceInMeters = userLocation.distance(from: place.coordinate.clLocation)
+        return formattedDistance(distanceInMeters)
+    }
 
-        // format tampilan teks (jika < 1 km tampilkan "500 m", jika lebih tampilkan "1.2 km")
+    private func formattedDistance(_ distanceInMeters: CLLocationDistance) -> String {
+        let formatter = MeasurementFormatter()
+        formatter.locale = .autoupdatingCurrent
+        formatter.unitOptions = .providedUnit
+        formatter.unitStyle = .short
+
         if distanceInMeters < 1000 {
-            return String(format: "%.0f m", distanceInMeters)
-        } else {
-            let distanceInKm = distanceInMeters / 1000
-            return String(format: "%.1f km", distanceInKm)
+            formatter.numberFormatter.minimumFractionDigits = 0
+            formatter.numberFormatter.maximumFractionDigits = 0
+            return formatter.string(
+                from: Measurement(value: distanceInMeters, unit: UnitLength.meters)
+            )
         }
+
+        formatter.numberFormatter.minimumFractionDigits = 1
+        formatter.numberFormatter.maximumFractionDigits = 1
+        return formatter.string(
+            from: Measurement(value: distanceInMeters / 1000, unit: UnitLength.kilometers)
+        )
     }
 
     // Returns true when GPS is available and the user is within 250 m of the place.

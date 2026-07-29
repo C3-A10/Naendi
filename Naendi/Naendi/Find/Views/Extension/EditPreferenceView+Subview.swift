@@ -5,6 +5,7 @@
 //  Created by Bryan Samuel on 22/07/26.
 //
 import SwiftUI
+import UIKit
 
 // MARK: - Subviews
 
@@ -18,7 +19,15 @@ extension EditPreferenceView {
             content()
 
             Button {
-                activeTooltip = tooltip
+                if UIAccessibility.isVoiceOverRunning {
+                    activeTooltip = nil
+                    UIAccessibility.post(
+                        notification: .announcement,
+                        argument: tooltipAccessibilityAnnouncement(for: tooltip)
+                    )
+                } else {
+                    activeTooltip = tooltip
+                }
             } label: {
                 Image(systemName: "info.circle")
                     .font(.title3)
@@ -28,7 +37,7 @@ extension EditPreferenceView {
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text(tooltip.accessibilityLabel))
-            .accessibilityHint("Shows more information about this preference.")
+            .accessibilityHint(Text(tooltip.description))
             .padding(.trailing, 8)
             .popover(
                 isPresented: tooltipPresentationBinding(for: tooltip),
@@ -48,6 +57,10 @@ extension EditPreferenceView {
                 .presentationCompactAdaptation(.popover)
             }
         }
+    }
+
+    func tooltipAccessibilityAnnouncement(for tooltip: PreferenceTooltip) -> String {
+        "\(String(localized: tooltip.title)). \(String(localized: tooltip.description))"
     }
 
     func tooltipPresentationBinding(for tooltip: PreferenceTooltip) -> Binding<Bool> {
@@ -142,7 +155,7 @@ extension EditPreferenceView {
 
                 Spacer()
 
-                Text(time.formatted(date: .omitted, time: .shortened))
+                Text(Self.timeFormatter.string(from: time))
                     .foregroundStyle(activePreferredTimeField == field ? .red : .primary)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 7)
@@ -160,7 +173,7 @@ extension EditPreferenceView {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(title)
-        .accessibilityValue(time.formatted(date: .omitted, time: .shortened))
+        .accessibilityValue(Self.timeFormatter.string(from: time))
         .accessibilityAddTraits(activePreferredTimeField == field ? .isSelected : [])
     }
 
@@ -200,7 +213,6 @@ extension EditPreferenceView {
             Text("Edit Preference")
                 .font(.title2.bold())
                 .multilineTextAlignment(.center)
-                .accessibilityAddTraits(.isHeader)
                 .foregroundColor(.black)
 
             Spacer(minLength: 0)

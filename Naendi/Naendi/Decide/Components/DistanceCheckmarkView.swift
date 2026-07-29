@@ -17,12 +17,13 @@ struct DistanceCheckmarkView: View {
     let isTagVisible: Bool
     let isDetail: Bool
     let isReported: Bool
+    var hidesMetadataFromAccessibility: Bool = false
     let onReport: () -> Void
     @State private var isShowingDistancePopover = false
     @State private var isShowingPlaceTagPopover = false
 
     var body: some View {
-        HStack(alignment: .center, spacing: 6) {
+        HStack(alignment: .top, spacing: 6) {
             // 1. Badge Jarak
             Text(viewModel.calculateDistance(to: place))
                 .font(.footnote)
@@ -34,6 +35,7 @@ struct DistanceCheckmarkView: View {
                 .clipShape(Capsule())
                 .accessibilityLabel("Distance")
                 .accessibilityValue(viewModel.calculateDistance(to: place))
+                .accessibilityHidden(hidesMetadataFromAccessibility)
                 .onTapGesture {
                     isShowingDistancePopover.toggle()
                 }
@@ -103,11 +105,11 @@ struct DistanceCheckmarkView: View {
                                 .foregroundColor(.black)
                         }
                     }
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .disabled(isCheckDisabled)
-                .frame(minWidth: 44, minHeight: 44)
-                .contentShape(Circle())
                 .accessibilityRespondsToUserInteraction(true)
                 .accessibilitySortPriority(3)
                 .accessibilityLabel(Text("Select \(place.nama) for comparison"))
@@ -141,9 +143,7 @@ struct DistanceCheckmarkView: View {
                     )
             } else {
                 ReportBubbleView(reportCount: viewModel.reportCount(for: place))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .clipShape(Capsule())
+                    .accessibilityHidden(hidesMetadataFromAccessibility)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
