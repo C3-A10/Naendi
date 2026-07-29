@@ -77,11 +77,16 @@ struct CompareCard: View {
                                 .foregroundColor(.gray)
                                 .accessibilityLabel("Rating \(item.accessibilityRatingDescription)")
                         }
+                        
+                        TagView(
+                            text: item.typeTempat,
+                            backgroundColor: Color.orange.opacity(0.15),
+                            textColor: Color(red: 0.90, green: 0.45, blue: 0.10))
 
                         TagView(
                             text: item.vibe,
-                            backgroundColor: Color(red: 0.82, green: 0.94, blue: 0.89),
-                            textColor: Color(red: 0.22, green: 0.55, blue: 0.42)
+                            backgroundColor: Color.blue.opacity(0.15),
+                            textColor: Color(red: 0.10, green: 0.45, blue: 0.90)
                         )
 
                         if item.halal.lowercased() == "halal" {
