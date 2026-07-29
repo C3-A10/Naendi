@@ -77,7 +77,7 @@ struct DetailPlaceView: View {
                         // Button
                         CustomActionButton(
                             text: "Go to Destination",
-                            backgroundColor: Color(red: 207/255, green: 245/255, blue: 64/255),
+                            backgroundColor: Color("color_green"),
                             textColor: .black,
                             action: {
                                 viewModel.openRoute(to: place)
