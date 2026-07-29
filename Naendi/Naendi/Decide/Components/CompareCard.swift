@@ -114,7 +114,7 @@ struct CompareCard: View {
 
                     DetailRowView(title: "Address", value: item.alamat)
                     DetailRowView(title: "Price Range", value: item.rangeHarga)
-                    DetailRowView(title: "Operating Hour", value: item.jamHariIniFormatted)
+                    DetailRowView(title: "Operational Hours", value: item.jamHariIniFormatted)
                 }
                 .padding(.horizontal, 8)
                 .padding(.bottom, 16)

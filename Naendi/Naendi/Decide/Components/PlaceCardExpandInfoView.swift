@@ -55,8 +55,10 @@ struct PlaceCardExpandInfoView: View {
                         Text("(\(place.jumlahReview))").font(.caption).foregroundColor(.secondary)
                         Text("•").foregroundColor(.secondary).font(.caption)
 
-                        // range harga
-                        Text(place.rangeHarga).font(.caption).foregroundColor(.secondary).lineLimit(1)
+                        Text(place.rangeHarga != "" ? place.rangeHarga : String(localized: "Price range data not available"))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
                     }
 
                     // Badges Type - Vibe - Halal
