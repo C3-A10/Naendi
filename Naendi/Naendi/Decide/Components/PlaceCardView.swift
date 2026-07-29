@@ -21,6 +21,8 @@ struct PlaceCardView: View {
     let isReported: Bool
     let onReport: () -> Void
     @State private var isExpanded: Bool = false
+    @State private var collapsedHeight: CGFloat?
+    @State private var expandedHeight: CGFloat?
     @State var viewModel: DecideViewModel
 
     @Binding var isComparing: Bool
@@ -55,17 +57,40 @@ struct PlaceCardView: View {
         self._selectedPlace = selectedPlace
     }
 
+    // Height the card should currently occupy. The two subtrees both take part in
+    // layout while a transition runs, so the height is driven explicitly instead of
+    // letting the container jump to whichever child is taller.
+    private var cardHeight: CGFloat? {
+        isExpanded ? (expandedHeight ?? collapsedHeight) : collapsedHeight
+    }
+
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                if isExpanded {
-                    PlaceCardExpandView(place: place, isChooseThisLocationBtnVisible: isChooseThisLocationBtnVisible, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel, onSelectImageIndex: onSelectImageIndex, selectedPlace: $selectedPlace, isDetail: isDetail, isReported: isReported, onReport: onReport)
-                } else {
-                    PlaceCardNormalView(place: place, mode: mode, isReported: isReported, isTagVisible: isTagVisible, isDetail: isDetail, onReport: onReport, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel)
-                }
+        ZStack(alignment: .top) {
+            if isExpanded {
+                PlaceCardExpandView(place: place, isChooseThisLocationBtnVisible: isChooseThisLocationBtnVisible, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel, onSelectImageIndex: onSelectImageIndex, selectedPlace: $selectedPlace, isDetail: isDetail, isReported: isReported, onReport: onReport)
+                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
+                        guard height > 0 else { return }
+                        // First expansion: the height arrives after the toggle's
+                        // transaction, so it needs its own animation.
+                        withAnimation(.cardMorph) { expandedHeight = height }
+                    }
+            } else {
+                PlaceCardNormalView(place: place, mode: mode, isReported: isReported, isTagVisible: isTagVisible, isDetail: isDetail, onReport: onReport, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel)
+                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
+                        guard height > 0 else { return }
+                        collapsedHeight = height
+                    }
             }
         }
+        .fixedSize(horizontal: false, vertical: true)   // children keep their natural height while the frame animates
+        .frame(height: cardHeight, alignment: .top)
+        .clipShape(RoundedRectangle(cornerRadius: isExpanded || mode == .result ? 32 : 20, style: .continuous))
+        .shadow(color: Color.black.opacity(isExpanded || mode == .result ? 0.12 : 0.3), radius: 12, x: 0, y: 6)
     }
+}
+
+extension Animation {
+    static let cardMorph = Animation.spring(response: 0.45, dampingFraction: 0.85)
 }
 
 #Preview {

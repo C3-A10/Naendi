@@ -146,7 +146,6 @@ struct PlaceCardNormalView: View {
             .frame(height: 240)
             .background(Color(.secondarySystemGroupedBackground))
             .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
-            .shadow(color: Color.black.opacity(0.12), radius: 12, x: 0, y: 6)
 
         } else if mode == .landing {
             ZStack (alignment: .bottom) {
@@ -297,7 +296,6 @@ struct PlaceCardNormalView: View {
                 .frame(height: 278)
                 .background(Color(.secondarySystemGroupedBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                .shadow(color: Color.black.opacity(0.3), radius: 12, x: 0, y: 6)
             }
             .contentShape(Rectangle())
         }
