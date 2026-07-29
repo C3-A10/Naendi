@@ -32,9 +32,9 @@ struct PlaceCardTitleBlock: View {
                 Text("•").foregroundColor(.secondary).font(.body)
                 Text("(\(place.jumlahReview))").font(.caption).foregroundColor(.secondary)
                     .accessibilityLabel("\(place.accessibilityReviewCountDescription) reviews")
-                if isExpanded {
+                if isExpanded && place.rangeHarga != "" {
                     Text("•").foregroundColor(.secondary).font(.caption)
-                    Text(place.rangeHarga != "" ? place.rangeHarga : String(localized: "Price range data not available"))
+                    Text(place.rangeHarga)
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .lineLimit(1)
