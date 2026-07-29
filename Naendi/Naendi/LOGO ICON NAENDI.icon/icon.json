@@ -1,0 +1,121 @@
+{
+  "fill" : "system-dark",
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "hidden" : true,
+          "image-name" : "ICON SBY DARKpng.png",
+          "name" : "ICON SBY DARKpng"
+        },
+        {
+          "hidden" : false,
+          "image-name" : "NAENDI.png",
+          "name" : "NAENDI"
+        },
+        {
+          "glass" : true,
+          "hidden" : false,
+          "image-name" : "bg icon 5.png",
+          "name" : "bg icon 5",
+          "position" : {
+            "scale" : 1.15,
+            "translation-in-points" : [
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "glass" : true,
+          "hidden" : false,
+          "image-name" : "ICON 1-01.png",
+          "name" : "ICON 1-01",
+          "position" : {
+            "scale" : 1.1,
+            "translation-in-points" : [
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    },
+    {
+      "layers" : [
+        {
+          "blend-mode" : "lighten",
+          "hidden" : true,
+          "image-name" : "logo icon apple c3 sby.png",
+          "name" : "logo icon apple c3 sby"
+        },
+        {
+          "hidden" : true,
+          "image-name" : "logo icon apple c3-06.png",
+          "name" : "logo icon apple c3-06"
+        },
+        {
+          "blend-mode" : "hard-light",
+          "hidden" : true,
+          "image-name" : "logo icon apple c3-07.png",
+          "name" : "logo icon apple c3-07",
+          "position" : {
+            "scale" : 1.1,
+            "translation-in-points" : [
+              -38.5,
+              19.800000000000068
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    },
+    {
+      "layers" : [
+        {
+          "glass" : true,
+          "hidden" : true,
+          "image-name" : "icon 2.png",
+          "name" : "icon 2"
+        },
+        {
+          "fill" : {
+            "solid" : "display-p3:0.07073,0.13224,0.07900,1.00000"
+          },
+          "hidden" : true,
+          "image-name" : "ICON 1-02 2.png",
+          "name" : "ICON 1-02 2"
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

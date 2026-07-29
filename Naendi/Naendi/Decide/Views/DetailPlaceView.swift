@@ -77,7 +77,7 @@ struct DetailPlaceView: View {
                         // Button
                         CustomActionButton(
                             text: "Go to Destination",
-                            backgroundColor: Color(red: 207/255, green: 245/255, blue: 64/255),
+                            backgroundColor: Color("color_green"),
                             textColor: .black,
                             action: {
                                 viewModel.openRoute(to: place)
@@ -130,12 +130,10 @@ struct DetailPlaceView: View {
         }
         // Report outcome (success / already reported / failure).
         .alert(
-            viewModel.reportMessage?.contains("already submitted") == true
-                ? "You've Already Reported"
-                : "Report Submitted",
+            viewModel.reportTitle ?? "",
             isPresented: Binding(
                 get: { viewModel.reportMessage != nil },
-                set: { if !$0 { viewModel.reportMessage = nil } }
+                set: { if !$0 { viewModel.reportMessage = nil; viewModel.reportTitle = nil } }
             )
         ) {
             Button("OK", role: .cancel) { }
