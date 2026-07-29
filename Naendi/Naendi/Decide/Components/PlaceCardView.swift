@@ -147,11 +147,12 @@ struct PlaceCardView: View {
                     PlaceCardTitleBlock(place: place, isExpanded: isExpanded)
                         .frame(width: frame.width, height: frame.height, alignment: .topLeading)
                         .offset(x: frame.minX, y: frame.minY)
+                        .accessibilitySortPriority(1)
                 }
             }
             .animation(.cardMorph, value: isExpanded)
             .allowsHitTesting(false)
-            .accessibilityHidden(true)
+            .accessibilityHidden(!isExpanded)
         }
     }
 }
