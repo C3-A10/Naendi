@@ -242,6 +242,27 @@ class DecideViewModel {
     }
 
     // fungsi untuk menambah report count di cloudkit
+//    func reportPlace(
+//        _ place: Place,
+//        using repository: CloudKitPlaceRepository = CloudKitPlaceRepository()
+//    ) async -> Bool {
+//        do {
+//            let isNew = try await repository.report(placeID: place.id)
+//            reportMessage = isNew
+//                ? "Your report has been submitted successfully. Thanks for your help!"
+//                : "Looks like you've already submitted a report for this place."
+//            if isNew {
+//                reportCounts[place.id, default: place.reportCount] += 1
+//            }
+//            return true // dilaporkan oleh user ini, baru maupun sudah ada sebelumnya
+//        } catch let error as CKError where error.code == .notAuthenticated {
+//            reportMessage = "Log-in to iCloud to submit a report. Please try again when you're back online."
+//        } catch {
+//            reportMessage = "Failed to send report, please try again"
+//        }
+//        return false
+//    }
+   
     func reportPlace(
         _ place: Place,
         using repository: CloudKitPlaceRepository = CloudKitPlaceRepository()
@@ -249,16 +270,16 @@ class DecideViewModel {
         do {
             let isNew = try await repository.report(placeID: place.id)
             reportMessage = isNew
-                ? "Your report has been submitted successfully. Thanks for your help!"
-                : "Looks lik you've already submitted a report for this place."
+                ? String(localized: "Your report has been submitted successfully. Thanks for your help!")
+                : String(localized: "Looks like you've already submitted a report for this place.")
             if isNew {
                 reportCounts[place.id, default: place.reportCount] += 1
             }
             return true // dilaporkan oleh user ini, baru maupun sudah ada sebelumnya
         } catch let error as CKError where error.code == .notAuthenticated {
-            reportMessage = "Log-in to iCloud to submit a report. Please try again when you're back online."
+            reportMessage = String(localized: "Log-in to iCloud to submit a report. Please try again when you're back online.")
         } catch {
-            reportMessage = "Failed to send report, please try again"
+            reportMessage = String(localized: "Failed to send report, please try again")
         }
         return false
     }
