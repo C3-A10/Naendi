@@ -390,7 +390,7 @@
 		6F5A4C1C3004E789005BB796 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "LOGO ICON NAENDI";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Naendi/Naendi.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -426,7 +426,7 @@
 		6F5A4C1D3004E789005BB796 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "LOGO ICON NAENDI";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Naendi/Naendi.entitlements;
 				CODE_SIGN_STYLE = Automatic;
