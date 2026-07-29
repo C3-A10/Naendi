@@ -18,6 +18,7 @@ struct PlaceCardNormalView: View {
     @Binding var isExpanded: Bool
     @Binding var isComparing: Bool
     @State var viewModel: DecideViewModel
+    let hero: Namespace.ID
 
     init(
         place: Place,
@@ -28,8 +29,10 @@ struct PlaceCardNormalView: View {
         onReport: @escaping () -> Void = {},
         isExpanded: Binding<Bool>,
         isComparing: Binding<Bool>,
-        viewModel: DecideViewModel
+        viewModel: DecideViewModel,
+        hero: Namespace.ID
     ) {
+        self.hero = hero
         self.place = place
         self.mode = mode
         self.isReported = isReported
@@ -73,6 +76,7 @@ struct PlaceCardNormalView: View {
                     }
                     .clipped()
                     .allowsHitTesting(false)
+                    .matchedGeometryEffect(id: placeCardHeroImageID, in: hero, isSource: !isExpanded)
 
                 DistanceCheckmarkView(
                     isComparing: isComparing,
@@ -193,6 +197,7 @@ struct PlaceCardNormalView: View {
                             }
                             .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
                             .allowsHitTesting(false)
+                            .matchedGeometryEffect(id: placeCardHeroImageID, in: hero, isSource: !isExpanded)
                             .padding(.horizontal, 12)
                             .padding(.bottom, 25)
 
@@ -394,10 +399,12 @@ struct PlaceCardNormalView: View {
 }
 
 #Preview {
+    @Previewable @Namespace var hero
+
     ZStack {
         Color(UIColor.systemGray6).ignoresSafeArea()
 
-        PlaceCardNormalView(place: Place.dummyData[0], isReported: false, isTagVisible: false, isExpanded: .constant(false), isComparing: .constant(false), viewModel: DecideViewModel())
+        PlaceCardNormalView(place: Place.dummyData[0], isReported: false, isTagVisible: false, isExpanded: .constant(false), isComparing: .constant(false), viewModel: DecideViewModel(), hero: hero)
         .padding()
     }
 }

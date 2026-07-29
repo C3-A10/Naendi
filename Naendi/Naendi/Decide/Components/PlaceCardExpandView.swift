@@ -20,6 +20,7 @@ struct PlaceCardExpandView: View {
     let isDetail: Bool
     let isReported: Bool
     let onReport: () -> Void
+    let hero: Namespace.ID
 
     init(
         place: Place,
@@ -31,8 +32,10 @@ struct PlaceCardExpandView: View {
         selectedPlace: Binding<Place?>,
         isDetail: Bool = false,
         isReported: Bool = false,
-        onReport: @escaping () -> Void = {}
+        onReport: @escaping () -> Void = {},
+        hero: Namespace.ID
     ) {
+        self.hero = hero
         self.place = place
         self.isChooseThisLocationBtnVisible = isChooseThisLocationBtnVisible
         self._isExpanded = isExpanded
@@ -63,6 +66,7 @@ struct PlaceCardExpandView: View {
                 isReported: isReported,
                 onReport: onReport,
                 onSelectImageIndex: onSelectImageIndex,
+                hero: hero
             )
 
             PlaceCardExpandInfoView(
@@ -76,6 +80,8 @@ struct PlaceCardExpandView: View {
 }
 
 #Preview {
+    @Previewable @Namespace var hero
+
     ZStack {
         Color(UIColor.systemGray6)
             .ignoresSafeArea()
@@ -88,6 +94,7 @@ struct PlaceCardExpandView: View {
                 viewModel: DecideViewModel(),
                 onSelectImageIndex: { index in },
                 selectedPlace: .constant(nil),
+                hero: hero
             )
             .padding(.horizontal)
             .padding(.vertical)

@@ -11,6 +11,23 @@
 
 import SwiftUI
 
+/// Shared id for the photo that exists in both card states: the normal card's
+/// thumbnail and the expanded gallery's first image are the same URL.
+let placeCardHeroImageID = "placeCardHeroImage"
+
+extension View {
+    /// Applies the effect only to the hero; other views must stay out of the
+    /// namespace entirely rather than hold an unmatched id.
+    @ViewBuilder
+    func heroMatch(_ isHero: Bool, id: String, in namespace: Namespace.ID, isSource: Bool = true) -> some View {
+        if isHero {
+            matchedGeometryEffect(id: id, in: namespace, isSource: isSource)
+        } else {
+            self
+        }
+    }
+}
+
 struct PlaceCardView: View {
     let place: Place
     let mode: PlaceCardMode
@@ -23,6 +40,7 @@ struct PlaceCardView: View {
     @State private var isExpanded: Bool = false
     @State private var collapsedHeight: CGFloat?
     @State private var expandedHeight: CGFloat?
+    @Namespace private var hero
     @State var viewModel: DecideViewModel
 
     @Binding var isComparing: Bool
@@ -67,7 +85,7 @@ struct PlaceCardView: View {
     var body: some View {
         ZStack(alignment: .top) {
             if isExpanded {
-                PlaceCardExpandView(place: place, isChooseThisLocationBtnVisible: isChooseThisLocationBtnVisible, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel, onSelectImageIndex: onSelectImageIndex, selectedPlace: $selectedPlace, isDetail: isDetail, isReported: isReported, onReport: onReport)
+                PlaceCardExpandView(place: place, isChooseThisLocationBtnVisible: isChooseThisLocationBtnVisible, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel, onSelectImageIndex: onSelectImageIndex, selectedPlace: $selectedPlace, isDetail: isDetail, isReported: isReported, onReport: onReport, hero: hero)
                     .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
                         guard height > 0 else { return }
                         // First expansion: the height arrives after the toggle's
@@ -75,7 +93,7 @@ struct PlaceCardView: View {
                         withAnimation(.cardMorph) { expandedHeight = height }
                     }
             } else {
-                PlaceCardNormalView(place: place, mode: mode, isReported: isReported, isTagVisible: isTagVisible, isDetail: isDetail, onReport: onReport, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel)
+                PlaceCardNormalView(place: place, mode: mode, isReported: isReported, isTagVisible: isTagVisible, isDetail: isDetail, onReport: onReport, isExpanded: $isExpanded, isComparing: $isComparing, viewModel: viewModel, hero: hero)
                     .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
                         guard height > 0 else { return }
                         collapsedHeight = height
