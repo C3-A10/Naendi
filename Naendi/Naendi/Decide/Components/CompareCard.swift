@@ -92,8 +92,8 @@ struct CompareCard: View {
                         if item.halal.lowercased() == "halal" {
                             TagView(
                                 text: "Halal",
-                                backgroundColor: Color(red: 0.98, green: 0.84, blue: 0.53),
-                                textColor: Color(red: 0.72, green: 0.44, blue: 0.16)
+                                backgroundColor: Color.green.opacity(0.15),
+                                textColor: Color(red: 0.15, green: 0.65, blue: 0.30)
                             )
                         } else if item.halal.lowercased() == "non-halal"{
                             TagView(
