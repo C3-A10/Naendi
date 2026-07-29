@@ -69,6 +69,17 @@ extension Place {
             ?? rating.formatted(.number.precision(.fractionLength(1)))
     }
 
+    /// A spoken whole-number review count, so a localized thousands separator
+    /// is never mistaken for a decimal separator by VoiceOver.
+    var accessibilityReviewCountDescription: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .spellOut
+        formatter.locale = .current
+
+        return formatter.string(from: NSNumber(value: jumlahReview))
+            ?? String(jumlahReview)
+    }
+
     /// Computed property untuk memparsing string JSON di dalam kolom `jam_buka`
     /// Menghasilkan dictionary dengan format: ["Senin": ["07.00–22.00"], "Selasa": [...]]
     var jamBukaDictionary: [String: [String]]? {

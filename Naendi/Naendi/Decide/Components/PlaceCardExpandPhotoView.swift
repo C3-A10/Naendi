@@ -59,77 +59,36 @@ struct PlaceCardExpandPhotoView: View {
 
                         // POLA 1: FULL IMAGE (Indeks 0, 3, 6, ...)
                         if index % 3 == 0 {
-                            if let url = URL(string: urlString) {
-                                AsyncImage(url: url) { phase in
-                                    if let image = phase.image {
-                                        image.resizable().aspectRatio(contentMode: .fill)
-                                    } else if !viewModel.isNetworkConnected {
-                                        NoInternetPlaceholder()
-                                    }
-                                    else {
-                                        Color.gray.opacity(0.3)
-                                    }
-                                }
-                                .frame(width: 290, height: 220)
-                                .clipped()
-                                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                                .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                                .onTapGesture {
-                                    onSelectImageIndex(index)
-                                }
-                            }
+                            galleryImageButton(
+                                urlString: urlString,
+                                index: index,
+                                width: 290,
+                                height: 220,
+                                hidesOfflineCaption: false
+                            )
                         }
                         // POLA 2: TUMPUK ATAS BAWAH (Mulai di Indeks 1, 4, 7, ...)
                         else if index % 3 == 1 {
                             // 2. Set spacing VStack ke 12
                             VStack(spacing: 12) {
                                 // Gambar Atas (Indeks saat ini)
-                                if let url = URL(string: urlString) {
-                                    AsyncImage(url: url) { phase in
-                                        if let image = phase.image {
-                                            image.resizable().aspectRatio(contentMode: .fill)
-                                        } else if !viewModel.isNetworkConnected {
-                                            NoInternetPlaceholder(isCaptionHidden: true)
-                                        } else {
-                                            ZStack {
-                                                Color.gray.opacity(0.1)
-                                                ProgressView()
-                                                    .scaleEffect(0.7)
-                                            }
-                                        }
-                                    }
-                                    // 3. Set tinggi menjadi 104 agar total tinggi + spacing pas 220 (104 + 12 + 104)
-                                    .frame(width: 160, height: 104)
-                                    .clipped()
-                                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                                    .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                                    .onTapGesture {
-                                        onSelectImageIndex(index)
-                                    }
-                                }
+                                galleryImageButton(
+                                    urlString: urlString,
+                                    index: index,
+                                    width: 160,
+                                    height: 104,
+                                    hidesOfflineCaption: true
+                                )
 
                                 // Gambar Bawah (Ambil indeks + 1 jika ada)
-                                if index + 1 < imageGallery.count, let nextUrl = URL(string: imageGallery[index + 1]) {
-                                    AsyncImage(url: nextUrl) { phase in
-                                        if let image = phase.image {
-                                            image.resizable().aspectRatio(contentMode: .fill)
-                                        } else if !viewModel.isNetworkConnected {
-                                            NoInternetPlaceholder(isCaptionHidden: true)
-                                        } else {
-                                            ZStack {
-                                                Color.gray.opacity(0.1)
-                                                ProgressView()
-                                                    .scaleEffect(0.7)
-                                            }
-                                        }
-                                    }
-                                    .frame(width: 160, height: 104)
-                                    .clipped()
-                                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                                    .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                                    .onTapGesture {
-                                        onSelectImageIndex(index + 1)
-                                    }
+                                if index + 1 < imageGallery.count {
+                                    galleryImageButton(
+                                        urlString: imageGallery[index + 1],
+                                        index: index + 1,
+                                        width: 160,
+                                        height: 104,
+                                        hidesOfflineCaption: true
+                                    )
                                 }
                             }
                         }
@@ -157,5 +116,46 @@ struct PlaceCardExpandPhotoView: View {
         }
         .frame(height: 240)
         .clipped()
+    }
+
+    @ViewBuilder
+    private func galleryImageButton(
+        urlString: String,
+        index: Int,
+        width: CGFloat,
+        height: CGFloat,
+        hidesOfflineCaption: Bool
+    ) -> some View {
+        if let url = URL(string: urlString) {
+            Button {
+                onSelectImageIndex(index)
+            } label: {
+                AsyncImage(url: url) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } else if !viewModel.isNetworkConnected {
+                        NoInternetPlaceholder(isCaptionHidden: hidesOfflineCaption)
+                    } else {
+                        ZStack {
+                            Color.gray.opacity(0.1)
+                            ProgressView()
+                                .scaleEffect(0.7)
+                        }
+                    }
+                }
+                .frame(width: width, height: height)
+                .clipped()
+                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            }
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(
+                Text("Photo \(index + 1) of \(imageGallery.count), \(place.nama)")
+            )
+            .accessibilityHint("Double-tap to open the full-screen image.")
+        }
     }
 }

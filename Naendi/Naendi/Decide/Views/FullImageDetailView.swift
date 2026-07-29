@@ -29,21 +29,37 @@ struct FullImageDetailView: View {
                 TabView(selection: $selectedIndex) {
                     ForEach(Array(imageUrls.enumerated()), id: \.offset) { index, urlString in
                         ZoomableImageItem(urlString: urlString)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .tag(index)
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .always))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel("Image gallery")
-                .accessibilityValue("Image \(selectedIndex + 1) of \(imageUrls.count)")
+                .accessibilityLabel("Photo gallery")
+                .accessibilityValue(
+                    Text("Photo \(selectedIndex + 1) of \(imageUrls.count)")
+                )
+                .accessibilityHint("Swipe up for the next photo or down for the previous photo.")
                 .accessibilityAdjustableAction { direction in
                     switch direction {
-                    case .increment: selectedIndex = min(selectedIndex + 1, imageUrls.count - 1)
-                    case .decrement: selectedIndex = max(selectedIndex - 1, 0)
-                    @unknown default: break
+                    case .increment:
+                        showPhoto(at: selectedIndex + 1)
+                    case .decrement:
+                        showPhoto(at: selectedIndex - 1)
+                    @unknown default:
+                        break
                     }
                 }
             }
+        }
+    }
+
+    private func showPhoto(at index: Int) {
+        guard imageUrls.indices.contains(index) else { return }
+
+        withAnimation {
+            selectedIndex = index
         }
     }
 
@@ -53,8 +69,10 @@ struct FullImageDetailView: View {
                 .font(.headline)
                 .foregroundColor(.white)
                 .multilineTextAlignment(.center)
-                .accessibilityAddTraits(.isHeader)
-                .accessibilityLabel("Image \(selectedIndex + 1) of \(imageUrls.count)")
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(
+                    Text("Photo \(selectedIndex + 1) of \(imageUrls.count)")
+                )
 
             HStack {
                 Spacer() // Mendorong konten ke kanan

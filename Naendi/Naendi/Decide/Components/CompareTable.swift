@@ -51,8 +51,10 @@ struct CompareTable: View {
     }
 
     private func selectionButton(for place: Place) -> some View {
-        Button(action: {
-            if selectedPlace?.id == place.id {
+        let isSelected = selectedPlace?.id == place.id
+
+        return Button(action: {
+            if isSelected {
                 selectedPlace = nil
             } else {
                 selectedPlace = place
@@ -67,16 +69,36 @@ struct CompareTable: View {
                             .stroke(Color(red: 0.22, green: 0.55, blue: 0.42), lineWidth: 2)
                     )
 
-                if selectedPlace?.id == place.id {
+                if isSelected {
                     Circle()
                         .fill(Color(red: 207/255, green: 245/255, blue: 64/255))
                         .frame(width: 14, height: 14)
                 }
             }
+            .frame(width: 44, height: 44)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .frame(minWidth: 44, minHeight: 44)
-        .accessibilityHidden(true)
+        .accessibilityLabel(
+            Text(isSelected ? "Deselect \(place.nama)" : "Select \(place.nama)")
+        )
+        .accessibilityValue(
+            Text(
+                isSelected
+                    ? String(localized: "Selected")
+                    : String(localized: "Not selected")
+            )
+        )
+        .accessibilityHint(
+            Text(
+                isSelected
+                    ? "Double-tap to deselect this place."
+                    : "Double-tap to select this place."
+            )
+        )
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+        .accessibilityRespondsToUserInteraction(true)
+        .accessibilitySortPriority(3)
     }
 }
 

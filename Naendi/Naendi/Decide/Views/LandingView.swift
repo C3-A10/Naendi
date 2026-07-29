@@ -69,7 +69,6 @@ struct LandingView: View {
                             .foregroundColor(.white)
                             .shadow(color: .black.opacity(0.4), radius: 4, x: 0, y: 2)
                             .padding(.top, 64)
-                            .accessibilityAddTraits(.isHeader)
 
                         // Gradient Transisi ke Putih (Agar menyatu dengan latar belakang aplikasi)
                         VStack {

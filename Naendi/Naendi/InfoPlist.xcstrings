@@ -10,6 +10,12 @@
             "state" : "new",
             "value" : "Naendi"
           }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Naendi"
+          }
         }
       }
     },
