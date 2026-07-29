@@ -100,21 +100,9 @@ struct PlaceCardNormalView: View {
                     }
                 } label: {
                     HStack {
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(place.nama)
-                                .font(.title3)
-                                .fontWeight(.bold)
-                                .foregroundColor(.primary).lineLimit(1)
-                            HStack(spacing: 6) {
-                                Image(systemName: "star.fill").foregroundColor(.yellow).font(.body)
-                                    .accessibilityHidden(true)
-                                Text("\(place.rating, specifier: "%.1f")").font(.body).fontWeight(.semibold).foregroundColor(.primary)
-                                    .accessibilityLabel("Rating \(place.accessibilityRatingDescription)")
-                                Text("•").foregroundColor(.secondary).font(.body)
-                                Text("(\(place.jumlahReview))").font(.caption).foregroundColor(.secondary)
-                                    .accessibilityLabel("\(place.accessibilityReviewCountDescription) reviews")
-                            }
-                        }
+                        PlaceCardTitleBlock(place: place, isExpanded: false)
+                            .hidden()
+                            .placeCardTitleSlot(expanded: false)
                         Spacer()
                         Image(systemName: "chevron.down").font(.title3).fontWeight(.bold) .foregroundColor(.primary)
                     }
@@ -149,7 +137,6 @@ struct PlaceCardNormalView: View {
             .frame(maxWidth: .infinity)
             .frame(height: 240)
             .background(Color(.secondarySystemGroupedBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
 
         } else if mode == .landing {
             ZStack (alignment: .bottom) {
@@ -246,19 +233,9 @@ struct PlaceCardNormalView: View {
                                 }
                             } label: {
                                 HStack {
-                                    VStack(alignment: .leading, spacing: 6) {
-                                        Text(place.nama).font(.title3)
-                                            .fontWeight(.bold).foregroundColor(.primary).lineLimit(1)
-                                        HStack(spacing: 6) {
-                                            Image(systemName: "star.fill").foregroundColor(.yellow).font(.body)
-                                                .accessibilityHidden(true)
-                                            Text("\(place.rating, specifier: "%.1f")").font(.body).fontWeight(.semibold).foregroundColor(.primary)
-                                                .accessibilityLabel("Rating \(place.accessibilityRatingDescription)")
-                                            Text("•").foregroundColor(.secondary).font(.body)
-                                            Text("(\(place.jumlahReview))").font(.caption).fontWeight(.semibold).foregroundColor(.secondary)
-                                                .accessibilityLabel("\(place.accessibilityReviewCountDescription) reviews")
-                                        }
-                                    }
+                                    PlaceCardTitleBlock(place: place, isExpanded: false)
+                                        .hidden()
+                                        .placeCardTitleSlot(expanded: false)
                                     Spacer()
                                     Image(systemName: "chevron.down").font(.system(size: 18, weight: .bold)).foregroundColor(.primary)
                                 }

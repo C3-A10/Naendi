@@ -20,8 +20,6 @@ struct PlaceCardExpandPhotoView: View {
     let onSelectImageIndex: (Int) -> Void
     let hero: Namespace.ID
 
-    /// Flips on appear so images after the hero slide in from the right instead of
-    /// riding the parent's fade.
     @State private var galleryRevealed = false
 
     init(
@@ -124,9 +122,6 @@ struct PlaceCardExpandPhotoView: View {
         .frame(height: 240)
         .clipped()
         .task {
-            // Must be a real suspension: flipping this in onAppear lands in the same
-            // update as the insertion, so SwiftUI renders the final state directly and
-            // never animates. The wait also lets the shrinking hero clear this area.
             try? await Task.sleep(for: .milliseconds(280))
             galleryRevealed = true
         }
@@ -144,8 +139,6 @@ struct PlaceCardExpandPhotoView: View {
             Button {
                 onSelectImageIndex(index)
             } label: {
-                // The transaction animates the placeholder -> photo swap, so an image
-                // that finishes loading mid-slide eases in instead of popping.
                 AsyncImage(url: url, transaction: Transaction(animation: .easeOut(duration: 0.25))) { phase in
                     if let image = phase.image {
                         image
@@ -168,9 +161,6 @@ struct PlaceCardExpandPhotoView: View {
                 .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
             }
             .buttonStyle(.plain)
-            // Only image 0 pairs with the normal card's thumbnail. The rest must not
-            // carry the effect at all: an inserted view with an unmatched id animates
-            // its frame, which reads as a wipe rather than a slide.
             .heroMatch(index == 0, id: placeCardHeroImageID, in: hero)
             .offset(x: index == 0 || galleryRevealed ? 0 : 60)
             .opacity(index == 0 || galleryRevealed ? 1 : 0)

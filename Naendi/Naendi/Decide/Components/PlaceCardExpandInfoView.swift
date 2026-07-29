@@ -27,38 +27,9 @@ struct PlaceCardExpandInfoView: View {
             HStack(alignment: .center, spacing: 8) {
                 VStack(alignment: .leading, spacing: 6) {
 
-                    // Nama tempat
-                    Text(place.nama)
-                        .font(.title3)
-                        .fontWeight(.bold)
-                        .foregroundColor(.primary)
-
-                    // Rating - jml rating - range harga
-                    HStack(spacing: 6) {
-
-                        // icon bintang
-                        Image(systemName: "star.fill")
-                            .foregroundColor(.yellow)
-                            .font(.body)
-                            .accessibilityHidden(true)
-
-                        // rating
-                        Text("\(place.rating, specifier: "%.1f")")
-                            .font(.caption)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.primary)
-                            .accessibilityLabel("Rating \(place.accessibilityRatingDescription)")
-
-                        Text("•").foregroundColor(.secondary).font(.caption)
-
-                        // jml review
-                        Text("(\(place.jumlahReview))").font(.caption).foregroundColor(.secondary)
-                            .accessibilityLabel("\(place.accessibilityReviewCountDescription) reviews")
-                        Text("•").foregroundColor(.secondary).font(.caption)
-
-                        // range harga
-                        Text(place.rangeHarga).font(.caption).foregroundColor(.secondary).lineLimit(1)
-                    }
+                    PlaceCardTitleBlock(place: place, isExpanded: true)
+                        .hidden()
+                        .placeCardTitleSlot(expanded: true)
 
                     // Badges Type - Vibe - Halal
                     HStack(spacing: 6) {
