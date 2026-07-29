@@ -130,12 +130,10 @@ struct DetailPlaceView: View {
         }
         // Report outcome (success / already reported / failure).
         .alert(
-            viewModel.reportMessage?.contains("already submitted") == true
-                ? "You've Already Reported"
-                : "Report Submitted",
+            viewModel.reportTitle ?? "",
             isPresented: Binding(
                 get: { viewModel.reportMessage != nil },
-                set: { if !$0 { viewModel.reportMessage = nil } }
+                set: { if !$0 { viewModel.reportMessage = nil; viewModel.reportTitle = nil } }
             )
         ) {
             Button("OK", role: .cancel) { }

@@ -7,12 +7,12 @@
 import SwiftUI
 // MARK: - Sub Component Detail Row
 struct DetailRowView: View {
-    let title: String
+    let title: LocalizedStringKey
     let value: String
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(LocalizedStringKey(title))
+            Text(title)
                 .font(.subheadline)
                 .fontWeight(.bold)
                 .foregroundColor(.primary)

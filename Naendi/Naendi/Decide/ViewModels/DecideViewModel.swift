@@ -36,6 +36,7 @@ class DecideViewModel {
     var isLoading: Bool = false
     var errorMessage: String?
     var persistenceErrorMessage: String?
+    var reportTitle: String? = nil
     var reportMessage: String?
     /// Live report counts per place id, sourced from the `Report` records rather
     /// than the stale `jumlah_report` field on `Place`.
@@ -242,23 +243,48 @@ class DecideViewModel {
     }
 
     // fungsi untuk menambah report count di cloudkit
+//    func reportPlace(
+//        _ place: Place,
+//        using repository: CloudKitPlaceRepository = CloudKitPlaceRepository()
+//    ) async -> Bool {
+//        do {
+//            let isNew = try await repository.report(placeID: place.id)
+//            reportMessage = isNew
+//                ? "Your report has been submitted successfully. Thanks for your help!"
+//                : "Looks like you've already submitted a report for this place."
+//            if isNew {
+//                reportCounts[place.id, default: place.reportCount] += 1
+//            }
+//            return true // dilaporkan oleh user ini, baru maupun sudah ada sebelumnya
+//        } catch let error as CKError where error.code == .notAuthenticated {
+//            reportMessage = "Log-in to iCloud to submit a report. Please try again when you're back online."
+//        } catch {
+//            reportMessage = "Failed to send report, please try again"
+//        }
+//        return false
+//    }
     func reportPlace(
         _ place: Place,
         using repository: CloudKitPlaceRepository = CloudKitPlaceRepository()
     ) async -> Bool {
         do {
             let isNew = try await repository.report(placeID: place.id)
-            reportMessage = isNew
-                ? "Your report has been submitted successfully. Thanks for your help!"
-                : "Looks lik you've already submitted a report for this place."
             if isNew {
+                reportTitle = String(localized: "Report Submitted")
+                reportMessage = String(localized: "Your report has been submitted successfully. Thanks for your help!")
                 reportCounts[place.id, default: place.reportCount] += 1
+            } else {
+                reportTitle = String(localized: "Report Failed") // atau "Already Reported"
+                reportMessage = String(localized: "Looks like you've already submitted a report for this place.")
             }
-            return true // dilaporkan oleh user ini, baru maupun sudah ada sebelumnya
+            return true
+            
         } catch let error as CKError where error.code == .notAuthenticated {
-            reportMessage = "Log-in to iCloud to submit a report. Please try again when you're back online."
+            reportTitle = String(localized: "Report Failed")
+            reportMessage = String(localized: "Log-in to iCloud to submit a report. Please try again when you're back online.")
         } catch {
-            reportMessage = "Failed to send report, please try again"
+            reportTitle = String(localized: "Report Failed")
+            reportMessage = String(localized: "Failed to send report, please try again")
         }
         return false
     }
