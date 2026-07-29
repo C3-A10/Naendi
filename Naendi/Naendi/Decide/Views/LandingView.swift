@@ -63,13 +63,18 @@ struct LandingView: View {
                         .padding(.horizontal, 0) // Memastikan tidak ada jarak/margin bawaan dari sistem
                         .padding(.top, 100)
                         .accessibilityHidden(true)
-
-                        Text("Discover Local Places in Surabaya")
-                            .font(.title2.bold())
-                            .foregroundColor(.white)
-                            .shadow(color: .black.opacity(0.4), radius: 4, x: 0, y: 2)
-                            .padding(.top, 64)
-                            .accessibilityAddTraits(.isHeader)
+                        HStack{
+                            Spacer()
+                            Text("Discover Local Places in Surabaya")
+                                .font(.title2.bold())
+                                .foregroundColor(.white)
+                                .multilineTextAlignment(.center)
+                                .shadow(color: .black.opacity(0.4), radius: 8, x: 0, y: 4)
+                                .padding(.top, 100)
+                                .padding(.horizontal, 60)
+                                .accessibilityAddTraits(.isHeader)
+                            Spacer()
+                        }
 
                         // Gradient Transisi ke Putih (Agar menyatu dengan latar belakang aplikasi)
                         VStack {
