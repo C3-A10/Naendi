@@ -18,6 +18,9 @@ struct PlaceCardExpandPhotoView: View {
     let isReported: Bool
     let onReport: () -> Void
     let onSelectImageIndex: (Int) -> Void
+    let hero: Namespace.ID
+
+    @State private var galleryRevealed = false
 
     init(
         isComparing: Bool,
@@ -29,7 +32,9 @@ struct PlaceCardExpandPhotoView: View {
         isReported: Bool = false,
         onReport: @escaping () -> Void = {},
         onSelectImageIndex: @escaping (Int) -> Void,
+        hero: Namespace.ID
     ) {
+        self.hero = hero
         self.isComparing = isComparing
         self.isSelected = isSelected
         self.isCheckDisabled = isCheckDisabled
@@ -116,6 +121,10 @@ struct PlaceCardExpandPhotoView: View {
         }
         .frame(height: 240)
         .clipped()
+        .task {
+            try? await Task.sleep(for: .milliseconds(280))
+            galleryRevealed = true
+        }
     }
 
     @ViewBuilder
@@ -130,11 +139,12 @@ struct PlaceCardExpandPhotoView: View {
             Button {
                 onSelectImageIndex(index)
             } label: {
-                AsyncImage(url: url) { phase in
+                AsyncImage(url: url, transaction: Transaction(animation: .easeOut(duration: 0.25))) { phase in
                     if let image = phase.image {
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
+                            .transition(.opacity)
                     } else if !viewModel.isNetworkConnected {
                         NoInternetPlaceholder(isCaptionHidden: hidesOfflineCaption)
                     } else {
@@ -151,6 +161,10 @@ struct PlaceCardExpandPhotoView: View {
                 .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
             }
             .buttonStyle(.plain)
+            .heroMatch(index == 0, id: placeCardHeroImageID, in: hero)
+            .offset(x: index == 0 || galleryRevealed ? 0 : 60)
+            .opacity(index == 0 || galleryRevealed ? 1 : 0)
+            .animation(.cardMorph.delay(Double(index) * 0.05), value: galleryRevealed)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(
                 Text("Photo \(index + 1) of \(imageGallery.count), \(place.nama)")

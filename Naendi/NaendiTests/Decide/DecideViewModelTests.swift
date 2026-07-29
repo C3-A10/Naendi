@@ -205,7 +205,9 @@ struct DecideViewModelTests {
 
         // Roughly 111 m north of the selected origin, not of the GPS fix.
         let place = Place.stub(latitude: 0.001, longitude: 0)
-        #expect(viewModel.calculateDistance(to: place) == "111 m")
+        // Spacing between value and unit is locale-dependent, the value is not.
+        let distance = viewModel.calculateDistance(to: place)
+        #expect(distance.filter { !$0.isWhitespace } == "111m")
     }
 
     @Test("distance shows a dash when there is nothing to measure from")
