@@ -25,44 +25,59 @@ struct LandingView: View {
                 ZStack(alignment: .bottom) {
                     // Gambar Hero & Teks
                     ZStack(alignment: .top) {
-                        AsyncImage(url: URL(string: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1000&auto=format&fit=crop")) { phase in
-                            if let image = phase.image {
-                                image
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: UIScreen.main.bounds.width, height: 420)
-                                    .clipped()
-                            } else {
-                                Color(UIColor.darkGray)
-                                    .frame(width: UIScreen.main.bounds.width, height: 420)
-                            }
-                        }
-                        .frame(width: UIScreen.main.bounds.width, height: 420)
-                        .clipped()
-                        .accessibilityHidden(true)
+                        Image("landing_photo")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: UIScreen.main.bounds.width, height: 420)
+                            .clipped()
+                            .accessibilityHidden(true)
+                        
 
                         // Maskot di Kiri dan Kanan
                         HStack(spacing: 0) {
-                            Image("asset_bicycle")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 180, height: 180)
-                                .offset(x: -50)
-                                .offset(y: 30)
-
+                            
+                            ZStack {
+                                
+                                Image("wiggle_1")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 120, height: 120)
+                                    .offset(x: -32)
+                                    .offset(y: -40)
+                                
+                                Image("asset_bicycle")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 160, height: 140)
+                                    .offset(x: -30)
+                                    .offset(y: 30)
+                            }
+                          
                             Spacer()
+                            
+                            ZStack {
+                                Image("wiggle_2")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 180, height: 180)
+                                    .offset(x: 40)
+                                    .offset(y: 40)
+                                
+                                Image("asset_rabbit")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 115, height: 170)
+                                    .offset(x: 60)
+                                    .offset(y: -5)
+                            }
 
-                            Image("asset_rabbit")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 150, height: 250)
-                                .offset(x: 50)
-                                .offset(y: -40)
+                            
                         }
-                        .frame(maxWidth: .infinity) // Memaksa HStack membentang selebar mungkin
-                        .padding(.horizontal, 0) // Memastikan tidak ada jarak/margin bawaan dari sistem
+                        .frame(maxWidth: .infinity)
+                        .padding(.horizontal, 0)
                         .padding(.top, 100)
                         .accessibilityHidden(true)
+                        
                         HStack{
                             Spacer()
                             Text("Discover Local Places in Surabaya")
