@@ -83,12 +83,13 @@ struct PriceRange: Equatable {
         return value * scale
     }
 
-    func overlaps(_ other: PriceRange) -> Bool {
+
+    func fits(within budget: PriceRange) -> Bool {
         let ourLow = lowerBound ?? -.greatestFiniteMagnitude
         let ourHigh = upperBound ?? .greatestFiniteMagnitude
-        let theirLow = other.lowerBound ?? -.greatestFiniteMagnitude
-        let theirHigh = other.upperBound ?? .greatestFiniteMagnitude
-        return ourLow <= theirHigh && ourHigh >= theirLow
+        let budgetLow = budget.lowerBound ?? -.greatestFiniteMagnitude
+        let budgetHigh = budget.upperBound ?? .greatestFiniteMagnitude
+        return ourLow >= budgetLow && ourHigh <= budgetHigh
     }
 }
 
