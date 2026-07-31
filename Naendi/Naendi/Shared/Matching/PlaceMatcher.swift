@@ -2,12 +2,7 @@
 //  PlaceMatcher.swift
 //  Naendi
 //
-//  Decides whether a single place satisfies the user's preferences. Every
-//  criterion must pass (a strict AND), but missing data is never treated as a
-//  mismatch — only a direct contradiction rejects a place. Roughly 21% of the
-//  dataset has no price and 75% has an unverified halal status, so excluding
-//  unknowns would discard most of the catalogue.
-//
+
 
 import CoreLocation
 import Foundation
@@ -90,8 +85,8 @@ struct PlaceMatcher {
 
     private func matchesBudget(_ place: Place, criteria: PreferenceCriteria) -> Bool {
         guard let budget = criteria.budgetRange else { return true }
-        guard let price = place.priceRange else { return true }
-        return price.overlaps(budget)
+        guard let price = place.priceRange else { return false }
+        return price.fits(within: budget)
     }
 
     private func matchesOpeningHours(

@@ -75,33 +75,44 @@ struct PriceRangeTests {
         #expect(PriceRange(parsing: raw) == nil)
     }
 
-    @Test("overlapping bands match even when neither contains the other")
-    func overlapIsNotContainment() {
-        let place = PriceRange(lowerBound: 25_000, upperBound: 50_000)
-        let budget = PriceRange(lowerBound: 10_000, upperBound: 30_000)
-        #expect(place.overlaps(budget))
-        #expect(budget.overlaps(place))
+    @Test("a band inside the budget fits, at either end of it")
+    func containedBandsFit() {
+        let budget = PriceRange(lowerBound: 50_000, upperBound: 100_000)
+        #expect(PriceRange(lowerBound: 50_000, upperBound: 75_000).fits(within: budget))
+        #expect(PriceRange(lowerBound: 75_000, upperBound: 100_000).fits(within: budget))
+        #expect(PriceRange(lowerBound: 60_000, upperBound: 70_000).fits(within: budget))
     }
 
-    @Test("disjoint bands do not match")
-    func disjointBandsDoNotMatch() {
+    @Test("a band that merely overlaps the budget does not fit")
+    func overlappingBandDoesNotFit() {
+        let budget = PriceRange(lowerBound: 50_000, upperBound: 100_000)
+        // Undershoots the floor.
+        #expect(PriceRange(lowerBound: 25_000, upperBound: 75_000).fits(within: budget) == false)
+        // Overshoots the ceiling.
+        #expect(PriceRange(lowerBound: 75_000, upperBound: 150_000).fits(within: budget) == false)
+    }
+
+    @Test("disjoint bands do not fit")
+    func disjointBandsDoNotFit() {
         let place = PriceRange(lowerBound: 100_000, upperBound: 250_000)
         let budget = PriceRange(lowerBound: 10_000, upperBound: 50_000)
-        #expect(place.overlaps(budget) == false)
+        #expect(place.fits(within: budget) == false)
     }
 
-    @Test("touching at a single boundary counts as overlap")
-    func touchingBoundsOverlap() {
-        let place = PriceRange(lowerBound: 50_000, upperBound: 75_000)
-        let budget = PriceRange(lowerBound: 10_000, upperBound: 50_000)
-        #expect(place.overlaps(budget))
-    }
-
-    @Test("an open upper bound overlaps any budget above its floor")
-    func openEndedOverlap() {
+    @Test("an open-ended place never fits a budget with a ceiling")
+    func openEndedPlaceDoesNotFit() {
         let place = PriceRange(lowerBound: 250_000, upperBound: nil)
-        #expect(place.overlaps(PriceRange(lowerBound: 300_000, upperBound: 400_000)))
-        #expect(place.overlaps(PriceRange(lowerBound: 10_000, upperBound: 50_000)) == false)
+        #expect(place.fits(within: PriceRange(lowerBound: 200_000, upperBound: 300_000)) == false)
+        // …but it does fit a budget that is itself open above.
+        #expect(place.fits(within: PriceRange(lowerBound: 200_000, upperBound: nil)))
+    }
+
+    @Test("an open budget bound imposes no limit on that side")
+    func openBudgetBound() {
+        let place = PriceRange(lowerBound: 25_000, upperBound: 50_000)
+        #expect(place.fits(within: PriceRange(lowerBound: nil, upperBound: 50_000)))
+        #expect(place.fits(within: PriceRange(lowerBound: 25_000, upperBound: nil)))
+        #expect(place.fits(within: PriceRange(lowerBound: 30_000, upperBound: nil)) == false)
     }
 
     @Test("Place exposes its parsed range")

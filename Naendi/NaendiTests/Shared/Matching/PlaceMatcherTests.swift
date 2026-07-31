@@ -121,14 +121,28 @@ struct PlaceMatcherTests {
         #expect(matches(.stub(rangeHarga: "Rp 250.000+"), PreferenceCriteria(budget: .any)))
     }
 
-    @Test("a place with no price string passes any budget")
-    func missingPricePasses() {
-        #expect(matches(.stub(rangeHarga: ""), PreferenceCriteria(budget: .tenToFifty)))
+    @Test("a place with no price string is excluded once a budget is set")
+    func missingPriceExcludedByBudget() {
+        #expect(matches(.stub(rangeHarga: ""), PreferenceCriteria(budget: .tenToFifty)) == false)
+        #expect(matches(.stub(rangeHarga: ""), PreferenceCriteria(budget: .any)))
     }
 
-    @Test("a price band overlapping the budget matches")
-    func overlappingPriceMatches() {
+    @Test("a price band inside the budget matches")
+    func containedPriceMatches() {
         #expect(matches(.stub(rangeHarga: "Rp 25–50 rb"), PreferenceCriteria(budget: .tenToFifty)))
+    }
+
+    @Test("a price band that only overlaps the budget is excluded")
+    func overlappingPriceExcluded() {
+        let criteria = PreferenceCriteria(
+            budget: .custom,
+            customMinBudget: 50_000,
+            customMaxBudget: 100_000
+        )
+        #expect(matches(.stub(rangeHarga: "Rp 50–75 rb"), criteria))
+        #expect(matches(.stub(rangeHarga: "Rp 75–100 rb"), criteria))
+        #expect(matches(.stub(rangeHarga: "Rp 25–75 rb"), criteria) == false)
+        #expect(matches(.stub(rangeHarga: "Rp 75–150 rb"), criteria) == false)
     }
 
     @Test("a price band clear of the budget is excluded")
@@ -143,7 +157,9 @@ struct PlaceMatcherTests {
             customMinBudget: 200_000,
             customMaxBudget: 300_000
         )
-        #expect(matches(.stub(rangeHarga: "Rp 250.000+"), criteria))
+        #expect(matches(.stub(rangeHarga: "Rp 225–250 rb"), criteria))
+        // An open-ended price could be anything above 250k, so it is not a fit.
+        #expect(matches(.stub(rangeHarga: "Rp 250.000+"), criteria) == false)
         #expect(matches(.stub(rangeHarga: "Rp 25–50 rb"), criteria) == false)
     }
 
